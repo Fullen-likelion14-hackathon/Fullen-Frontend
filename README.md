@@ -6,6 +6,23 @@ Erbe Frontend 프로젝트 협업을 위한 Git 및 코드 작성 규칙입니�
 
 ---
 
+# 🛠 Tech Stack
+
+| Category         | Stack            |
+| ---------------- | ---------------- |
+| Framework        | React 19         |
+| Language         | TypeScript       |
+| Build Tool       | Vite             |
+| Styling          | Tailwind CSS v4  |
+| UI               | shadcn/ui        |
+| Routing          | React Router DOM |
+| State Management | Zustand          |
+| Server State     | TanStack Query   |
+| HTTP Client      | Axios            |
+| Code Quality     | ESLint, Prettier |
+
+---
+
 # 🌿 Branch Convention
 
 안정적인 배포와 독립적인 기능 개발을 위해 Git Flow를 사용합니다.
