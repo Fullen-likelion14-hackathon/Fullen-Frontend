@@ -187,124 +187,9 @@ feature/LoginPage       ❌
 - Tailwind 클래스 오타와 중복을 확인합니다.
 - 임의값은 디자인 요구사항이 명확한 경우에만 사용합니다.
 
-```tsx
-<div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">...</div>
-```
+자세한 CSS 및 UI 작성 규칙은 아래 문서를 참고해주세요.
 
-다음처럼 잘못된 클래스는 사용하지 않습니다.
-
-```tsx
-<div className="gird grid-cols-1 ,md:grid-cols-2 gap">...</div>
-```
-
----
-
-## Class 작성 순서
-
-권장 순서:
-
-```text
-Layout
-↓
-
-Position
-
-↓
-
-Flex / Grid
-
-↓
-
-Size
-
-↓
-
-Spacing
-
-↓
-
-Border
-
-↓
-
-Background / Color
-
-↓
-
-Typography
-
-↓
-
-Effect
-
-↓
-
-State
-
-↓
-
-Responsive
-```
-
-예시:
-
-```tsx
-<button
-  className="
-    flex
-    items-center
-    justify-center
-    w-full
-    px-4
-    py-2
-    rounded-lg
-    border
-    border-gray-300
-    bg-blue-500
-    text-sm
-    font-medium
-    text-white
-    shadow-sm
-    transition
-    hover:bg-blue-600
-    md:w-auto
-  "
->
-  저장
-</button>
-```
-
-실제 코드에서는 한 줄로 작성해도 됩니다.
-
-```tsx
-<button className="flex w-full items-center justify-center rounded-lg border border-gray-300 bg-blue-500 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-blue-600 md:w-auto">
-  저장
-</button>
-```
-
----
-
-## 반응형
-
-모바일 스타일을 기본으로 작성한 뒤 `sm`, `md`, `lg` 순서로 확장합니다.
-
-```tsx
-<div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">...</div>
-```
-
----
-
-## shadcn/ui
-
-- CLI가 생성한 컴포넌트는 `src/components/ui`에서 관리합니다.
-- 공통 디자인 변경이 아니라면 기본 컴포넌트를 직접 수정하지 않습니다.
-- 특정 화면의 스타일은 `className`으로 변경합니다.
-- 반복되는 UI는 공통 컴포넌트로 분리합니다.
-- 새로운 Variant 추가는 팀 합의 후 진행합니다.
-
-```tsx
-<Button className="bg-blue-500 hover:bg-blue-600">저장</Button>
-```
+➡️ [CSS Convention](./docs/CSS.md)
 
 ---
 
@@ -312,4 +197,12 @@ Responsive
 
 자세한 협업 규칙은 아래 문서를 참고해주세요.
 
-- [상세 협업 및 코드 컨벤션](./docs/CONVENTION.md)
+## 📚 Documents
+
+- 🌿 [Git Convention](./docs/GIT.md)
+
+- 🎨 [CSS Convention](./docs/CSS.md)
+
+- 🌐 [API & State Convention](./docs/API.md)
+
+- ⚙️ [Project Setup](./docs/SETUP.md)
