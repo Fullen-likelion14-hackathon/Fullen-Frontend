@@ -1,3 +1,181 @@
+import type { CSSProperties } from "react";
+import { NavLink, useLocation } from "react-router-dom";
+
+import mcomActiveIcon from "@/assets/icons/mcom-active.png";
+import mcomInactiveIcon from "@/assets/icons/mcom-inactive.png";
+
+import passportActiveIcon from "@/assets/icons/passport-active.png";
+import passportInactiveIcon from "@/assets/icons/passport-inactive.png";
+
+import customActiveIcon from "@/assets/icons/custom-active.png";
+import customInactiveIcon from "@/assets/icons/custom-inactive.png";
+
+//TypeScript 의 interface 사용해서 네비게이션 아이템안에 잘못된 데이터 들어가는 거 미리 검사(데이터 타입 정의)
+interface NavigationItem {
+  label: string;
+  path: string;
+  activeIcon: string; //메뉴 선택 됐을 때 표시할 PNG 경로
+  inactiveIcon: string; // 메뉴가 선택 되지 X 때
+}
+//푸네에 표시할 메뉴 정보 배열로 관리
+const navigationItems: NavigationItem[] = [
+  {
+    label: "아카이브",
+    path: "/",
+    activeIcon: mcomActiveIcon,
+    inactiveIcon: mcomInactiveIcon,
+  },
+  {
+    label: "나의 여정",
+    path: "/passport",
+    activeIcon: passportActiveIcon,
+    inactiveIcon: passportInactiveIcon,
+  },
+  {
+    label: "커스텀",
+    path: "/custom",
+    activeIcon: customActiveIcon,
+    inactiveIcon: customInactiveIcon,
+  },
+];
+
 export default function FooterNavigation() {
-  return <nav>하단 메뉴</nav>;
+  const { pathname } = useLocation(); // 현재 브라우저 pathname 가져옴
+
+  // 현재 주소와 일치하는 네비게이션 메뉴의 index 찾기
+  const matchedIndex = navigationItems.findIndex(({ path }) => {
+    // "/"는 모든 주소가 포함하고 있어서 정확히 "/"일 때만 아카이브 활성화
+    if (path === "/") {
+      return pathname === "/";
+    }
+
+    // 하위 페이지가 생겨도 해당 메뉴가 활성화되도록 함
+    // 예: /passport/1도 /passport 메뉴 활성화
+    return pathname === path || pathname.startsWith(`${path}/`);
+  });
+
+  // 일치하는 메뉴가 없으면 기본값으로 첫 번째 메뉴 사용
+  const activeIndex = matchedIndex === -1 ? 0 : matchedIndex;
+
+  // 현재 선택된 메뉴 정보 가져오기
+  const activeItem = navigationItems[activeIndex];
+
+  // 메뉴 전체 영역이 300px이므로 메뉴 한 칸의 너비는 100px
+  const notchPositions = ["calc(50% - 100px)", "50%", "calc(50% + 100px)"] as const;
+
+  // 현재 선택된 메뉴 위치를 푸터 곡선에 전달
+  const footerBackgroundStyle = {
+    "--footer-notch-x": notchPositions[activeIndex] ?? notchPositions[0],
+  } as CSSProperties;
+
+  return (
+    <nav
+      aria-label="하단 네비게이션"
+      className="
+      fixed bottom-0 left-1/2 z-50
+      h-22 w-full max-w-107.5
+      -translate-x-1/2
+      overflow-visible bg-transparent
+      pb-[env(safe-area-inset-bottom)]
+    "
+    >
+      {/* 선택된 메뉴 주변이 곡선으로 파이는 네이비 푸터 배경 */}
+      <div
+        aria-hidden="true"
+        className="
+        footer-navigation-background
+        pointer-events-none
+        absolute inset-0 z-0
+        bg-[#242D41]
+      "
+        style={footerBackgroundStyle}
+      />
+
+      {/* 활성 원이 움직이는 300px 범위 */}
+      <div
+        aria-hidden="true"
+        className="
+        pointer-events-none
+        absolute -top-7 left-1/2 z-20
+        w-75 -translate-x-1/2
+      "
+      >
+        {/* 선택된 메뉴 위치로 원 이동 */}
+        <div
+          className="
+          flex w-1/3 justify-center
+          transition-transform duration-1000
+          ease-[cubic-bezier(0.22,1,0.36,1)]
+          will-change-transform
+        "
+          style={{
+            transform: `translateX(${activeIndex * 100}%)`,
+          }}
+        >
+          {/* 활성 메뉴 원형 도형 */}
+          <div
+            className="
+            flex size-17
+            items-center justify-center
+            rounded-full bg-white/30
+            shadow-[0_0_10.5px_0_rgba(94,140,136,0.25),inset_0_3px_3px_0_rgba(255,255,255,0.25),inset_0_-1.5px_1.5px_0_rgba(159,159,159,0.25)]
+          "
+          >
+            <img
+              src={activeItem.activeIcon}
+              alt=""
+              aria-hidden="true"
+              className="size-10 object-contain"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* 메뉴 3개의 전체 범위도 동일하게 300px */}
+      <div className="relative z-10 mx-auto grid h-full w-75 grid-cols-3">
+        {navigationItems.map((item, index) => {
+          const isActive = index === activeIndex;
+
+          return (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              aria-label={`${item.label} 페이지로 이동`}
+              aria-current={isActive ? "page" : undefined}
+              className="
+              flex h-full flex-col
+              items-center justify-end
+              gap-1 pb-3
+              outline-none
+              focus-visible:ring-2
+              focus-visible:ring-white
+            "
+            >
+              <img
+                src={item.inactiveIcon}
+                alt=""
+                aria-hidden="true"
+                className={`
+                size-9 object-contain
+                transition-opacity duration-500
+                ${isActive ? "opacity-0" : "opacity-100"}
+              `}
+              />
+
+              <span
+                className={`
+                text-[15px]
+                font-['Pretendard_Variable']
+                transition-colors duration-1000
+                ${isActive ? "text-white font-semibold" : "text-white/50"}
+              `}
+              >
+                {item.label}
+              </span>
+            </NavLink>
+          );
+        })}
+      </div>
+    </nav>
+  );
 }
