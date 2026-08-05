@@ -128,3 +128,69 @@
     @apply font-sans;
   }
 }
+/* 푸터에 뚫리는 원형 홀의 위치값 정의*/
+@property --footer-notch-x {
+  syntax: "<length-percentage>";
+  inherits: false;
+  initial-value: 50%;
+}
+/* 선택된 메뉴 주변 부드럽게 곡선으로 파내기 */
+.footer-navigation-background {
+  -webkit-clip-path: polygon(
+    0 0,
+    calc(var(--footer-notch-x) - 75px) 0,
+    calc(var(--footer-notch-x) - 68px) 2px,
+    calc(var(--footer-notch-x) - 60px) 5px,
+    calc(var(--footer-notch-x) - 52px) 10px,
+    calc(var(--footer-notch-x) - 45px) 17px,
+    calc(var(--footer-notch-x) - 37px) 25px,
+    calc(var(--footer-notch-x) - 29px) 33px,
+    calc(var(--footer-notch-x) - 21px) 40px,
+    calc(var(--footer-notch-x) - 14px) 43px,
+    calc(var(--footer-notch-x) - 7px) 45px,
+    var(--footer-notch-x) 46px,
+    calc(var(--footer-notch-x) + 7px) 45px,
+    calc(var(--footer-notch-x) + 14px) 43px,
+    calc(var(--footer-notch-x) + 21px) 40px,
+    calc(var(--footer-notch-x) + 29px) 33px,
+    calc(var(--footer-notch-x) + 37px) 25px,
+    calc(var(--footer-notch-x) + 45px) 17px,
+    calc(var(--footer-notch-x) + 52px) 10px,
+    calc(var(--footer-notch-x) + 60px) 5px,
+    calc(var(--footer-notch-x) + 68px) 2px,
+    calc(var(--footer-notch-x) + 75px) 0,
+    100% 0,
+    100% 100%,
+    0 100%
+  );
+
+  clip-path: polygon(
+    0 0,
+    calc(var(--footer-notch-x) - 75px) 0,
+    calc(var(--footer-notch-x) - 68px) 2px,
+    calc(var(--footer-notch-x) - 60px) 5px,
+    calc(var(--footer-notch-x) - 52px) 10px,
+    calc(var(--footer-notch-x) - 45px) 17px,
+    calc(var(--footer-notch-x) - 37px) 25px,
+    calc(var(--footer-notch-x) - 29px) 33px,
+    calc(var(--footer-notch-x) - 21px) 40px,
+    calc(var(--footer-notch-x) - 14px) 43px,
+    calc(var(--footer-notch-x) - 7px) 45px,
+    var(--footer-notch-x) 46px,
+    calc(var(--footer-notch-x) + 7px) 45px,
+    calc(var(--footer-notch-x) + 14px) 43px,
+    calc(var(--footer-notch-x) + 21px) 40px,
+    calc(var(--footer-notch-x) + 29px) 33px,
+    calc(var(--footer-notch-x) + 37px) 25px,
+    calc(var(--footer-notch-x) + 45px) 17px,
+    calc(var(--footer-notch-x) + 52px) 10px,
+    calc(var(--footer-notch-x) + 60px) 5px,
+    calc(var(--footer-notch-x) + 68px) 2px,
+    calc(var(--footer-notch-x) + 75px) 0,
+    100% 0,
+    100% 100%,
+    0 100%
+  );
+  /* 메뉴 변경 시 투명한 홈도 같이 슬라이드 */
+  transition: --footer-notch-x 1000ms cubic-bezier(0.22, 1, 0.36, 1);
+}
