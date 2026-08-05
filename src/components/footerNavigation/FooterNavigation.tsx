@@ -166,9 +166,8 @@ export default function FooterNavigation() {
                 className={`
                 text-[15px]
                 font-['Pretendard_Variable']
-                font-semibold
                 transition-colors duration-1000
-                ${isActive ? "text-white" : "text-white/50"}
+                ${isActive ? "text-white font-semibold" : "text-white/50"}
               `}
               >
                 {item.label}
