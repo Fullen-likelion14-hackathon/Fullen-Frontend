@@ -29,7 +29,7 @@ export default function MCoMView() {
             <button
               type="button"
               aria-label="뒤로 가기"
-              onClick={() => navigate("/")}
+              onClick={() => navigate("/mcom")}
               className="absolute left-5"
             >
               <ChevronLeft size={36} strokeWidth={2.5} />
