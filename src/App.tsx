@@ -18,8 +18,10 @@ function App() {
         <Route path="/nfc-tagging" element={<NfcTagging />} />
 
         <Route element={<RootLayout />}>
+          {/*메인 페이지 Passport - 내 여행기록 페이지*/}
+          <Route path="/" element={<Passport />} />
           {/* MCoM - 피드 구경 페이지 */}
-          <Route path="/" element={<MCoM />} />
+          <Route path="/mcom" element={<MCoM />} />
           {/* MCoM - 피드 미리보기 페이지 */}
           <Route path="/mcom/view/:feedId" element={<MCoMView />} />
           {/* Passport - 내 여행기록 페이지 */}
