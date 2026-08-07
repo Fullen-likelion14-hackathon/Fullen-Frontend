@@ -11,7 +11,7 @@ export default function MCoM() {
   return (
     <main className="min-h-screen bg-gray-200">
       <div className="mx-auto min-h-screen w-full max-w-97.5 bg-[#F9F4F0]">
-        <header className="bg-[#AB6A37] px-5 pb-6.25 pt-9.5">
+        <header className="bg-[#AB6A37] px-5 pb-6.25 pt-11">
           <h1 className="text-xl text-center font-semibold text-[#E9D8CB]">MCM 아카이브</h1>
         </header>
 
