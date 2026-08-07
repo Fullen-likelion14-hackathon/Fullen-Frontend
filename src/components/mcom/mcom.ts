@@ -10,4 +10,5 @@ export type MCoMFeed = {
   thumbnail: string;
   imageCount: number;
   textCount: number;
+  content: string;
 };
