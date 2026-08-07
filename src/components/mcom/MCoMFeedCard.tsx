@@ -28,7 +28,11 @@ export default function MCoMFeedCard({ feed, variant = "current" }: MCoMFeedCard
     <div className="relative h-125 w-73 rounded-2xl bg-white pt-13 text-black">
       {/* 국기 */}
       <div className="absolute -top-10 left-1/2 flex h-20 w-20 -translate-x-1/2 items-center justify-center rounded-full bg-white shadow-lg">
-        <img src={feed.flagImage} alt={`${feed.countryName} 국기`} className="h-auto w-10" />
+        <img
+          src={feed.flagImage}
+          alt={`${feed.countryName} 국기`}
+          className="h-auto w-10 border-2"
+        />
       </div>
 
       {/* 피드 정보 */}
