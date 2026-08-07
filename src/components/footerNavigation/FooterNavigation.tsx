@@ -124,7 +124,7 @@ export default function FooterNavigation() {
             className="
             flex size-17
             items-center justify-center
-            rounded-full bg-white/30
+            rounded-full bg-gray-400/85
             shadow-[0_0_10.5px_0_rgba(94,140,136,0.25),inset_0_3px_3px_0_rgba(255,255,255,0.25),inset_0_-1.5px_1.5px_0_rgba(159,159,159,0.25)]
           "
           >
