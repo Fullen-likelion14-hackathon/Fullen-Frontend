@@ -9,6 +9,9 @@ import Passport from "@/pages/Passport/Passport";
 import Custom from "@/pages/Custom/Custom";
 import MCoMView from "@/pages/MCoM/MCoMView";
 import McoMDetail from "./pages/MCoM/MCoMDetail";
+import Map from "@/pages/Map/Map";
+import CategoryNew from "@/pages/CategoryNew/CategoryNew";
+import CategoryFeed from "@/pages/CategoryFeed/CategoryFeed";
 
 function App() {
   return (
@@ -17,6 +20,12 @@ function App() {
         {/* Login / NFC 태깅 - 하단 네비게이션 없는 온보딩 플로우 */}
         <Route path="/login" element={<Login />} />
         <Route path="/nfc-tagging" element={<NfcTagging />} />
+        {/* 지도 페이지 - 하단 네비게이션 없음(전체화면) */}
+        <Route path="/map" element={<Map />} />
+        {/* Passport - 카테고리 추가 페이지 - 하단 네비게이션 없음 (⚠️ /passport/:categoryId 보다 반드시 위에 있어야 함) */}
+        <Route path="/passport/new" element={<CategoryNew />} />
+        {/* Passport - 카테고리 안 피드 목록 페이지 - 하단 네비게이션 없음 */}
+        <Route path="/passport/:categoryId" element={<CategoryFeed />} />
 
         <Route element={<RootLayout />}>
           {/*메인 페이지 Passport - 내 여행기록 페이지*/}
