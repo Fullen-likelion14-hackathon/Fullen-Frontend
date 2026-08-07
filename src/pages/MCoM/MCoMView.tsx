@@ -22,7 +22,7 @@ export default function MCoMView() {
     currentIndex < mcomFeedMockData.length - 1 ? mcomFeedMockData[currentIndex + 1] : null;
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50">
       <div className="mx-auto flex min-h-screen w-full max-w-97.5 flex-col bg-[#242D41] text-white">
         <header className="border-b-[7px] border-[#AB6A37] bg-[#242D41] pb-6.25 pt-11">
           <div className="relative flex items-center justify-center px-5">
@@ -41,6 +41,6 @@ export default function MCoMView() {
 
         <MCoMFeedSlider feed={feed} previousFeed={previousFeed} nextFeed={nextFeed} />
       </div>
-    </main>
+    </div>
   );
 }
