@@ -8,6 +8,7 @@ import MCoM from "@/pages/MCoM/MCoM";
 import Passport from "@/pages/Passport/Passport";
 import Custom from "@/pages/Custom/Custom";
 import MCoMView from "@/pages/MCoM/MCoMView";
+import McoMDetail from "./pages/MCoM/MCoMDetail";
 
 function App() {
   return (
@@ -24,6 +25,9 @@ function App() {
           <Route path="/mcom" element={<MCoM />} />
           {/* MCoM - 피드 미리보기 페이지 */}
           <Route path="/mcom/view/:feedId" element={<MCoMView />} />
+          {/* MCoM - 피드 디테일 페이지 */}
+          <Route path="/mcom/view/:feedId/detail" element={<McoMDetail />} />
+
           {/* Passport - 내 여행기록 페이지 */}
           <Route path="/passport" element={<Passport />} />
           {/* Custom - 제품 커스텀 페이지 */}

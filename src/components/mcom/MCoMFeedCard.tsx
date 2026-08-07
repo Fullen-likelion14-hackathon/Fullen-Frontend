@@ -1,4 +1,5 @@
 import type { MCoMFeed } from "@/components/mcom/mcom";
+import { useNavigate } from "react-router-dom";
 
 type MCoMFeedCardProps = {
   feed: MCoMFeed;
@@ -6,6 +7,12 @@ type MCoMFeedCardProps = {
 };
 
 export default function MCoMFeedCard({ feed, variant = "current" }: MCoMFeedCardProps) {
+  const navigate = useNavigate();
+
+  const handleDtailClick = (feedId: number) => {
+    navigate(`/mcom/view/${feedId}/detail`);
+  };
+
   // 양옆에 살짝 보이는 카드
   if (variant === "side") {
     return (
@@ -55,7 +62,9 @@ export default function MCoMFeedCard({ feed, variant = "current" }: MCoMFeedCard
 
         {/* 자세히 보기 */}
         <button type="button" className="mt-1 rounded-2xl bg-gray-200 px-20 py-2">
-          <span className="font-bold text-[#757575]">자세히 보기</span>
+          <span className="font-bold text-[#757575]" onClick={() => handleDtailClick(feed.feedId)}>
+            자세히 보기
+          </span>
         </button>
       </div>
     </div>
