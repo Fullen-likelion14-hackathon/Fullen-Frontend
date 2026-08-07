@@ -42,6 +42,13 @@ const navigationItems: NavigationItem[] = [
 export default function FooterNavigation() {
   const { pathname } = useLocation(); // 현재 브라우저 pathname 가져옴
 
+  // view 에서 푸터 숨기기위해 ( 여기서 주소 추가해서 숨김처리 하세요 )
+  const hideFooter = [pathname.startsWith("/view/")];
+
+  if (hideFooter) {
+    return null;
+  }
+
   // 현재 주소와 일치하는 네비게이션 메뉴의 index 찾기
   const matchedIndex = navigationItems.findIndex(({ path }) => {
     // "/"는 모든 주소가 포함하고 있어서 정확히 "/"일 때만 아카이브 활성화

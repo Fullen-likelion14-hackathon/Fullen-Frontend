@@ -10,7 +10,7 @@ export default function MCoMView() {
   return (
     <main className="min-h-screen bg-gray-50 ">
       <div className="mx-auto min-h-screen bg-[#242D41] text-white ">
-        <header className="b pt-18 pb-8 border-b-[7px] border-[#AB6A37]">
+        <header className="b pt-18 pb-8 border-b-[7px] bg-[#242D41] border-[#AB6A37]">
           <div className="relative flex items-center justify-center px-5">
             <button
               type="button"
