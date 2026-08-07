@@ -7,6 +7,7 @@ import NfcTagging from "@/pages/NfcTagging/NfcTagging";
 import MCoM from "@/pages/MCoM/MCoM";
 import Passport from "@/pages/Passport/Passport";
 import Custom from "@/pages/Custom/Custom";
+import MCoMView from "@/pages/MCoM/MCoMView";
 
 function App() {
   return (
@@ -19,10 +20,10 @@ function App() {
         <Route element={<RootLayout />}>
           {/* MCoM - 피드 구경 페이지 */}
           <Route path="/" element={<MCoM />} />
-
+          {/* MCoM - 피드 미리보기 페이지 */}
+          <Route path="/mcom/view/:feedId" element={<MCoMView />} />
           {/* Passport - 내 여행기록 페이지 */}
           <Route path="/passport" element={<Passport />} />
-
           {/* Custom - 제품 커스텀 페이지 */}
           <Route path="/custom" element={<Custom />} />
         </Route>
