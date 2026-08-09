@@ -21,7 +21,7 @@ interface NavigationItem {
 const navigationItems: NavigationItem[] = [
   {
     label: "아카이브",
-    path: "/",
+    path: "/mcom",
     activeIcon: mcomActiveIcon,
     inactiveIcon: mcomInactiveIcon,
   },
@@ -42,6 +42,13 @@ const navigationItems: NavigationItem[] = [
 export default function FooterNavigation() {
   const { pathname } = useLocation(); // 현재 브라우저 pathname 가져옴
 
+  // view 에서 푸터 숨기기위해 ( 여기서 주소 추가해서 숨김처리 하십쇼 )
+  const hideFooter = pathname.startsWith("/mcom/view/");
+
+  if (hideFooter) {
+    return null;
+  }
+
   // 현재 주소와 일치하는 네비게이션 메뉴의 index 찾기
   const matchedIndex = navigationItems.findIndex(({ path }) => {
     // "/"는 모든 주소가 포함하고 있어서 정확히 "/"일 때만 아카이브 활성화
@@ -54,8 +61,8 @@ export default function FooterNavigation() {
     return pathname === path || pathname.startsWith(`${path}/`);
   });
 
-  // 일치하는 메뉴가 없으면 기본값으로 첫 번째 메뉴 사용
-  const activeIndex = matchedIndex === -1 ? 0 : matchedIndex;
+  // 일치하는 메뉴가 없으면 기본값으로 메인화면
+  const activeIndex = pathname === "/" ? 1 : matchedIndex;
 
   // 현재 선택된 메뉴 정보 가져오기
   const activeItem = navigationItems[activeIndex];
@@ -117,7 +124,7 @@ export default function FooterNavigation() {
             className="
             flex size-17
             items-center justify-center
-            rounded-full bg-white/30
+            rounded-full bg-gray-400/85
             shadow-[0_0_10.5px_0_rgba(94,140,136,0.25),inset_0_3px_3px_0_rgba(255,255,255,0.25),inset_0_-1.5px_1.5px_0_rgba(159,159,159,0.25)]
           "
           >
