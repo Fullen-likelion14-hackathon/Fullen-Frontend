@@ -2,18 +2,15 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
 
+type CustomizeButtonProps = {
+  onClick: () => void;
+};
+
 // 커스터마이징 버튼
-export function CustomizeButton() {
-  const navigate = useNavigate();
-
-  const handleCustomize = () => {
-    // TODO: 커스터마이징 페이지 생성 후 경로 수정
-    navigate("/");
-  };
-
+export function CustomizeButton({ onClick }: CustomizeButtonProps) {
   return (
     <Button
-      onClick={handleCustomize}
+      onClick={onClick}
       className="
         h-12
         w-40.5

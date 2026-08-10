@@ -12,6 +12,7 @@ import McoMDetail from "./pages/MCoM/MCoMDetail";
 import Map from "@/pages/Map/Map";
 import CategoryNew from "@/pages/CategoryNew/CategoryNew";
 import CategoryFeed from "@/pages/CategoryFeed/CategoryFeed";
+import CustomPatch from "@/pages/Custom/CustomPatch";
 
 function App() {
   return (
@@ -41,6 +42,7 @@ function App() {
           <Route path="/passport" element={<Passport />} />
           {/* Custom - 제품 커스텀 페이지 */}
           <Route path="/custom" element={<Custom />} />
+          <Route path="/custom/patch" element={<CustomPatch />} />
         </Route>
       </Routes>
     </BrowserRouter>
