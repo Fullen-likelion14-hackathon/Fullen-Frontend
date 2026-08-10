@@ -8,11 +8,17 @@ import MCoM from "@/pages/MCoM/MCoM";
 import Passport from "@/pages/Passport/Passport";
 import Custom from "@/pages/Custom/Custom";
 import MCoMView from "@/pages/MCoM/MCoMView";
-import McoMDetail from "./pages/MCoM/MCoMDetail";
+import McoMDetail from "@/pages/MCoM/MCoMDetail";
 import Map from "@/pages/Map/Map";
 import CategoryNew from "@/pages/CategoryNew/CategoryNew";
 import CategoryFeed from "@/pages/CategoryFeed/CategoryFeed";
+<<<<<<< HEAD
 import CustomPatch from "@/pages/Custom/CustomPatch";
+=======
+import CustomRequest from "@/pages/Custom/CustomRequest";
+import CustomRequestComplete from "@/pages/Custom/CustomRequestComplete";
+import CustomRequestDetail from "@/pages/Custom/CustomRequestDetail";
+>>>>>>> origin/develop
 
 function App() {
   return (
@@ -42,7 +48,16 @@ function App() {
           <Route path="/passport" element={<Passport />} />
           {/* Custom - 제품 커스텀 페이지 */}
           <Route path="/custom" element={<Custom />} />
+<<<<<<< HEAD
           <Route path="/custom/patch" element={<CustomPatch />} />
+=======
+          {/* Custom - 1:1 커스텀 신청 */}
+          <Route path="/custom/request" element={<CustomRequest />} />
+          {/* Custom - 1:1 커스텀 신청완료 */}
+          <Route path="/custom/request/complate" element={<CustomRequestComplete />} />
+          {/* Custom - 1:1 커스텀 신청완료 */}
+          <Route path="/custom/request/:requestId" element={<CustomRequestDetail />} />
+>>>>>>> origin/develop
         </Route>
       </Routes>
     </BrowserRouter>
