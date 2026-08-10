@@ -43,7 +43,7 @@ export default function FooterNavigation() {
   const { pathname } = useLocation(); // 현재 브라우저 pathname 가져옴
 
   // view 에서 푸터 숨기기위해 ( 여기서 주소 추가해서 숨김처리 하십쇼 )
-  const hideFooter = pathname.startsWith("/mcom/view/");
+  const hideFooter = pathname.startsWith("/mcom/view/") || pathname.startsWith("/custom/request");
 
   if (hideFooter) {
     return null;
