@@ -12,6 +12,10 @@ import McoMDetail from "@/pages/MCoM/MCoMDetail";
 import Map from "@/pages/Map/Map";
 import CategoryNew from "@/pages/CategoryNew/CategoryNew";
 import CategoryFeed from "@/pages/CategoryFeed/CategoryFeed";
+
+import CustomPatch from "@/pages/Custom/CustomPatch";
+import CustomInitials from "@/pages/Custom/CustomInitials";
+
 import CustomRequest from "@/pages/Custom/CustomRequest";
 import CustomRequestComplete from "@/pages/Custom/CustomRequestComplete";
 import CustomRequestDetail from "@/pages/Custom/CustomRequestDetail";
@@ -44,6 +48,9 @@ function App() {
           <Route path="/passport" element={<Passport />} />
           {/* Custom - 제품 커스텀 페이지 */}
           <Route path="/custom" element={<Custom />} />
+          <Route path="/custom/patch" element={<CustomPatch />} />
+          <Route path="/custom/initials" element={<CustomInitials />} />
+
           {/* Custom - 1:1 커스텀 신청 */}
           <Route path="/custom/request" element={<CustomRequest />} />
           {/* Custom - 1:1 커스텀 신청완료 */}
