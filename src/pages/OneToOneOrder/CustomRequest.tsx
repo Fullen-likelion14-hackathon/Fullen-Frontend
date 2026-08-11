@@ -25,8 +25,9 @@ export default function CustomRequest() {
   return (
     <main className="relative min-h-dvh overflow-hidden bg-[#EEE4D8]">
       {/* 배경 곡선 */}
-      <div className="pointer-events-none absolute -bottom-40 left-1/2 h-150 w-150 -translate-x-1/2 rounded-[50%] bg-[#F9F4F0]" />
-
+      <div className="pointer-events-none absolute top-100 left-1/2 h-80 w-150 -translate-x-1/2 rounded-[50%] bg-[#F9F4F0]" />
+      {/* 아래 배경 */}
+      <div className="pointer-events-none absolute top-135 bottom-0 left-0 w-full bg-[#F9F4F0]" />
       {/* 실제 페이지 내용 */}
       <div className="relative">
         <PageHeader title="1:1 커스텀 신청" backTo="/onetooneorder" />
