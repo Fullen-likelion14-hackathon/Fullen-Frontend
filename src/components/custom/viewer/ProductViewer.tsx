@@ -7,9 +7,13 @@ import { FloatingShadow } from "./FloatingShadow";
 
 const DEFAULT_DISTANCE = 7; //카메라 기본 거리
 
-export function ProductViewer() {
+type ProductViewerProps = {
+  isCustomizing: boolean;
+};
+
+export function ProductViewer({ isCustomizing }: ProductViewerProps) {
   return (
-    <div className="absolute inset-0">
+    <div className="h-full w-full">
       {/*카메라 설정*/}
       <Canvas
         camera={{
@@ -23,10 +27,10 @@ export function ProductViewer() {
         <directionalLight position={[4, 6, 5]} intensity={1.5} />
 
         {/* 3D 가방 배치 */}
-        <Product />
+        <Product isCustomizing={isCustomizing} />
 
         {/* 가방 아래 부드러운 가짜 그림자 */}
-        <FloatingShadow />
+        <FloatingShadow isCustomizing={isCustomizing} />
 
         {/* GLB 재질 반사용 환경광 */}
         <Environment preset="studio" environmentIntensity={0.3} />
