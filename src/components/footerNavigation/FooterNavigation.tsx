@@ -34,22 +34,22 @@ const navigationItems: NavigationItem[] = [
     inactiveIcon: mcomInactiveIcon,
   },
   {
-    label: "나의 여정",
-    path: "/passport",
-    activeIcon: passportActiveIcon,
-    inactiveIcon: passportInactiveIcon,
-  },
-  {
     label: "커스텀",
     path: "/custom",
     activeIcon: customActiveIcon,
     inactiveIcon: customInactiveIcon,
   },
   {
+    label: "나의 여정",
+    path: "/passport",
+    activeIcon: passportActiveIcon,
+    inactiveIcon: passportInactiveIcon,
+  },
+  {
     label: "1:1 커스텀",
     path: "/onetooneorder",
-    activeIcon: customActiveIcon,
-    inactiveIcon: customInactiveIcon,
+    activeIcon: orderActiveIcon,
+    inactiveIcon: orderInActiveIcon,
   },
   {
     label: "마이페이지",
@@ -63,7 +63,7 @@ export default function FooterNavigation() {
   const { pathname } = useLocation(); // 현재 브라우저 pathname 가져옴
 
   // view 에서 푸터 숨기기위해 ( 여기서 주소 추가해서 숨김처리 하십쇼 )
-  const hideFooter = pathname.startsWith("/mcom/view/") || pathname.startsWith("/custom/request");
+  const hideFooter = pathname.startsWith("/mcom/view/") || pathname.startsWith("/onetooneorder/");
 
   if (hideFooter) {
     return null;
@@ -87,8 +87,14 @@ export default function FooterNavigation() {
   // 현재 선택된 메뉴 정보 가져오기
   const activeItem = navigationItems[activeIndex];
 
-  // 메뉴 전체 영역이 300px이므로 메뉴 한 칸의 너비는 100px
-  const notchPositions = ["calc(50% - 100px)", "50%", "calc(50% + 100px)"] as const;
+  // 메뉴 전체 영역이 300px이므로 메뉴 한 칸의 너비는 60px
+  const notchPositions = [
+    "calc(50% - 152px)",
+    "calc(50% - 76px)",
+    "50%",
+    "calc(50% + 76px)",
+    "calc(50% + 152px)",
+  ] as const;
 
   // 현재 선택된 메뉴 위치를 푸터 곡선에 전달
   const footerBackgroundStyle = {
@@ -100,7 +106,7 @@ export default function FooterNavigation() {
       aria-label="하단 네비게이션"
       className="
       fixed bottom-0 left-1/2 z-50
-      h-22 w-full max-w-107.5
+      h-23 w-full max-w-107.5
       -translate-x-1/2
       overflow-visible bg-transparent
       pb-[env(safe-area-inset-bottom)]
@@ -124,13 +130,13 @@ export default function FooterNavigation() {
         className="
         pointer-events-none
         absolute -top-7 left-1/2 z-20
-        w-75 -translate-x-1/2
+        w-95 -translate-x-1/2
       "
       >
         {/* 선택된 메뉴 위치로 원 이동 */}
         <div
           className="
-          flex w-1/3 justify-center
+          flex w-1/5 justify-center
           transition-transform duration-1000
           ease-[cubic-bezier(0.22,1,0.36,1)]
           will-change-transform
@@ -144,7 +150,7 @@ export default function FooterNavigation() {
             className="
             flex size-17
             items-center justify-center
-            rounded-full bg-gray-400/85
+            rounded-full bg-gray-100/50
             shadow-[0_0_10.5px_0_rgba(94,140,136,0.25),inset_0_3px_3px_0_rgba(255,255,255,0.25),inset_0_-1.5px_1.5px_0_rgba(159,159,159,0.25)]
           "
           >
@@ -159,7 +165,7 @@ export default function FooterNavigation() {
       </div>
 
       {/* 메뉴 3개의 전체 범위도 동일하게 300px */}
-      <div className="relative z-10 mx-auto grid h-full w-75 grid-cols-3">
+      <div className="relative z-10 mx-auto grid h-full w-95 grid-cols-5">
         {navigationItems.map((item, index) => {
           const isActive = index === activeIndex;
 
@@ -172,7 +178,7 @@ export default function FooterNavigation() {
               className="
               flex h-full flex-col
               items-center justify-end
-              gap-1 pb-3
+              gap-1 pb-4
               outline-none
               focus-visible:ring-2
               focus-visible:ring-white
@@ -191,7 +197,7 @@ export default function FooterNavigation() {
 
               <span
                 className={`
-                text-[15px]
+                text-[12px]
                 font-['Pretendard_Variable']
                 transition-colors duration-1000
                 ${isActive ? "text-white font-semibold" : "text-white/50"}
