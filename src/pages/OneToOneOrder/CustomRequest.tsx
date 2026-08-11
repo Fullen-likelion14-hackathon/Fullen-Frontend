@@ -25,14 +25,14 @@ export default function CustomRequest() {
   return (
     <main className="relative min-h-dvh overflow-hidden bg-[#EEE4D8]">
       {/* 배경 곡선 */}
-      <div className="pointer-events-none absolute top-100 left-1/2 h-80 w-150 -translate-x-1/2 rounded-[50%] bg-[#F9F4F0]" />
+      <div className="pointer-events-none absolute top-105 left-1/2 h-80 w-150 -translate-x-1/2 rounded-[50%] bg-[#F9F4F0]" />
       {/* 아래 배경 */}
       <div className="pointer-events-none absolute top-135 bottom-0 left-0 w-full bg-[#F9F4F0]" />
       {/* 실제 페이지 내용 */}
       <div className="relative">
         <PageHeader title="1:1 커스텀 신청" backTo="/onetooneorder" />
 
-        <div className="flex flex-col items-center gap-5 py-7">
+        <div className="flex flex-col items-center gap-5 py-8">
           <label htmlFor="custom-image" className="cursor-pointer">
             <CustomRequestBox isFilled={!!image} className="h-90 flex-col gap-3 overflow-hidden">
               {image ? (
@@ -61,7 +61,7 @@ export default function CustomRequest() {
           />
 
           <CustomRequestBox
-            className="min-h-25 cursor-pointer"
+            className="min-h-30 cursor-pointer"
             onClick={() => navigate("/onetooneorder/artist")}
           >
             <p className="text-[18px] font-semibold text-[#C9C9C9]">작가를 선택해주세요</p>
@@ -73,7 +73,7 @@ export default function CustomRequest() {
               onChange={(e) => setRequestText(e.target.value)}
               placeholder="요청사항을 입력해주세요"
               rows={1}
-              className="field-sizing-content min-h-20 w-full resize-none overflow-hidden bg-transparent px-4 py-5 text-left text-[18px] font-semibold outline-none placeholder:text-center placeholder:text-[#C9C9C9] focus:placeholder-transparent"
+              className="field-sizing-content w-full resize-none overflow-hidden bg-transparent px-4 py-5 text-left text-[18px] font-semibold outline-none placeholder:text-center placeholder:text-[#C9C9C9] focus:placeholder-transparent"
             />
           </CustomRequestBox>
 
