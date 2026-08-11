@@ -2,27 +2,31 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
 
-type CustomizeButtonProps = {
-  onClick: () => void;
-};
-
 // 커스터마이징 버튼
-export function CustomizeButton({ onClick }: CustomizeButtonProps) {
+export function CustomizeButton() {
+  const navigate = useNavigate();
+
+  const handleCustomize = () => {
+    navigate("/custom/patch");
+  };
   return (
     <Button
-      onClick={onClick}
+      onClick={handleCustomize}
       className="
         h-12
-        w-40.5
+        w-50
         rounded-full
         bg-white/40
         text-[20px]
         font-semibold
         text-[#757575]
         shadow-[0_0_7.82px_0_rgba(94,140,136,0.25),inset_0_2.24px_2.24px_0_rgba(255,255,255,0.70)]
+         flex 
+        items-center 
+        justify-center
       "
     >
-      커스터마이징
+      나만의 가방 꾸미기
     </Button>
   );
 }
@@ -41,13 +45,17 @@ export function OrderButton() {
       onClick={handleOrder}
       className="
         h-12
-        w-27.5
+        w-50
         rounded-full
         bg-white/40
         text-[20px]
         font-semibold
-        text-[#C0C0C0]
+          text-[#757575]
         shadow-[0_0_7.82px_0_rgba(94,140,136,0.25),inset_0_2.24px_2.24px_0_rgba(255,255,255,0.70)]
+         flex 
+        items-center 
+        justify-center
+      
       "
     >
       주문하기
@@ -74,8 +82,11 @@ export function DPPButton() {
         bg-white/40
         text-[12px]
         font-semibold
-        text-[#C0C0C0]
+         text-[#757575]
         shadow-[0_0_7.82px_0_rgba(94,140,136,0.25)]
+        flex 
+        items-center 
+        justify-center
       "
     >
       디지털 제품 여권
