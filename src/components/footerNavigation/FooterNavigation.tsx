@@ -1,6 +1,8 @@
 import type { CSSProperties } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 
+import "./FooterNavigation.css";
+
 import mcomActiveIcon from "@/assets/icons/mcom-active.png";
 import mcomInactiveIcon from "@/assets/icons/mcom-inactive.png";
 
@@ -9,6 +11,12 @@ import passportInactiveIcon from "@/assets/icons/passport-inactive.png";
 
 import customActiveIcon from "@/assets/icons/custom-active.png";
 import customInactiveIcon from "@/assets/icons/custom-inactive.png";
+
+import orderActiveIcon from "@/assets/icons/onetoone-order-active.png";
+import orderInActiveIcon from "@/assets/icons/onetoone-order-inactive.png";
+
+import mypageActiveIcon from "@/assets/icons/mypage-active.png";
+import mypageInActiveIcon from "@/assets/icons/mypage-inactive.png";
 
 //TypeScript 의 interface 사용해서 네비게이션 아이템안에 잘못된 데이터 들어가는 거 미리 검사(데이터 타입 정의)
 interface NavigationItem {
@@ -36,6 +44,18 @@ const navigationItems: NavigationItem[] = [
     path: "/custom",
     activeIcon: customActiveIcon,
     inactiveIcon: customInactiveIcon,
+  },
+  {
+    label: "1:1 커스텀",
+    path: "/onetooneorder",
+    activeIcon: customActiveIcon,
+    inactiveIcon: customInactiveIcon,
+  },
+  {
+    label: "마이페이지",
+    path: "/mypage",
+    activeIcon: mypageActiveIcon,
+    inactiveIcon: mypageInActiveIcon,
   },
 ];
 

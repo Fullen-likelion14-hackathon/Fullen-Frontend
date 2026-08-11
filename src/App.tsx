@@ -21,6 +21,8 @@ import CustomRequestComplete from "@/pages/OneToOneOrder/CustomRequestComplete";
 import CustomRequestDetail from "@/pages/OneToOneOrder/CustomRequestDetail";
 import CustomArtistSelect from "@/pages/OneToOneOrder/CustomArtistSelect";
 
+import MyPage from "@/pages/MyPage/MyPage";
+
 function App() {
   return (
     <BrowserRouter>
@@ -47,19 +49,23 @@ function App() {
 
           {/* Passport - 내 여행기록 페이지 */}
           <Route path="/passport" element={<Passport />} />
+
           {/* Custom - 제품 커스텀 페이지 */}
           <Route path="/custom" element={<Custom />} />
           <Route path="/custom/patch" element={<CustomPatch />} />
           <Route path="/custom/initials" element={<CustomInitials />} />
 
           {/* Custom - 1:1 커스텀 신청 */}
-          <Route path="/custom/request" element={<CustomRequest />} />
+          <Route path="/onetooneorder" element={<CustomRequest />} />
           {/* Custom - 1:1 커스텀 작가 선택 */}
-          <Route path="/custom/request/artist" element={<CustomArtistSelect />} />
+          <Route path="/onetooneorder/artist" element={<CustomArtistSelect />} />
           {/* Custom - 1:1 커스텀 신청완료 */}
-          <Route path="/custom/request/complate" element={<CustomRequestComplete />} />
-          {/* Custom - 1:1 커스텀 신청완료 */}
-          <Route path="/custom/request/:requestId" element={<CustomRequestDetail />} />
+          <Route path="/onetooneorder/complate" element={<CustomRequestComplete />} />
+          {/* Custom - 1:1 커스텀 신청내역확인 */}
+          <Route path="/onetooneorder/:requestId" element={<CustomRequestDetail />} />
+
+          {/* MyPage- 마이페이지 */}
+          <Route path="/mypage" element={<MyPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
