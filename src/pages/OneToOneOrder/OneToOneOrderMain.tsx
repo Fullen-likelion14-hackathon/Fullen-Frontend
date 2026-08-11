@@ -2,7 +2,11 @@ import floorBg from "@/assets/images/Floor.png";
 import { ProductViewer } from "@/components/custom/viewer/ProductViewer";
 import { Button } from "@base-ui/react/button";
 
+import { useNavigate } from "react-router-dom";
+
 export default function OneToOneOrderMain() {
+  const navigate = useNavigate();
+
   return (
     <main className="relative mx-auto h-dvh w-full max-w-97.5 overflow-hidden bg-[#F9F4F0]">
       {/* 배경 */}
@@ -40,7 +44,10 @@ export default function OneToOneOrderMain() {
       </div>
 
       {/* 주문 버튼 */}
-      <Button className="absolute inset-x-6 bottom-50 rounded-xl bg-[#242D41] py-4 text-[20px] font-bold text-white">
+      <Button
+        onClick={() => navigate("/onetooneorder/request")}
+        className="absolute inset-x-6 bottom-50 rounded-xl bg-[#242D41] py-4 text-[20px] font-bold text-white"
+      >
         1:1 커스텀 주문하기
       </Button>
     </main>
