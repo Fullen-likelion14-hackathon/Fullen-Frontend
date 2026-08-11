@@ -16,6 +16,7 @@ import CategoryFeed from "@/pages/CategoryFeed/CategoryFeed";
 import CustomPatch from "@/pages/Custom/CustomPatch";
 import CustomInitials from "@/pages/Custom/CustomInitials";
 
+import OneToOneOrderMain from "@/pages/OneToOneOrder/OneToOneOrderMain";
 import CustomRequest from "@/pages/OneToOneOrder/CustomRequest";
 import CustomRequestComplete from "@/pages/OneToOneOrder/CustomRequestComplete";
 import CustomRequestDetail from "@/pages/OneToOneOrder/CustomRequestDetail";
@@ -55,8 +56,10 @@ function App() {
           <Route path="/custom/patch" element={<CustomPatch />} />
           <Route path="/custom/initials" element={<CustomInitials />} />
 
+          {/* Custom - 1:1 커스텀 신청 메인 화면 */}
+          <Route path="/onetooneorder" element={<OneToOneOrderMain />} />
           {/* Custom - 1:1 커스텀 신청 */}
-          <Route path="/onetooneorder" element={<CustomRequest />} />
+          <Route path="/onetooneorder/request" element={<CustomRequest />} />
           {/* Custom - 1:1 커스텀 작가 선택 */}
           <Route path="/onetooneorder/artist" element={<CustomArtistSelect />} />
           {/* Custom - 1:1 커스텀 신청완료 */}
