@@ -1,14 +1,16 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import BottomNavigation from "@/components/footerNavigation/FooterNavigation";
 
 export default function RootLayout() {
+  const location = useLocation();
+
+  const isCustomPatch = location.pathname === "/custom/patch";
+
   return (
     <>
-      <main>
-        <Outlet />
-      </main>
+      <Outlet />
 
-      <BottomNavigation />
+      {!isCustomPatch && <BottomNavigation />}
     </>
   );
 }
