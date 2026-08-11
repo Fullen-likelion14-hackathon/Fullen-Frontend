@@ -1,7 +1,14 @@
 import * as THREE from "three";
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
+import { useFrame } from "@react-three/fiber";
 
-export function FloatingShadow() {
+type FloatingShadowProps = {
+  isCustomizing: boolean;
+};
+
+export function FloatingShadow({ isCustomizing }: FloatingShadowProps) {
+  const shadowRef = useRef<THREE.Mesh>(null);
+
   const shadowTexture = useMemo(() => {
     const size = 512;
 
@@ -35,10 +42,29 @@ export function FloatingShadow() {
     return texture;
   }, []);
 
+  useFrame(() => {
+    if (!shadowRef.current) return;
+
+    // 기본 그림자 위치 0.7
+    // 커스터마이징 시 조금 위로 이동
+    const targetY = isCustomizing ? 1.2 : 0.7;
+
+    shadowRef.current.position.y = THREE.MathUtils.lerp(
+      shadowRef.current.position.y,
+      targetY,
+      0.05,
+    );
+  });
+
   if (!shadowTexture) return null;
 
   return (
-    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.7, 0]} scale={[3.0, 1.5, 1]}>
+    <mesh
+      ref={shadowRef}
+      rotation={[-Math.PI / 2, 0, 0]}
+      position={[0, 0.7, 0]}
+      scale={[3.0, 1.5, 1]}
+    >
       <planeGeometry args={[1, 1]} />
 
       <meshBasicMaterial map={shadowTexture} transparent depthWrite={false} opacity={1} />
