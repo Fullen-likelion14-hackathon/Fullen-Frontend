@@ -4,13 +4,20 @@ import { cn } from "@/lib/utils";
 
 type CustomRequestBoxProps = ComponentProps<"div"> & {
   children: ReactNode;
+  isFilled?: boolean;
 };
 
-export default function CustomRequestBox({ children, className, ...props }: CustomRequestBoxProps) {
+export default function CustomRequestBox({
+  children,
+  className,
+  isFilled = false,
+  ...props
+}: CustomRequestBoxProps) {
   return (
     <div
       className={cn(
-        "flex items-center justify-center rounded-2xl border-3 border-[#C9C9C9] bg-white",
+        "flex w-85 items-center justify-center rounded-xl border-3 bg-white",
+        isFilled ? "border-[#242D41]" : "border-[#C9C9C9]",
         className,
       )}
       {...props}
