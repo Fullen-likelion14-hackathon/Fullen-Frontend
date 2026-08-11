@@ -12,9 +12,10 @@ import McoMDetail from "@/pages/MCoM/MCoMDetail";
 import Map from "@/pages/Map/Map";
 import CategoryNew from "@/pages/CategoryNew/CategoryNew";
 import CategoryFeed from "@/pages/CategoryFeed/CategoryFeed";
-import CustomRequest from "@/pages/Custom/CustomRequest";
-import CustomRequestComplete from "@/pages/Custom/CustomRequestComplete";
-import CustomRequestDetail from "@/pages/Custom/CustomRequestDetail";
+import CustomRequest from "@/pages/OneToOneOrder/CustomRequest";
+import CustomRequestComplete from "@/pages/OneToOneOrder/CustomRequestComplete";
+import CustomRequestDetail from "@/pages/OneToOneOrder/CustomRequestDetail";
+import CustomArtistSelect from "@/pages/OneToOneOrder/CustomArtistSelect";
 
 function App() {
   return (
@@ -46,6 +47,8 @@ function App() {
           <Route path="/custom" element={<Custom />} />
           {/* Custom - 1:1 커스텀 신청 */}
           <Route path="/custom/request" element={<CustomRequest />} />
+          {/* Custom - 1:1 커스텀 작가 선택 */}
+          <Route path="/custom/request/artist" element={<CustomArtistSelect />} />
           {/* Custom - 1:1 커스텀 신청완료 */}
           <Route path="/custom/request/complate" element={<CustomRequestComplete />} />
           {/* Custom - 1:1 커스텀 신청완료 */}
