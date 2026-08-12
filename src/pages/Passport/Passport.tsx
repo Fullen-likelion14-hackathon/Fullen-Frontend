@@ -17,11 +17,16 @@ import mcmWatermark from "@/assets/images/MainMcmLogo.png"; // 카드 하단 플
 
 // 국가별 여행 카테고리 데이터 타입
 // mock 파일(passport.mock.ts)과 실제 API 응답 둘 다 이 타입을 따름
-export interface TravelCategory {
+export type TravelCategory = {
   id: string;
-  countryName: string; // 카드에 표시되는 국가명 (영문, font-sans/Geist Variable)
+  countryName: string;
   imageUrl: string;
-}
+  continent: string; // "아시아" | "유럽" | "북아메리카" 등
+  travelTitle: string;
+  startDate: string; // ISO 형식 "YYYY-MM-DD"
+  endDate: string;
+  feedCount: number;
+};
 
 const mockUserName = "멋사대학"; // TODO: 로그인 연동 후 실제 사용자명으로 교체
 
@@ -48,9 +53,9 @@ const TravelCard = ({ category, onClick }: TravelCardProps) => (
     </div>
 
     {/* 하단 플랩: 카드 전체 폭 기준, MCM 로고 + 다이아몬드 워터마크 장식
-        직접 조정 포인트:
-        - 가로 폭: w-42 숫자만 바꾸면 됨 (left-1/2 -translate-x-1/2로 항상 가운데 정렬 유지)
-        - 불투명도: bg-stone-300/70 의 /70(0~100) 숫자만 바꾸면 됨 (숫자가 클수록 불투명) */}
+          직접 조정 포인트:
+          - 가로 폭: w-42 숫자만 바꾸면 됨 (left-1/2 -translate-x-1/2로 항상 가운데 정렬 유지)
+          - 불투명도: bg-stone-300/70 의 /70(0~100) 숫자만 바꾸면 됨 (숫자가 클수록 불투명) */}
     <div
       aria-hidden="true"
       className="w-42 h-24 left-1/2 -translate-x-1/2 top-22 absolute overflow-hidden rounded-bl-[10px] rounded-br-[10px] bg-stone-300/65 shadow-[0px_0px_2.5px_1px_rgba(0,0,0,0.10),0px_1.5px_2.5px_1.5px_rgba(81,48,24,0.30),inset_0px_0px_2.5px_2.5px_rgba(198,198,198,0.25)] outline-[0.5px] outline-offset-[-0.5px] outline-stone-400/30"
@@ -78,7 +83,6 @@ const TravelCard = ({ category, onClick }: TravelCardProps) => (
 const Passport = () => {
   const navigate = useNavigate();
 
-  // 카테고리 유무에 따라 그리드 vs 빈 상태 UI 분기
   const hasCategories = mockCategories.length > 0;
 
   const handleAddCategory = () => {
@@ -89,8 +93,8 @@ const Passport = () => {
     navigate("/map");
   };
 
-  const handleOpenCategory = (categoryId: string) => {
-    navigate(`/passport/${categoryId}`);
+  const handleOpenCategory = (continent: string) => {
+    navigate(`/passport/detail/${continent}`);
   };
 
   return (
@@ -133,7 +137,7 @@ const Passport = () => {
 
       {/* 카드 그리드 (카테고리 있을 때) vs 빈 상태 안내 문구 (없을 때) */}
       {/* absolute 대신 일반 흐름(margin/padding)으로 배치 → 컨테이너 높이가 카테고리 수만큼 실제로 늘어나서
-          배경 가죽 텍스처가 스크롤 끝까지 끊기지 않고 이어짐 */}
+            배경 가죽 텍스처가 스크롤 끝까지 끊기지 않고 이어짐 */}
       {hasCategories ? (
         // w-fit + mx-auto: 카드 2장(w-40) + 간격(gap-5)이 실제로 필요로 하는 폭만큼만 차지하고
         // 컨테이너 안에서 좌우 중앙 정렬되도록 함 (이전엔 w-80 고정폭이 카드+간격 합계보다 좁아서
@@ -146,7 +150,7 @@ const Passport = () => {
                 <TravelCard
                   key={category.id}
                   category={category}
-                  onClick={() => handleOpenCategory(category.id)}
+                  onClick={() => handleOpenCategory(category.continent)}
                 />
               ))}
             </div>
