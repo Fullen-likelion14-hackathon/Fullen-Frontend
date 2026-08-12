@@ -12,6 +12,7 @@ import McoMDetail from "@/pages/MCoM/MCoMDetail";
 import Map from "@/pages/Map/Map";
 import CategoryNew from "@/pages/CategoryNew/CategoryNew";
 import CategoryFeed from "@/pages/CategoryFeed/CategoryFeed";
+import FeedDetail from "@/pages/FeedDetail/FeedDetail";
 import PassportDetail from "@/pages/PassportDetail/PassportDetail";
 
 import CustomPatch from "@/pages/Custom/CustomPatch";
@@ -38,8 +39,10 @@ function App() {
         <Route path="/passport/new" element={<CategoryNew />} />
         {/* Passport - 대륙별 상세 페이지(4번) - 하단 네비게이션 없음, "전체" 모드는 continent에 "all" 전달 */}
         <Route path="/passport/detail/:continent" element={<PassportDetail />} />
-        {/* Passport - 카테고리 안 피드 목록 페이지 - 하단 네비게이션 없음 */}
+        {/* Passport - 카테고리 안 피드 목록 페이지(6번) - 하단 네비게이션 없음 */}
         <Route path="/passport/:categoryId" element={<CategoryFeed />} />
+        {/* Passport - 피드 상세 페이지(8번) - 하단 네비게이션 없음 */}
+        <Route path="/passport/:categoryId/:feedId" element={<FeedDetail />} />
 
         <Route element={<RootLayout />}>
           {/*메인 페이지 Passport - 내 여행기록 페이지*/}
