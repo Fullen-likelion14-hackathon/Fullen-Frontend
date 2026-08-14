@@ -12,6 +12,7 @@ import McoMDetail from "@/pages/MCoM/MCoMDetail";
 import Map from "@/pages/Map/Map";
 import CategoryNew from "@/pages/CategoryNew/CategoryNew";
 import CategoryFeed from "@/pages/CategoryFeed/CategoryFeed";
+import FeedNew from "@/pages/FeedNew/FeedNew";
 import FeedDetail from "@/pages/FeedDetail/FeedDetail";
 import PassportDetail from "@/pages/PassportDetail/PassportDetail";
 
@@ -37,11 +38,13 @@ function App() {
         <Route path="/map" element={<Map />} />
         {/* Passport - 카테고리 추가 페이지 - 하단 네비게이션 없음 (⚠️ /passport/:categoryId 보다 반드시 위에 있어야 함) */}
         <Route path="/passport/new" element={<CategoryNew />} />
-        {/* Passport - 대륙별 상세 페이지(4번) - 하단 네비게이션 없음, "전체" 모드는 continent에 "all" 전달 */}
+        {/* Passport - 대륙별 상세 페이지 - 하단 네비게이션 없음, "전체" 모드는 continent에 "all" 전달 */}
         <Route path="/passport/detail/:continent" element={<PassportDetail />} />
-        {/* Passport - 카테고리 안 피드 목록 페이지(6번) - 하단 네비게이션 없음 */}
+        {/* Passport - 새 게시물 생성 페이지 - 하단 네비게이션 없음 (⚠️ /passport/:categoryId/:feedId 보다 반드시 위에 있어야 함) */}
+        <Route path="/passport/:categoryId/new" element={<FeedNew />} />
+        {/* Passport - 카테고리 안 피드 목록 페이지 - 하단 네비게이션 없음 */}
         <Route path="/passport/:categoryId" element={<CategoryFeed />} />
-        {/* Passport - 피드 상세 페이지(8번) - 하단 네비게이션 없음 */}
+        {/* Passport - 피드 상세 페이지 - 하단 네비게이션 없음 */}
         <Route path="/passport/:categoryId/:feedId" element={<FeedDetail />} />
 
         <Route element={<RootLayout />}>
