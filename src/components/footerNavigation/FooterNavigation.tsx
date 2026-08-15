@@ -82,7 +82,7 @@ export default function FooterNavigation() {
   });
 
   // 일치하는 메뉴가 없으면 기본값으로 메인화면
-  const activeIndex = pathname === "/" ? 1 : matchedIndex;
+  const activeIndex = pathname === "/" ? 2 : matchedIndex;
 
   // 현재 선택된 메뉴 정보 가져오기
   const activeItem = navigationItems[activeIndex];
