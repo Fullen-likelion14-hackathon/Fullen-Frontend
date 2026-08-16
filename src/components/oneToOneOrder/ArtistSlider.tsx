@@ -1,12 +1,7 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import ArtistFrame from "@/components/oneToOneOrder/ArtistFrame";
-
-type Artist = {
-  id: number;
-  image: string;
-  name: string;
-};
+import type { Artist } from "@/components/oneToOneOrder/ArtistData";
 
 type ArtistSliderProps = {
   artists: Artist[];
@@ -31,17 +26,35 @@ export default function ArtistSlider({
   const [isDragging, setIsDragging] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
 
-  const previousPreviousIndex = (currentIndex - 2 + artists.length) % artists.length;
+  // API 응답으로 작가 수가 줄어들었을 때 currentIndex 보정
+  useEffect(() => {
+    if (artists.length === 0) {
+      setCurrentIndex(0);
+      return;
+    }
 
-  const previousIndex = (currentIndex - 1 + artists.length) % artists.length;
+    setCurrentIndex((prev) => (prev >= artists.length ? 0 : prev));
+  }, [artists.length]);
 
-  const nextIndex = (currentIndex + 1) % artists.length;
+  // API 연결 후 데이터가 아직 없을 때 오류 방지
+  if (artists.length === 0) {
+    return null;
+  }
 
-  const nextNextIndex = (currentIndex + 2) % artists.length;
+  // useEffect가 실행되기 전 렌더에서도 안전하게 사용할 인덱스
+  const safeCurrentIndex = currentIndex % artists.length;
+
+  const previousPreviousIndex = (safeCurrentIndex - 2 + artists.length) % artists.length;
+
+  const previousIndex = (safeCurrentIndex - 1 + artists.length) % artists.length;
+
+  const nextIndex = (safeCurrentIndex + 1) % artists.length;
+
+  const nextNextIndex = (safeCurrentIndex + 2) % artists.length;
 
   const previousPreviousArtist = artists[previousPreviousIndex];
   const previousArtist = artists[previousIndex];
-  const currentArtist = artists[currentIndex];
+  const currentArtist = artists[safeCurrentIndex];
   const nextArtist = artists[nextIndex];
   const nextNextArtist = artists[nextNextIndex];
 
@@ -123,13 +136,7 @@ export default function ArtistSlider({
     // 스와이프한 경우 클릭으로 처리하지 않음
     if (hasDragged.current) return;
 
-    // 이미 선택된 작가를 다시 클릭하면 선택 취소
-    if (selectedArtistId === currentArtist.id) {
-      onSelectArtist(null);
-      return;
-    }
-
-    // 선택되지 않은 작가라면 선택
+    // 선택 / 취소 판단은 부모에서 처리
     onSelectArtist(currentArtist.id);
   };
 
@@ -209,7 +216,7 @@ export default function ArtistSlider({
           <span
             key={artist.id}
             className={`h-2.5 w-2.5 rounded-full ${
-              index === currentIndex ? "bg-[#A86A34]" : "bg-[#D0D0D0]"
+              index === safeCurrentIndex ? "bg-[#A86A34]" : "bg-[#D0D0D0]"
             }`}
           />
         ))}
@@ -220,7 +227,7 @@ export default function ArtistSlider({
         {currentArtist.name}
       </p>
 
-      {/* 고정 설명 */}
+      {/* AI 추천 고정 설명 */}
       <p className="mt-2 text-center text-[14px] font-medium leading-5 text-[#AC917C]">
         멋쟁이사자처럼님의 여행 스타일과 어울리는
         <br />
