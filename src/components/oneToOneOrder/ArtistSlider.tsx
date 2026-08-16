@@ -7,6 +7,9 @@ type ArtistSliderProps = {
   artists: Artist[];
   selectedArtistId: number | null;
   onSelectArtist: (artistId: number | null) => void;
+
+  // 상세보기
+  onDetailArtist: (artist: Artist) => void;
 };
 
 const CARD_STEP = 240;
@@ -17,6 +20,7 @@ export default function ArtistSlider({
   artists,
   selectedArtistId,
   onSelectArtist,
+  onDetailArtist,
 }: ArtistSliderProps) {
   const dragStartX = useRef<number | null>(null);
   const hasDragged = useRef(false);
@@ -41,7 +45,6 @@ export default function ArtistSlider({
     return null;
   }
 
-  // useEffect가 실행되기 전 렌더에서도 안전하게 사용할 인덱스
   const safeCurrentIndex = currentIndex % artists.length;
 
   const previousPreviousIndex = (safeCurrentIndex - 2 + artists.length) % artists.length;
@@ -87,7 +90,7 @@ export default function ArtistSlider({
     dragStartX.current = null;
     setIsDragging(false);
 
-    // 왼쪽으로 넘김 → 다음 작가
+    // 왼쪽 → 다음 작가
     if (dragOffset < -SWIPE_THRESHOLD) {
       setIsAnimating(true);
       setDragOffset(-CARD_STEP);
@@ -101,7 +104,7 @@ export default function ArtistSlider({
       return;
     }
 
-    // 오른쪽으로 넘김 → 이전 작가
+    // 오른쪽 → 이전 작가
     if (dragOffset > SWIPE_THRESHOLD) {
       setIsAnimating(true);
       setDragOffset(CARD_STEP);
@@ -133,10 +136,8 @@ export default function ArtistSlider({
   };
 
   const handleArtistClick = () => {
-    // 스와이프한 경우 클릭으로 처리하지 않음
     if (hasDragged.current) return;
 
-    // 선택 / 취소 판단은 부모에서 처리
     onSelectArtist(currentArtist.id);
   };
 
@@ -173,7 +174,6 @@ export default function ArtistSlider({
         >
           <ArtistFrame image={previousArtist.image} name={previousArtist.name} />
         </div>
-
         {/* 현재 작가 */}
         <div
           onClick={handleArtistClick}
@@ -186,6 +186,7 @@ export default function ArtistSlider({
             image={currentArtist.image}
             name={currentArtist.name}
             isSelected={selectedArtistId === currentArtist.id}
+            onDetail={() => onDetailArtist(currentArtist)}
           />
         </div>
 
@@ -228,7 +229,7 @@ export default function ArtistSlider({
       </p>
 
       {/* AI 추천 고정 설명 */}
-      <p className="mt-2 text-center text-[14px] font-medium leading-5 text-[#AC917C]">
+      <p className="mt-3 text-center text-[14px] font-medium leading-5 text-[#AC917C]">
         멋쟁이사자처럼님의 여행 스타일과 어울리는
         <br />
         <span className="font-extrabold text-[#A3642B]">성주재단 파트너 아티스트 3명</span>을

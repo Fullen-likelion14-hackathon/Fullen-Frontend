@@ -5,14 +5,23 @@ import { ChevronDown } from "lucide-react";
 import PageHeader from "@/components/common/PageHeader";
 import ArtistSlider from "@/components/oneToOneOrder/ArtistSlider";
 import ArtistCard from "@/components/oneToOneOrder/ArtistCard";
+import ArtistDetailModal from "@/components/oneToOneOrder/ArtistDetailModal";
 
 import { recommendedArtists, otherArtists } from "@/components/oneToOneOrder/ArtistData";
+
+import type { Artist } from "@/components/oneToOneOrder/ArtistData";
 
 export default function CustomArtistSelect() {
   const navigate = useNavigate();
 
+  // 실제 선택한 작가
   const [selectedArtistId, setSelectedArtistId] = useState<number | null>(null);
+
+  // 다른 작가 더보기
   const [isMoreOpen, setIsMoreOpen] = useState(false);
+
+  // 상세 모달에서 보여줄 작가
+  const [detailArtist, setDetailArtist] = useState<Artist | null>(null);
 
   // 작가 선택 / 선택 취소
   const handleArtistToggle = (artistId: number | null) => {
@@ -22,6 +31,16 @@ export default function CustomArtistSelect() {
     }
 
     setSelectedArtistId((prev) => (prev === artistId ? null : artistId));
+  };
+
+  // 작가 상세보기
+  const handleArtistDetail = (artist: Artist) => {
+    setDetailArtist(artist);
+  };
+
+  // 상세 모달 닫기
+  const handleDetailClose = () => {
+    setDetailArtist(null);
   };
 
   // 선택한 작가를 가지고 신청 페이지로 이동
@@ -49,6 +68,7 @@ export default function CustomArtistSelect() {
         artists={recommendedArtists}
         selectedArtistId={selectedArtistId}
         onSelectArtist={handleArtistToggle}
+        onDetailArtist={handleArtistDetail}
       />
 
       {/* 기본 화면 */}
@@ -103,10 +123,12 @@ export default function CustomArtistSelect() {
                   artist={artist}
                   isSelected={selectedArtistId === artist.id}
                   onSelect={handleArtistToggle}
+                  onDetail={handleArtistDetail}
                 />
               ))}
             </div>
           </div>
+
           {/* 하단 고정 작가 선택 버튼 */}
           <div className="fixed inset-x-0 bottom-0 z-40 bg-[#F9F4F0] px-6 pb-6 pt-3">
             <button
@@ -124,6 +146,13 @@ export default function CustomArtistSelect() {
           </div>
         </div>
       )}
+
+      {/* 작가 상세 모달 */}
+      <ArtistDetailModal
+        artist={detailArtist}
+        isOpen={detailArtist !== null}
+        onClose={handleDetailClose}
+      />
     </div>
   );
 }
