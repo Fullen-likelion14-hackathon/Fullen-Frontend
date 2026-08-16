@@ -15,9 +15,11 @@ export function CustomModeToggle({ mode, onChange }: CustomModeToggleProps) {
         relative
         flex
         h-12
-        w-47.5
-        rounded-full
-        bg-[#CFCDCE]
+        w-75
+        rounded-lg
+        border-2
+        border-[#E3DFD9]
+        bg-[#F4EEE8]
         p-1
       "
     >
@@ -29,10 +31,11 @@ export function CustomModeToggle({ mode, onChange }: CustomModeToggleProps) {
         className={`
           absolute
           left-1
-          top-1
-          h-10
-          w-[calc(50%-4px)]
-          rounded-full
+          top-1/2
+          h-[calc(100%-4px)]
+          w-[calc(50%-3px)]
+          -translate-y-1/2
+          rounded-md 
           bg-white
           transition-transform
           duration-300
@@ -51,14 +54,14 @@ export function CustomModeToggle({ mode, onChange }: CustomModeToggleProps) {
           relative
           z-10
           flex-1
-          rounded-full
+          rounded-lg
           text-[16px]
           font-semibold
           transition-colors
-          ${mode === "initial" ? "text-[#757575]" : "text-[#8E8E93]"}
+          ${mode === "initial" ? "text-[#19273C]" : "text-[#8E8E93]"}
         `}
       >
-        이니셜 Aa
+        이니셜
       </button>
 
       {/* 패치 버튼임 */}
@@ -70,14 +73,14 @@ export function CustomModeToggle({ mode, onChange }: CustomModeToggleProps) {
           relative
           z-10
           flex-1
-          rounded-full
+          rounded-lg
           text-[16px]
           font-semibold
           transition-colors
-          ${mode === "patch" ? "text-[#757575]" : "text-[#8E8E93]"}
+          ${mode === "patch" ? "text-[#19273C]" : "text-[#8E8E93]"}
         `}
       >
-        패치 ★
+        패치
       </button>
     </div>
   );
