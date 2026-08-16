@@ -90,14 +90,14 @@ export default function ArtistDetailModal({ artist, isOpen, onClose }: ArtistDet
         onClick={(event) => event.stopPropagation()}
       >
         {/* 상단 헤더 */}
-        <div className="sticky top-0 z-20 flex h-12 items-center justify-between bg-white px-4">
-          <div className="flex items-center gap-3">
-            {/* 작가 국가 */}
-            <img src={artist.flagImage} alt="" className="h-4 w-6 object-cover" />
+        <div className="sticky z-20 flex h-15 items-center justify-between bg-white px-5">
+          {/* 작가 국가 */}
+          <img src={artist.flagImage} className="h-6 w-10 object-cover border-2" />
 
-            {/* 작가 이름 */}
-            <p className="text-[14px] font-bold text-[#192A40]">{artist.name}</p>
-          </div>
+          {/* 작가 이름 */}
+          <p className="absolute left-1/2 -translate-x-1/2 whitespace-nowrap pt-1 text-[18px] font-bold text-[#192A40]">
+            {artist.name}
+          </p>
 
           {/* 모달 닫기 */}
           <button type="button" onClick={onClose} aria-label="작가 상세 닫기">
@@ -133,7 +133,7 @@ export default function ArtistDetailModal({ artist, isOpen, onClose }: ArtistDet
         </div>
 
         {/* 상세 정보 */}
-        <div className="px-5 py-4">
+        <div className="px-8 py-4">
           {/* 짧은 화풍 설명 */}
           <p className="text-[12px] font-semibold leading-4 text-[#192A40]">
             {artist.detailSummary}
