@@ -6,7 +6,7 @@ import Login from "@/pages/Login/Login";
 import NfcTagging from "@/pages/NfcTagging/NfcTagging";
 import MCoM from "@/pages/MCoM/MCoM";
 import Passport from "@/pages/Passport/Passport";
-import Custom from "@/pages/Custom/Custom";
+
 import MCoMView from "@/pages/MCoM/MCoMView";
 import McoMDetail from "@/pages/MCoM/MCoMDetail";
 import Map from "@/pages/Map/Map";
@@ -16,8 +16,8 @@ import FeedNew from "@/pages/FeedNew/FeedNew";
 import FeedDetail from "@/pages/FeedDetail/FeedDetail";
 import PassportDetail from "@/pages/PassportDetail/PassportDetail";
 
-import CustomPatch from "@/pages/Custom/CustomPatch";
-import CustomInitials from "@/pages/Custom/CustomInitials";
+import Customizing from "@/pages/Custom/Customizing";
+import CustomMain from "@/pages/Custom/CustomMain";
 
 import OneToOneOrderMain from "@/pages/OneToOneOrder/OneToOneOrderMain";
 import CustomRequest from "@/pages/OneToOneOrder/CustomRequest";
@@ -61,9 +61,8 @@ function App() {
           <Route path="/passport" element={<Passport />} />
 
           {/* Custom - 제품 커스텀 페이지 */}
-          <Route path="/custom" element={<Custom />} />
-          <Route path="/custom/patch" element={<CustomPatch />} />
-          <Route path="/custom/initials" element={<CustomInitials />} />
+          <Route path="/custom" element={<CustomMain />} />
+          <Route path="/custom/customizing" element={<Customizing />} />
 
           {/* Custom - 1:1 커스텀 신청 메인 화면 */}
           <Route path="/onetooneorder" element={<OneToOneOrderMain />} />

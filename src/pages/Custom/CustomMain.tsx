@@ -3,7 +3,7 @@ import { CustomizeButton, OrderButton, DPPButton } from "@/components/custom/Cus
 import { ProductViewer } from "@/components/custom/viewer/ProductViewer";
 import floorBg from "@/assets/images/Floor.png";
 
-export default function Custom() {
+export default function CustomMain() {
   return (
     <main className="relative mx-auto h-dvh w-full max-w-97.5 overflow-hidden bg-[#F9F4F0]">
       {/*배경색 피그마 고정 배경 - F9F4F0, mx-auto:좌우 마진 중앙 위치, 삐져나온건 숨기기, 화면 높이 꽉채우고, 가로는 최대 390px*/}
