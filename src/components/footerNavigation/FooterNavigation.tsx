@@ -3,20 +3,20 @@ import { NavLink, useLocation } from "react-router-dom";
 
 import "./FooterNavigation.css";
 
-import mcomActiveIcon from "@/assets/icons/mcom-active.png";
-import mcomInactiveIcon from "@/assets/icons/mcom-inactive.png";
+import mcomActiveIcon from "@/assets/icons/navigationIcons/mcom-active.png";
+import mcomInactiveIcon from "@/assets/icons/navigationIcons/mcom-inactive.png";
 
-import passportActiveIcon from "@/assets/icons/passport-active.png";
-import passportInactiveIcon from "@/assets/icons/passport-inactive.png";
+import passportActiveIcon from "@/assets/icons/navigationIcons/passport-active.png";
+import passportInactiveIcon from "@/assets/icons/navigationIcons/passport-inactive.png";
 
-import customActiveIcon from "@/assets/icons/custom-active.png";
-import customInactiveIcon from "@/assets/icons/custom-inactive.png";
+import customActiveIcon from "@/assets/icons/navigationIcons/custom-active.png";
+import customInactiveIcon from "@/assets/icons/navigationIcons/custom-inactive.png";
 
-import orderActiveIcon from "@/assets/icons/onetoone-order-active.png";
-import orderInActiveIcon from "@/assets/icons/onetoone-order-inactive.png";
+import orderActiveIcon from "@/assets/icons/navigationIcons/onetoone-order-active.png";
+import orderInActiveIcon from "@/assets/icons/navigationIcons/onetoone-order-inactive.png";
 
-import mypageActiveIcon from "@/assets/icons/mypage-active.png";
-import mypageInActiveIcon from "@/assets/icons/mypage-inactive.png";
+import mypageActiveIcon from "@/assets/icons/navigationIcons/mypage-active.png";
+import mypageInActiveIcon from "@/assets/icons/navigationIcons/mypage-inactive.png";
 
 //TypeScript 의 interface 사용해서 네비게이션 아이템안에 잘못된 데이터 들어가는 거 미리 검사(데이터 타입 정의)
 interface NavigationItem {
@@ -154,7 +154,7 @@ export default function FooterNavigation() {
             className="
             flex size-17
             items-center justify-center
-            rounded-full bg-gray-100/50
+            rounded-full bg-[#19273C]
             shadow-[0_0_10.5px_0_rgba(94,140,136,0.25),inset_0_3px_3px_0_rgba(255,255,255,0.25),inset_0_-1.5px_1.5px_0_rgba(159,159,159,0.25)]
           "
           >
