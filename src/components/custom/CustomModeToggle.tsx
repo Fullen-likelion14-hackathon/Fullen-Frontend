@@ -2,6 +2,7 @@ interface CustomModeToggleProps {
   // 현재 선택된 모드 받음
   mode: "initial" | "patch";
 
+  // 부모의 mode를 변경할 함수 받음
   onChange: (mode: "initial" | "patch") => void;
 }
 
@@ -35,7 +36,7 @@ export function CustomModeToggle({ mode, onChange }: CustomModeToggleProps) {
           h-[calc(100%-4px)]
           w-[calc(50%-3px)]
           -translate-y-1/2
-          rounded-md 
+          rounded-md
           bg-white
           transition-transform
           duration-300
@@ -45,8 +46,7 @@ export function CustomModeToggle({ mode, onChange }: CustomModeToggleProps) {
       />
 
       {/* 이니셜 버튼임 */}
-      {/* z-10으로 움직이는 흰색 배경보다 위에 표시함 */}
-      {/* flex-1로 전체 영역의 절반 차지함 */}
+      {/* 클릭하면 부모의 mode를 initial로 변경함 */}
       <button
         type="button"
         onClick={() => onChange("initial")}

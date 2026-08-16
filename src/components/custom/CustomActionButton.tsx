@@ -7,7 +7,7 @@ export function CustomizeButton() {
   const navigate = useNavigate();
 
   const handleCustomize = () => {
-    navigate("/custom/patch");
+    navigate("/custom/customizing");
   };
   return (
     <Button
