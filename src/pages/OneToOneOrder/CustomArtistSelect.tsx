@@ -149,6 +149,7 @@ export default function CustomArtistSelect() {
 
       {/* 작가 상세 모달 */}
       <ArtistDetailModal
+        key={detailArtist?.id ?? "closed"}
         artist={detailArtist}
         isOpen={detailArtist !== null}
         onClose={handleDetailClose}

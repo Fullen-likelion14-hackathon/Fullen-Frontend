@@ -22,29 +22,39 @@ export default function ArtistSlider({
   onSelectArtist,
   onDetailArtist,
 }: ArtistSliderProps) {
+  // 드래그 시작 위치
   const dragStartX = useRef<number | null>(null);
+
+  // 실제로 드래그가 발생했는지 확인
   const hasDragged = useRef(false);
+
+  // 슬라이드 애니메이션 타이머
+  const animationTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // setTimeout 내부에서도 최신 작가 수를 사용할 수 있도록 저장
+  const artistsLengthRef = useRef(artists.length);
+  artistsLengthRef.current = artists.length;
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [dragOffset, setDragOffset] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
 
-  // API 응답으로 작가 수가 줄어들었을 때 currentIndex 보정
+  // 컴포넌트가 사라질 때 남아있는 애니메이션 타이머 제거
   useEffect(() => {
-    if (artists.length === 0) {
-      setCurrentIndex(0);
-      return;
-    }
-
-    setCurrentIndex((prev) => (prev >= artists.length ? 0 : prev));
-  }, [artists.length]);
+    return () => {
+      if (animationTimerRef.current !== null) {
+        clearTimeout(animationTimerRef.current);
+      }
+    };
+  }, []);
 
   // API 연결 후 데이터가 아직 없을 때 오류 방지
   if (artists.length === 0) {
     return null;
   }
 
+  // API 응답으로 작가 수가 변경되어도 안전한 인덱스 사용
   const safeCurrentIndex = currentIndex % artists.length;
 
   const previousPreviousIndex = (safeCurrentIndex - 2 + artists.length) % artists.length;
@@ -56,11 +66,34 @@ export default function ArtistSlider({
   const nextNextIndex = (safeCurrentIndex + 2) % artists.length;
 
   const previousPreviousArtist = artists[previousPreviousIndex];
+
   const previousArtist = artists[previousIndex];
+
   const currentArtist = artists[safeCurrentIndex];
+
   const nextArtist = artists[nextIndex];
+
   const nextNextArtist = artists[nextNextIndex];
 
+  // 기존 애니메이션 타이머 제거
+  const clearAnimationTimer = () => {
+    if (animationTimerRef.current !== null) {
+      clearTimeout(animationTimerRef.current);
+      animationTimerRef.current = null;
+    }
+  };
+
+  // 애니메이션 타이머 실행
+  const startAnimationTimer = (callback: () => void) => {
+    clearAnimationTimer();
+
+    animationTimerRef.current = setTimeout(() => {
+      callback();
+      animationTimerRef.current = null;
+    }, ANIMATION_DURATION);
+  };
+
+  // 드래그 시작
   const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
     if (isAnimating) return;
 
@@ -72,11 +105,15 @@ export default function ArtistSlider({
     event.currentTarget.setPointerCapture(event.pointerId);
   };
 
+  // 드래그 중
   const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
-    if (dragStartX.current === null || isAnimating) return;
+    if (dragStartX.current === null || isAnimating) {
+      return;
+    }
 
     const distance = event.clientX - dragStartX.current;
 
+    // 일정 거리 이상 움직이면 클릭이 아닌 드래그로 판단
     if (Math.abs(distance) > 5) {
       hasDragged.current = true;
     }
@@ -84,58 +121,85 @@ export default function ArtistSlider({
     setDragOffset(distance);
   };
 
+  // 드래그 종료
   const handlePointerUp = () => {
-    if (dragStartX.current === null || isAnimating) return;
+    if (dragStartX.current === null || isAnimating) {
+      return;
+    }
 
     dragStartX.current = null;
     setIsDragging(false);
 
-    // 왼쪽 → 다음 작가
+    // 왼쪽으로 넘김 → 다음 작가
     if (dragOffset < -SWIPE_THRESHOLD) {
       setIsAnimating(true);
       setDragOffset(-CARD_STEP);
 
-      setTimeout(() => {
-        setCurrentIndex(nextIndex);
+      startAnimationTimer(() => {
+        setCurrentIndex((prev) => {
+          const length = artistsLengthRef.current;
+
+          if (length === 0) return 0;
+
+          const safeIndex = prev % length;
+
+          return (safeIndex + 1) % length;
+        });
+
         setDragOffset(0);
         setIsAnimating(false);
-      }, ANIMATION_DURATION);
+      });
 
       return;
     }
 
-    // 오른쪽 → 이전 작가
+    // 오른쪽으로 넘김 → 이전 작가
     if (dragOffset > SWIPE_THRESHOLD) {
       setIsAnimating(true);
       setDragOffset(CARD_STEP);
 
-      setTimeout(() => {
-        setCurrentIndex(previousIndex);
+      startAnimationTimer(() => {
+        setCurrentIndex((prev) => {
+          const length = artistsLengthRef.current;
+
+          if (length === 0) return 0;
+
+          const safeIndex = prev % length;
+
+          return (safeIndex - 1 + length) % length;
+        });
+
         setDragOffset(0);
         setIsAnimating(false);
-      }, ANIMATION_DURATION);
+      });
 
       return;
     }
 
+    // 스와이프 기준을 넘지 못하면 원래 위치로 복귀
     setIsAnimating(true);
     setDragOffset(0);
 
-    setTimeout(() => {
+    startAnimationTimer(() => {
       setIsAnimating(false);
-    }, ANIMATION_DURATION);
+    });
   };
 
+  // 포인터 이벤트가 중간에 취소된 경우 초기화
   const handlePointerCancel = () => {
     dragStartX.current = null;
     hasDragged.current = false;
+
+    clearAnimationTimer();
 
     setDragOffset(0);
     setIsDragging(false);
     setIsAnimating(false);
   };
 
+  // 현재 가운데 작가 선택
   const handleArtistClick = () => {
+    // 스와이프한 경우 클릭으로 처리하지 않음
     if (hasDragged.current) return;
 
     onSelectArtist(currentArtist.id);
@@ -174,6 +238,7 @@ export default function ArtistSlider({
         >
           <ArtistFrame image={previousArtist.image} name={previousArtist.name} />
         </div>
+
         {/* 현재 작가 */}
         <div
           onClick={handleArtistClick}
