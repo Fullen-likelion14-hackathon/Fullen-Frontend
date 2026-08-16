@@ -12,7 +12,7 @@ export default function MyPageMenuItem({ label, icon, onClick }: MyPageMenuItemP
     <button
       type="button"
       onClick={onClick}
-      className="flex w-full items-center border-b-2 border-[#e2cdb9] px-2 py-4 text-left"
+      className="flex w-full items-center border-b-2 border-[#e2cdb9] px-2 py-3 text-left"
     >
       <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-white text-[#aa6829] [&_svg]:size-6">
         {icon}

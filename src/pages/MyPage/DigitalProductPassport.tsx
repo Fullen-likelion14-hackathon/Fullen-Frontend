@@ -1,6 +1,6 @@
-import { ChevronLeft, ChevronRight, Factory, Globe2, Leaf, RefreshCw } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { ChevronRight, Factory, Globe2, Leaf, RefreshCw } from "lucide-react";
 import { ddpProduct } from "@/components/myPage/MyPageData";
+import PageHeader from "@/components/common/PageHeader";
 
 const infoItems = [
   { label: "소재 정보", icon: Factory, color: "bg-[#f8e7e9]" },
@@ -10,17 +10,9 @@ const infoItems = [
 ];
 
 export default function DigitalProductPassport() {
-  const navigate = useNavigate();
   return (
     <div className="min-h-dvh bg-[#faf5f0] pb-16 font-['Pretendard_Variable'] text-[#192940]">
-      <header className="flex h-32 items-end border-b-[7px] border-[#aa6829] bg-[#192940] px-6 pb-6 text-white">
-        <button type="button" onClick={() => navigate(-1)} aria-label="뒤로 가기">
-          <ChevronLeft className="size-9" strokeWidth={2} />
-        </button>
-        <h1 className="absolute left-1/2 -translate-x-1/2 whitespace-nowrap text-[22px] font-bold">
-          제품 디지털 여권 (DDP)
-        </h1>
-      </header>
+      <PageHeader title="제품 디지털 여권 (DDP)" backTo="/mypage" />
       <main className="mx-auto max-w-107 px-6 pt-8">
         <section className="text-center">
           <h2 className="text-[25px] font-bold">{ddpProduct.name}</h2>
@@ -31,13 +23,13 @@ export default function DigitalProductPassport() {
             className="mx-auto h-52 w-full object-contain"
           />
         </section>
-        <section className="flex items-center rounded-xl border-2 border-[#aa6829] bg-white px-4 py-3">
+        <section className="flex items-center rounded-xl border-2 border-[#aa6829] bg-white px-4 py-3 mt-4">
           <div className="mr-3 flex size-14 shrink-0 items-center justify-center rounded-lg bg-[#faf5f0] text-[17px] font-serif font-bold">
             MCM
           </div>
           <div className="min-w-0 flex-1">
             <h3 className="text-[18px] font-bold">정품 인증 완료</h3>
-            <p className="text-[12px] font-semibold text-[#ac927c]">
+            <p className="text-[11px] font-semibold text-[#ac927c]">
               이 제품은 MCM에서 정식 인증한 제품입니다.
             </p>
           </div>

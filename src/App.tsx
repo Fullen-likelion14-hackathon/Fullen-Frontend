@@ -21,8 +21,6 @@ import CustomInitials from "@/pages/Custom/CustomInitials";
 
 import OneToOneOrderMain from "@/pages/OneToOneOrder/OneToOneOrderMain";
 import CustomRequest from "@/pages/OneToOneOrder/CustomRequest";
-import CustomRequestComplete from "@/pages/OneToOneOrder/CustomRequestComplete";
-import CustomRequestDetail from "@/pages/OneToOneOrder/CustomRequestDetail";
 import CustomArtistSelect from "@/pages/OneToOneOrder/CustomArtistSelect";
 
 import MyPage from "@/pages/MyPage/MyPage";
@@ -73,10 +71,6 @@ function App() {
           <Route path="/onetooneorder/request" element={<CustomRequest />} />
           {/* Custom - 1:1 커스텀 작가 선택 */}
           <Route path="/onetooneorder/artist" element={<CustomArtistSelect />} />
-          {/* Custom - 1:1 커스텀 신청완료 */}
-          <Route path="/onetooneorder/complate" element={<CustomRequestComplete />} />
-          {/* Custom - 1:1 커스텀 신청내역확인 */}
-          <Route path="/onetooneorder/:requestId" element={<CustomRequestDetail />} />
 
           {/* MyPage- 마이페이지 */}
           <Route path="/mypage" element={<MyPage />} />
