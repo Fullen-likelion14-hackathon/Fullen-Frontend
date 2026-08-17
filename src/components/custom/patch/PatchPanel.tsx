@@ -24,7 +24,7 @@ export default function PatchPanel() {
 
       {/* AI 생성 버튼도 클릭 가능해야 함 */}
       <div className="pointer-events-auto absolute inset-x-0 top-30 flex justify-end pr-11">
-        <CustomGenerateButton text="AI 패치 생성" path="/" />
+        <CustomGenerateButton text="AI 패치 생성" path="/custom/ai-patch" />
       </div>
 
       {/* 패치 선택 버튼들도 클릭 가능해야 함 */}
