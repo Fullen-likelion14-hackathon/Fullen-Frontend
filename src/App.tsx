@@ -16,8 +16,9 @@ import FeedNew from "@/pages/FeedNew/FeedNew";
 import FeedDetail from "@/pages/FeedDetail/FeedDetail";
 import PassportDetail from "@/pages/PassportDetail/PassportDetail";
 
-import Customizing from "@/pages/Custom/Customizing";
 import CustomMain from "@/pages/Custom/CustomMain";
+import Customizing from "@/pages/Custom/Customizing";
+import AIPatchGenerator from "@/pages/Custom/AIPatchGenerator";
 
 import OneToOneOrderMain from "@/pages/OneToOneOrder/OneToOneOrderMain";
 import CustomRequest from "@/pages/OneToOneOrder/CustomRequest";
@@ -63,6 +64,8 @@ function App() {
           {/* Custom - 제품 커스텀 페이지 */}
           <Route path="/custom" element={<CustomMain />} />
           <Route path="/custom/customizing" element={<Customizing />} />
+          {/* Custom - AI 패치 생성 플로우 - 하단 네비게이션 없음 */}
+          <Route path="/custom/ai-patch" element={<AIPatchGenerator />} />
 
           {/* Custom - 1:1 커스텀 신청 메인 화면 */}
           <Route path="/onetooneorder" element={<OneToOneOrderMain />} />
