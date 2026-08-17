@@ -18,6 +18,7 @@ import PassportDetail from "@/pages/PassportDetail/PassportDetail";
 
 import Customizing from "@/pages/Custom/Customizing";
 import CustomMain from "@/pages/Custom/CustomMain";
+import CustomOrder from "@/pages/Custom/CustomOrder";
 
 import OneToOneOrderMain from "@/pages/OneToOneOrder/OneToOneOrderMain";
 import CustomRequest from "@/pages/OneToOneOrder/CustomRequest";
@@ -63,6 +64,7 @@ function App() {
           {/* Custom - 제품 커스텀 페이지 */}
           <Route path="/custom" element={<CustomMain />} />
           <Route path="/custom/customizing" element={<Customizing />} />
+          <Route path="/custom/order" element={<CustomOrder />} />
 
           {/* Custom - 1:1 커스텀 신청 메인 화면 */}
           <Route path="/onetooneorder" element={<OneToOneOrderMain />} />
