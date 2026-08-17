@@ -2,9 +2,9 @@ import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import DeleteConfirmDialog from "@/components/common/DeleteConfirmDialog";
-import editIcon from "@/assets/icons/edit.png";
-import deleteIcon from "@/assets/icons/delete.png";
-import publicIcon from "@/assets/icons/public.png";
+import editIcon from "@/assets/icons/edit2.png";
+import deleteIcon from "@/assets/icons/delete2.png";
+import publicIcon from "@/assets/icons/public2.png";
 import privateIcon from "@/assets/icons/private.png";
 import { feedDetailMockData } from "./feedDetail.mock";
 import { categoryFeedMockData } from "@/pages/CategoryFeed/categoryFeed.mock";
@@ -55,60 +55,76 @@ export default function FeedDetail() {
     <div className="min-h-screen bg-gray-200">
       <div className="relative mx-auto min-h-screen w-full max-w-97.5 overflow-hidden bg-white">
         {/* 헤더 */}
-        <header className="relative bg-stone-100 pb-6 pt-9">
-          {/* 뒤로가기 버튼 */}
-          <button
-            type="button"
-            aria-label="뒤로 가기"
-            onClick={() => navigate(`/passport/${categoryId}`)}
-            className="absolute left-5 top-9 flex h-6 w-6 items-center justify-center"
-          >
-            <span className="block h-3.5 w-3.5 rotate-45 border-b-2 border-l-2 border-[#CFCDCE]" />
-          </button>
+        <header className="relative h-31.25 w-97.5 bg-[#F9F4F0] pb-6 pt-9">
+          <div className="mt-[21px]">
+            <div className="flex items-center justify-between px-5 pt-1">
+              {/* 뒤로가기 버튼: CategoryFeed와 동일한 CSS 화살표 디자인
+                  이전엔 navigate(`/passport/${categoryId}`)로 고정 경로 이동했는데,
+                  이게 실제로는 히스토리에 새 엔트리를 push하는 동작이라 다른 페이지의
+                  navigate(-1)과 꼬여서 뒤로가기 체인이 깨지는 버그가 있었음.
+                  다른 페이지들과 동일하게 navigate(-1)로 통일 */}
+              <button
+                type="button"
+                aria-label="뒤로 가기"
+                onClick={() => navigate(-1)}
+                className="flex h-8 w-8 items-center justify-center"
+              >
+                <span className="block h-4.5 w-4.5 rotate-45 border-b-[3px] border-l-[3px] border-[#CFCDCE]" />
+              </button>
 
-          <div className="flex items-center justify-center gap-[5px] pt-1">
-            {/* 공개/비공개 아이콘 */}
-            <div className="flex size-7 items-center justify-center overflow-hidden rounded-full bg-white">
-              <img
-                src={feed.isPublic ? publicIcon : privateIcon}
-                alt={feed.isPublic ? "공개" : "비공개"}
-                className="h-3 w-5 object-contain"
-              />
+              {/* 공개/비공개 아이콘 + 날짜 */}
+              <div className="flex items-center gap-[20px]">
+                <div className="flex size-8 items-center justify-center overflow-hidden rounded-full bg-white">
+                  <img
+                    src={feed.isPublic ? publicIcon : privateIcon}
+                    alt={feed.isPublic ? "공개" : "비공개"}
+                    className="size-8 object-contain"
+                  />
+                </div>
+
+                <p
+                  className="text-xl font-semibold tracking-tight text-slate-800"
+                  style={{ fontFamily: "Paperlogy" }}
+                >
+                  {feed.date}
+                </p>
+              </div>
+
+              {/* 수정 / 삭제 버튼 */}
+              <div className="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  aria-label="게시물 수정"
+                  onClick={() =>
+                    // FeedEdit이 location.state로 기존 값을 초기화하므로 함께 전달
+                    navigate(`/passport/${categoryId}/${feedId}/edit`, {
+                      state: {
+                        images: feed.images,
+                        comment: feed.content,
+                        isPublic: feed.isPublic,
+                      },
+                    })
+                  }
+                  className="flex size-9 items-center justify-center rounded-md bg-white"
+                >
+                  <img src={editIcon} alt="" className="size-9 object-contain" />
+                </button>
+                <button
+                  type="button"
+                  aria-label="게시물 삭제"
+                  onClick={() => setIsDeleteOpen(true)}
+                  className="flex size-9 items-center justify-center rounded-md bg-white"
+                >
+                  <img src={deleteIcon} alt="" className="size-9 object-contain" />
+                </button>
+              </div>
             </div>
-
-            <p
-              className="text-lg font-bold tracking-tight text-slate-800"
-              style={{ fontFamily: "Paperlogy" }}
-            >
-              {feed.date}
-            </p>
           </div>
-
-          {/* 수정 / 삭제 버튼 */}
-          <div className="absolute right-5 top-9 flex items-center gap-1.5">
-            <button
-              type="button"
-              aria-label="게시물 수정"
-              onClick={() => navigate(`/passport/${categoryId}/${feedId}/edit`)}
-              className="flex size-9 items-center justify-center rounded-md bg-white"
-            >
-              <img src={editIcon} alt="" className="size-8 object-contain" />
-            </button>
-            <button
-              type="button"
-              aria-label="게시물 삭제"
-              onClick={() => setIsDeleteOpen(true)}
-              className="flex size-9 items-center justify-center rounded-md bg-white"
-            >
-              <img src={deleteIcon} alt="" className="size-8 object-contain" />
-            </button>
-          </div>
-
-          <div className="absolute inset-x-0 bottom-0 h-1.5 bg-yellow-700" />
+          <div className="absolute inset-x-0 bottom-0 h-[8px] bg-[#A3642B]" />
         </header>
 
-        {/* 사진 슬라이드 */}
-        <div className="relative aspect-square w-full bg-stone-300">
+        {/* 사진 슬라이드: 고정 크기 390x430px */}
+        <div className="relative h-[435px] w-97.5 bg-stone-300">
           <div
             onScroll={handleScroll}
             className="flex h-full w-full snap-x snap-mandatory overflow-x-auto scroll-smooth [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
