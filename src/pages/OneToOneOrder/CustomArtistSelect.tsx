@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
 
 import PageHeader from "@/components/common/PageHeader";
@@ -11,8 +11,22 @@ import { recommendedArtists, otherArtists } from "@/components/oneToOneOrder/Art
 
 import type { Artist } from "@/components/oneToOneOrder/ArtistData";
 
+interface ArtistSelectLocationState {
+  // 작가 선택 완료 후 돌아갈 경로임
+  returnTo?: string;
+
+  // 어떤 플로우에서 작가 선택 페이지로 들어왔는지 구분함
+  source?: "ai-patch" | "onetoone";
+
+  // AI 패치에서 기존에 선택한 사진을 유지하기 위한 값임
+  selectedImage?: string;
+}
+
 export default function CustomArtistSelect() {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const locationState = location.state as ArtistSelectLocationState | null;
 
   // 실제 선택한 작가
   const [selectedArtistId, setSelectedArtistId] = useState<number | null>(null);
@@ -43,10 +57,28 @@ export default function CustomArtistSelect() {
     setDetailArtist(null);
   };
 
-  // 선택한 작가를 가지고 신청 페이지로 이동
+  // 선택한 작가를 진입한 플로우에 맞는 페이지로 전달함
   const handleSelectButtonClick = () => {
     if (selectedArtistId === null) return;
 
+    // AI 패치 생성에서 들어온 경우 AI 패치 페이지로 돌아감
+    if (locationState?.source === "ai-patch" && locationState.returnTo) {
+      navigate(locationState.returnTo, {
+        state: {
+          selectedArtistId,
+
+          // 기존에 선택했던 사진도 다시 전달해줌
+          selectedImage: locationState.selectedImage,
+
+          // 작가 선택 단계로 돌아가게 해줌
+          currentStep: 2,
+        },
+      });
+
+      return;
+    }
+
+    // 별도 source가 없으면 기존 1:1 커스텀 주문 흐름으로 이동함
     navigate("/onetooneorder/request", {
       state: {
         selectedArtistId,
