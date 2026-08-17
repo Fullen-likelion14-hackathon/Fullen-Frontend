@@ -44,7 +44,7 @@ export default function CustomRequest() {
   };
 
   return (
-    <main className="relative min-h-dvh overflow-hidden bg-[#EEE4D8]">
+    <main className="relative mx-auto h-dvh w-full max-w-97.5 overflow-hidden bg-[#F9F4F0]">
       {/* 상단 배경 곡선 */}
       <div className="pointer-events-none absolute top-105 left-1/2 h-80 w-150 -translate-x-1/2 rounded-[50%] bg-[#F9F4F0]" />
 

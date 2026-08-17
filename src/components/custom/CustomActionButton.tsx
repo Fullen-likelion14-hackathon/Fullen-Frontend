@@ -69,7 +69,7 @@ export function DPPButton() {
 
   const handleDPP = () => {
     // TODO: 디지털 제품 여권 페이지 생성 후 경로 수정
-    navigate("/");
+    navigate("/mypage/ddp");
   };
 
   return (
