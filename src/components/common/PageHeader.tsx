@@ -4,12 +4,19 @@ import { ChevronLeft } from "lucide-react";
 type PageHeaderProps = {
   title: string;
   backTo?: string;
+  // 뒤로가기 전에 커스텀 로직(예: 미저장 변경사항 확인모달)이 필요한 페이지용.
+  // 넘기지 않으면 기존과 동일하게 backTo 이동 또는 navigate(-1) 실행됨 (하위호환).
+  onBackClick?: () => void;
 };
 
-export default function PageHeader({ title, backTo }: PageHeaderProps) {
+export default function PageHeader({ title, backTo, onBackClick }: PageHeaderProps) {
   const navigate = useNavigate();
 
   const handleBack = () => {
+    if (onBackClick) {
+      onBackClick();
+      return;
+    }
     if (backTo) {
       navigate(backTo);
     } else {
