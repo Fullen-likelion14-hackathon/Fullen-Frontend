@@ -1,19 +1,12 @@
-interface SelectedArtist {
-  id: number;
-  name: string;
-  description: string;
-  image: string;
-  flagImage: string;
-}
+import type { Artist } from "@/components/oneToOneOrder/ArtistData";
 
 interface ArtistSelectBoxProps {
-  selectedArtist: SelectedArtist | null;
+  selectedArtist: Artist | null;
   onSelect: () => void;
   onRemove: () => void;
 }
 
 const ArtistSelectBox = ({ selectedArtist, onSelect, onRemove }: ArtistSelectBoxProps) => {
-  // 아직 작가를 선택하지 않은 상태임
   if (!selectedArtist) {
     return (
       <button
@@ -26,16 +19,17 @@ const ArtistSelectBox = ({ selectedArtist, onSelect, onRemove }: ArtistSelectBox
     );
   }
 
-  // 작가 선택 완료 후 선택한 작가 정보를 보여줌
   return (
     <div className="relative flex h-29 w-full overflow-hidden rounded-xl border-2 border-[#192C44] bg-white">
+      {/* 작가 이미지 */}
       <img
         src={selectedArtist.image}
         alt={selectedArtist.name}
-        className="h-full w-29 shrink-0 object-cover"
+        className="h-full w-24 shrink-0 object-cover"
       />
 
-      <div className="flex min-w-0 flex-1 flex-col justify-center px-3">
+      {/* 작가 정보 */}
+      <div className="flex min-w-0 flex-1 flex-col justify-center px-3 py-2">
         <img
           src={selectedArtist.flagImage}
           alt=""
@@ -43,26 +37,24 @@ const ArtistSelectBox = ({ selectedArtist, onSelect, onRemove }: ArtistSelectBox
           className="mb-1 h-4 w-6 object-cover"
         />
 
-        <p className="text-base font-bold text-[#192C44]">{selectedArtist.name}</p>
+        <p className="text-base font-bold text-[#192A40]">{selectedArtist.name}</p>
 
-        <p className="mt-1 line-clamp-2 text-xs leading-snug text-[#192C44]">
+        <p className="mt-1 line-clamp-2 pr-5 text-xs leading-4 text-[#515C6C]">
           {selectedArtist.description}
         </p>
       </div>
 
-      {/* 선택한 작가를 다시 해제할 수 있게 해줌 */}
+      {/* 선택한 작가 해제 버튼 */}
       <button
         type="button"
         onClick={onRemove}
         aria-label="선택한 작가 삭제"
-        className="absolute right-2 top-1 text-2xl font-light text-[#8C949E]"
+        className="absolute right-2 top-1 flex h-7 w-7 items-center justify-center text-2xl font-light text-[#8C949E]"
       >
         ×
       </button>
     </div>
   );
 };
-
-export type { SelectedArtist };
 
 export default ArtistSelectBox;
