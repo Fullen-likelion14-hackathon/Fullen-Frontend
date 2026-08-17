@@ -44,7 +44,7 @@ export default function MyOrderList() {
         {/* 주문내용 상세보기 */}
         <button
           type="button"
-          onClick={() => navigate("/custom/order")}
+          onClick={() => navigate("/custom/order/detail")}
           className="mt-6 flex h-10 w-51 items-center justify-center gap-1 rounded-full border-3 border-[#D1D1D1] bg-white font-bold  text-[#969BA3]"
         >
           주문내용 상세보기
