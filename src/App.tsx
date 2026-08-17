@@ -21,6 +21,7 @@ import PassportDetail from "@/pages/PassportDetail/PassportDetail";
 import CustomMain from "@/pages/Custom/CustomMain";
 import Customizing from "@/pages/Custom/Customizing";
 import AIPatchGenerator from "@/pages/Custom/AIPatchGenerator";
+import AIPatchOptionSelect from "@/pages/Custom/AIPatchOptionSelect";
 
 import CustomOrder from "@/pages/Custom/CustomOrder";
 import CustomOrderComplete from "@/pages/Custom/CustomOrderComplete";
@@ -79,6 +80,9 @@ function App() {
           <Route path="/custom/order/detail" element={<CustomOrderDetail />} />
           {/* Custom - AI 패치 생성 플로우 - 하단 네비게이션 없음 */}
           <Route path="/custom/ai-patch" element={<AIPatchGenerator />} />
+          {/* Custom - AI 패치 생성 */}
+          <Route path="/custom/ai-patch" element={<AIPatchGenerator />} />
+          <Route path="/custom/ai-patch/options" element={<AIPatchOptionSelect />} />
 
           {/* Custom - 1:1 커스텀 신청 메인 화면 */}
           <Route path="/onetooneorder" element={<OneToOneOrderMain />} />
