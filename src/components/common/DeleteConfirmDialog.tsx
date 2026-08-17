@@ -1,4 +1,10 @@
-import warningIcon from "@/assets/icons/warning2.png";
+// ============================================================
+// DeleteConfirmDialog.tsx — 카테고리/게시물 삭제 확인 모달
+// 문구만 다르고(카테고리: "여행", 게시물: "게시물") 디자인은 공용
+// LeaveConfirmDialog/MCMWarningDialog와 동일한 가운데 정렬 카드형 모달 패턴
+// ============================================================
+
+import warningIcon from "@/assets/icons/warning3.png";
 
 interface DeleteConfirmDialogProps {
   open: boolean;
@@ -9,6 +15,7 @@ interface DeleteConfirmDialogProps {
   onCancel: () => void;
   onConfirm: () => void;
 }
+
 export default function DeleteConfirmDialog({
   open,
   title,
@@ -19,38 +26,54 @@ export default function DeleteConfirmDialog({
   if (!open) return null;
 
   return (
-    <div className="absolute inset-0 z-50 flex flex-col">
-      {/* 상단 브라운 패널: 화면 폭 꽉 채움, 카드 아님 */}
-      <div className="bg-[#AB6A37] px-8 pb-8 pt-16 text-center">
-        <img src={warningIcon} alt="" className="mx-auto mb-3 h-9 w-9" />
+    <>
+      {/* 오버레이: 배경 클릭 시 취소와 동일하게 닫힘 */}
+      <div className="fixed inset-0 z-50 bg-black/50" onClick={onCancel} aria-hidden="true" />
 
-        <p className="text-xl font-bold text-white" style={{ fontFamily: "Paperlogy" }}>
-          {title}
-        </p>
-        <p className="mt-1.5 text-sm font-medium text-stone-100/50">{description}</p>
+      {/* 모달: 화면 전체 기준 정중앙, w-72 h-56 */}
+      <div className="fixed inset-0 z-51 flex items-center justify-center pointer-events-none">
+        <div className="pointer-events-auto relative h-56 w-72 overflow-hidden rounded-[20px] bg-stone-100">
+          <div className="absolute left-[39px] top-[32px] flex w-52 flex-col items-center gap-2.5">
+            <div className="flex w-full flex-col items-center gap-2.5">
+              <img src={warningIcon} alt="" className="h-7 w-8 object-contain" />
 
-        <div className="mx-auto mt-6 flex max-w-70 flex-col gap-2.5 items-center">
-          <button
-            type="button"
-            onClick={onConfirm}
-            className="w-50 h-10 rounded-[100px] bg-white/40 px-6 text-lg font-semibold text-[#45454E] shadow-[0px_0px_5px_0px_rgba(94,140,136,0.25)] shadow-[inset_0px_3px_3px_0px_rgba(255,255,255,0.25)] shadow-[inset_0px_-1.5px_1.5px_0px_rgba(159,159,159,0.25)]"
-            style={{ fontFamily: "Paperlogy" }}
-          >
-            삭제하기
-          </button>
-          <button
-            type="button"
-            onClick={onCancel}
-            className="w-50 h-10 rounded-[100px] bg-white/40 px-6 text-lg font-semibold text-white shadow-[0px_0px_5px_0px_rgba(94,140,136,0.25)] shadow-[inset_0px_3px_3px_0px_rgba(255,255,255,0.25)] shadow-[inset_0px_-1.5px_1.5px_0px_rgba(159,159,159,0.25)]"
-            style={{ fontFamily: "Paperlogy" }}
-          >
-            취소하기
-          </button>
+              <div className="flex w-full flex-col items-center gap-[5px]">
+                <p
+                  style={{ fontFamily: "Paperlogy" }}
+                  className="w-full text-center text-base font-bold tracking-tight text-slate-800"
+                >
+                  {title}
+                </p>
+                <p
+                  style={{ fontFamily: "Paperlogy" }}
+                  className="w-full text-center text-xs font-semibold tracking-tight text-slate-800/50"
+                >
+                  {description}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex w-full flex-col gap-[5px]">
+              <button
+                type="button"
+                onClick={onCancel}
+                style={{ fontFamily: "Paperlogy" }}
+                className="h-9 w-full rounded-[10px] bg-slate-800 text-center text-xs font-bold tracking-tight text-stone-100"
+              >
+                유지하기
+              </button>
+              <button
+                type="button"
+                onClick={onConfirm}
+                style={{ fontFamily: "Paperlogy" }}
+                className="h-9 w-full rounded-[10px] bg-stone-300 text-center text-xs font-bold tracking-tight text-slate-800/50"
+              >
+                삭제하기
+              </button>
+            </div>
+          </div>
         </div>
       </div>
-
-      {/* 하단: 남은 화면(그리드 등)이 딤 처리되어 비침 */}
-      <button type="button" aria-label="닫기" onClick={onCancel} className="flex-1 bg-black/40" />
-    </div>
+    </>
   );
 }

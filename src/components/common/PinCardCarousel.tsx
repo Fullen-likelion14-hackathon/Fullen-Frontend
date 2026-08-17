@@ -41,7 +41,7 @@ export function PinCardCarousel({
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: "center",
     startIndex: activeIndex,
-    // 카드 크기가 활성/비활성마다 달라서(w-64 vs w-52), 기본값(trimSnaps)이
+    // 카드 크기가 활성/비활성마다 달라서(w-72 vs w-52), 기본값(trimSnaps)이
     // 맨 앞/맨 뒤 스냅 위치를 억지로 잘라내며 중앙 정렬이 어긋나는 버그가 생김.
     // false로 두면 경계에서도 다른 카드들과 동일하게 정확히 중앙 정렬됨.
     containScroll: false,
@@ -65,7 +65,7 @@ export function PinCardCarousel({
     }
   }, [activeIndex, emblaApi]);
 
-  // 활성 카드는 다른 카드보다 크기 때문에(w-64 vs w-52), 카드 크기가 바뀔 때마다
+  // 활성 카드는 다른 카드보다 크기 때문에(w-72 vs w-52), 카드 크기가 바뀔 때마다
   // 캐러셀이 스냅 위치를 다시 계산하도록 reInit 해줘야 함
   useEffect(() => {
     emblaApi?.reInit();
@@ -95,7 +95,8 @@ export function PinCardCarousel({
               onClick={() => handleCardClick(pin, index)}
               className={[
                 "relative shrink-0 overflow-hidden text-left transition-all duration-300",
-                isActive ? "h-90 w-64 rounded-xl" : "h-72 w-52 rounded-lg",
+                // 활성 카드 폭 w-64 -> w-72로 확대 (피그마 반영, 정확한 px는 인스펙터로 재확인 필요)
+                isActive ? "h-[370px] w-[271px] rounded-xl" : "h-[293px] w-[215px] rounded-lg",
                 isActive ? ACTIVE_CARD_SHADOW : INACTIVE_CARD_SHADOW,
               ].join(" ")}
             >
@@ -107,9 +108,6 @@ export function PinCardCarousel({
                   isActive ? "rounded-xl" : "rounded-lg",
                 ].join(" ")}
               />
-
-              {/* 비활성 카드 딤 처리 */}
-              {!isActive && <div className="absolute inset-0 rounded-lg bg-black/50" />}
 
               {/* 국기 원형 배지 */}
               {pin.flagUrl && (
@@ -131,50 +129,55 @@ export function PinCardCarousel({
               {/* 하단 텍스트 그라데이션 오버레이 */}
               <div
                 className={[
-                  "absolute inset-x-0 bottom-0 flex flex-col justify-end overflow-hidden bg-linear-to-t from-black/70 via-black/40 via-40% to-transparent",
+                  "absolute inset-x-0 bottom-0  flex flex-col justify-end overflow-hidden bg-linear-to-t from-black/70 via-black/40 via-40% to-transparent",
                   isActive
                     ? "h-36 rounded-b-xl px-4 pt-4 pb-10"
                     : "h-28 rounded-b-lg px-3 pt-3 pb-10",
                 ].join(" ")}
               >
-                <p
-                  className={[
-                    "font-bold text-white",
-                    isActive
-                      ? "font-['Paperlogy'] text-2xl tracking-wide"
-                      : "font-['Paperlogy'] text-lg tracking-tight",
-                  ].join(" ")}
-                >
-                  {pin.countryName}
-                </p>
-                <p
-                  className={[
-                    "mt-1 font-['Paperlogy'] font-semibold tracking-tight text-white",
-                    isActive ? "text-sm" : "text-xs",
-                  ].join(" ")}
-                >
-                  {pin.travelTitle}
-                </p>
-                <p
-                  className={[
-                    "mt-1 font-['Paperlogy'] font-semibold text-stone-100",
-                    isActive ? "text-xs" : "text-[9.94px]",
-                  ].join(" ")}
-                >
-                  {pin.period}
-                </p>
+                <div className="pl-[25px]">
+                  <p
+                    className={[
+                      "font-bold text-white",
+                      isActive
+                        ? "font-['Paperlogy'] text-2xl tracking-wide"
+                        : "font-['Paperlogy'] text-lg tracking-tight",
+                    ].join(" ")}
+                  >
+                    {pin.countryName}
+                  </p>
+                  <p
+                    className={[
+                      "mt-1 font-['Paperlogy'] font-semibold tracking-tight text-white",
+                      isActive ? "text-sm" : "text-xs",
+                    ].join(" ")}
+                  >
+                    {pin.travelTitle}
+                  </p>
+                  <p
+                    className={[
+                      "mt-1 font-['Paperlogy'] font-semibold text-stone-100",
+                      isActive ? "text-xs" : "text-[9.94px]",
+                    ].join(" ")}
+                  >
+                    {pin.period}
+                  </p>
+                </div>
 
                 {/* 기록 개수 배지: file.png(접힌 모서리 문서 아이콘) 위에 숫자를 겹쳐서 표시 */}
                 <div
                   className={[
                     "absolute",
-                    isActive ? "bottom-4 right-4 size-8" : "bottom-3 right-3 size-6",
+                    isActive
+                      ? "bottom-10.5 right-5.5 h-[36px] w-[30px]"
+                      : "bottom-10.5 right-4.5 h-7 w-5.5",
                   ].join(" ")}
                 >
                   <img src={fileIcon} alt="" className="size-full object-contain" />
+                  {/* 색상 text-neutral-400 -> text-slate-800/50 (피그마 반영) */}
                   <span
                     className={[
-                      "absolute inset-0 flex items-center justify-center pt-1 font-['Paperlogy'] font-semibold text-neutral-400",
+                      "absolute inset-0 flex items-center justify-center pt-1 font-['Paperlogy'] font-semibold text-slate-800/50",
                       isActive ? "text-sm" : "text-xs",
                     ].join(" ")}
                   >
@@ -182,6 +185,9 @@ export function PinCardCarousel({
                   </span>
                 </div>
               </div>
+
+              {/* 비활성 카드 딤 처리: 국기배지/파일아이콘까지 전부 덮도록 맨 위 레이어(마지막 렌더)로 배치 */}
+              {!isActive && <div className="absolute inset-0 rounded-lg bg-black/50" />}
             </button>
           );
         })}

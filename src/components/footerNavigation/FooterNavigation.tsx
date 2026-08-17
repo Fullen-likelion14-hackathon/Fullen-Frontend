@@ -67,7 +67,8 @@ export default function FooterNavigation() {
     pathname.startsWith("/mcom/view/") ||
     pathname.startsWith("/onetooneorder/") ||
     pathname.startsWith("/mypage/orders") ||
-    pathname.startsWith("/mypage/ddp");
+    pathname.startsWith("/mypage/ddp") ||
+    pathname.startsWith("/custom/order");
 
   if (hideFooter) {
     return null;

@@ -73,7 +73,7 @@ const DateRangeField = ({ startDate, endDate, onChange, disabled }: DateRangeFie
         className={`h-10 w-full rounded-[10px] border-2 bg-white text-center tracking-tight disabled:opacity-60 ${
           hasRange
             ? "border-slate-800 text-base font-semibold text-slate-800"
-            : "border-stone-300 text-sm font-semibold text-stone-300"
+            : "border-[#D3C5BB] text-sm font-semibold text-[#AC917C]"
         }`}
       >
         {hasRange ? `${formatDate(startDate)}  ~  ${formatDate(endDate)}` : "날짜를 선택해주세요"}

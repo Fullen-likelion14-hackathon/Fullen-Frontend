@@ -1,7 +1,9 @@
+// src/mocks/categoryFeed.mock.ts
 import germanyFeed1 from "@/assets/images/germany_feed1.jpg";
 import germanyFeed2 from "@/assets/images/germany_feed2.jpg";
 import japanFeed1 from "@/assets/images/japan_feed1.jpg";
 import japanFeed2 from "@/assets/images/japan_feed2.png";
+import { getCountryFlagUrl } from "@/mocks/countryFlags.mock";
 
 export interface FeedThumbnail {
   feedId: number;
@@ -18,8 +20,9 @@ export interface CategoryFeedData {
   feeds: FeedThumbnail[];
 }
 
-const GERMANY_FLAG = "https://placehold.co/45x30?text=DE";
-const JAPAN_FLAG = "https://placehold.co/45x30?text=JP";
+// placehold.co 임시 텍스트 박스 대신 실제 국기 이미지(flagcdn.com CDN, countryFlags.mock.ts 재사용)
+const GERMANY_FLAG = getCountryFlagUrl("GERMANY") ?? "";
+const JAPAN_FLAG = getCountryFlagUrl("JAPAN") ?? "";
 
 const GERMANY_IMAGES = [germanyFeed1, germanyFeed2];
 const JAPAN_IMAGES = [japanFeed1, japanFeed2];

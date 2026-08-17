@@ -6,13 +6,13 @@
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { Map as LeafletMapInstance } from "leaflet";
+import PageHeader from "@/components/common/PageHeader";
 import { MapLeaflet } from "./MapLeaflet";
 import { flyToPin } from "../../utils/mapCamera";
 import { PinCardCarousel } from "../../components/common/PinCardCarousel";
 import { useLeafletMapSync } from "../../hooks/useLeafletMapSync";
 import { useMapPins } from "../../hooks/useMapPins";
 import type { MapPin } from "../../types/mapPin";
-import backIcon from "@/assets/icons/back.png";
 
 export default function Map() {
   const navigate = useNavigate();
@@ -48,23 +48,8 @@ export default function Map() {
 
   return (
     <div className="relative mx-auto flex h-dvh w-full max-w-97.5 flex-col overflow-hidden">
-      {/* 헤더: 다른 페이지(CategoryNew 등)와 동일한 패턴 재사용 */}
-      <header className="relative h-32 shrink-0 overflow-hidden bg-slate-800">
-        <div className="relative flex h-full items-center justify-center">
-          <button
-            type="button"
-            onClick={() => navigate("/")}
-            className="absolute left-6 top-1/2 -translate-y-1/2"
-            aria-label="메인으로 돌아가기"
-          >
-            <img src={backIcon} alt="" className="h-6 w-3.5" />
-          </button>
-          <h1 className="font-['Pretendard_Variable'] text-xl font-bold text-white">
-            지도 위 나의 여정
-          </h1>
-        </div>
-        <div className="absolute inset-x-0 bottom-0 h-1.5 bg-yellow-700" />
-      </header>
+      {/* 팀 공용 PageHeader로 교체 (기존 자체 헤더 블록 제거) */}
+      <PageHeader title="지도 위 나의 여정" backTo="/" />
 
       {/* 지도 + 오버레이(캐러셀/버튼) 영역 */}
       <div className="relative flex-1 overflow-hidden">
@@ -88,13 +73,27 @@ export default function Map() {
         )}
 
         {/* 하단 버튼: 캐러셀 노출 여부와 무관하게 항상 화면 하단에 고정 */}
-        <div className="absolute inset-x-0 bottom-8 z-1000 flex justify-center px-6">
+        <div className="absolute inset-x-0 bottom-8 z-1000 flex flex-col items-center gap-3 px-6 pb-8">
+          {/* "열기": 캐러셀에서 카드가 선택된 상태일 때만 노출, 활성 카드 클릭과 동일하게 상세 이동 */}
+          {showCarousel && (
+            <button
+              type="button"
+              onClick={() => {
+                const activePin = pins[activeIndex];
+                if (activePin) handleDetailClick(activePin);
+              }}
+              className="h-[48px] w-[250px] max-w-80 rounded-full bg-[#EDF2F4] font-['Paperlogy'] text-lg font-semibold tracking-tight text-slate-800 shadow-[0px_0px_5px_0px_rgba(25,39,60,0.30),inset_0px_3px_3px_0px_rgba(255,255,255,0.25),inset_0px_-1.5px_1.5px_0px_rgba(159,159,159,0.25)]"
+            >
+              열기
+            </button>
+          )}
+
           {!showCarousel ? (
             pins.length > 0 && (
               <button
                 type="button"
                 onClick={handleShowLatestTravel}
-                className="h-14 w-full max-w-80 rounded-[10px] bg-slate-800 text-xl font-bold text-white"
+                className="h-[54px] w-[330px] max-w-80 rounded-[10px] bg-slate-800 text-xl font-bold text-white"
               >
                 가장 최근 여행 보기
               </button>
@@ -103,7 +102,7 @@ export default function Map() {
             <button
               type="button"
               onClick={handleShowFullMap}
-              className="h-14 w-full max-w-80 rounded-[10px] bg-slate-800 text-xl font-bold text-white"
+              className="h-[54px] w-[330px] max-w-80 rounded-[10px] bg-slate-800 text-xl font-bold text-white"
             >
               지도 한눈에 보기
             </button>

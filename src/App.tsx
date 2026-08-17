@@ -11,8 +11,10 @@ import MCoMView from "@/pages/MCoM/MCoMView";
 import McoMDetail from "@/pages/MCoM/MCoMDetail";
 import Map from "@/pages/Map/Map";
 import CategoryNew from "@/pages/CategoryNew/CategoryNew";
+import CategoryEdit from "@/pages/CategoryEdit/CategoryEdit";
 import CategoryFeed from "@/pages/CategoryFeed/CategoryFeed";
 import FeedNew from "@/pages/FeedNew/FeedNew";
+import FeedEdit from "@/pages/FeedEdit/FeedEdit";
 import FeedDetail from "@/pages/FeedDetail/FeedDetail";
 import PassportDetail from "@/pages/PassportDetail/PassportDetail";
 
@@ -20,6 +22,10 @@ import CustomMain from "@/pages/Custom/CustomMain";
 import Customizing from "@/pages/Custom/Customizing";
 import AIPatchGenerator from "@/pages/Custom/AIPatchGenerator";
 import AIPatchOptionSelect from "@/pages/Custom/AIPatchOptionSelect";
+
+import CustomOrder from "@/pages/Custom/CustomOrder";
+import CustomOrderComplete from "@/pages/Custom/CustomOrderComplete";
+import CustomOrderDetail from "@/pages/Custom/CustomOrderDetail";
 
 import OneToOneOrderMain from "@/pages/OneToOneOrder/OneToOneOrderMain";
 import CustomRequest from "@/pages/OneToOneOrder/CustomRequest";
@@ -44,8 +50,12 @@ function App() {
         <Route path="/passport/detail/:continent" element={<PassportDetail />} />
         {/* Passport - 새 게시물 생성 페이지 - 하단 네비게이션 없음 (⚠️ /passport/:categoryId/:feedId 보다 반드시 위에 있어야 함) */}
         <Route path="/passport/:categoryId/new" element={<FeedNew />} />
+        {/* Passport - 카테고리 수정 페이지 - 하단 네비게이션 없음 (⚠️ /passport/:categoryId/:feedId 보다 반드시 위에 있어야 함) */}
+        <Route path="/passport/:categoryId/edit" element={<CategoryEdit />} />
         {/* Passport - 카테고리 안 피드 목록 페이지 - 하단 네비게이션 없음 */}
         <Route path="/passport/:categoryId" element={<CategoryFeed />} />
+        {/* Passport - 게시물 수정 페이지 - 하단 네비게이션 없음 (⚠️ /passport/:categoryId/:feedId 보다 반드시 위에 있어야 함) */}
+        <Route path="/passport/:categoryId/:feedId/edit" element={<FeedEdit />} />
         {/* Passport - 피드 상세 페이지 - 하단 네비게이션 없음 */}
         <Route path="/passport/:categoryId/:feedId" element={<FeedDetail />} />
 
@@ -65,6 +75,9 @@ function App() {
           {/* Custom - 제품 커스텀 페이지 */}
           <Route path="/custom" element={<CustomMain />} />
           <Route path="/custom/customizing" element={<Customizing />} />
+          <Route path="/custom/order" element={<CustomOrder />} />
+          <Route path="/custom/order/complete" element={<CustomOrderComplete />} />
+          <Route path="/custom/order/detail" element={<CustomOrderDetail />} />
           {/* Custom - AI 패치 생성 플로우 - 하단 네비게이션 없음 */}
           <Route path="/custom/ai-patch" element={<AIPatchGenerator />} />
           {/* Custom - AI 패치 생성 */}

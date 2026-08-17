@@ -37,7 +37,7 @@ export function OrderButton() {
 
   const handleOrder = () => {
     // TODO: 주문 페이지 생성 후 경로 수정
-    navigate("/custom/request");
+    navigate("/custom/order");
   };
 
   return (
