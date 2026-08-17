@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import PageHeader from "@/components/common/PageHeader";
 import bag from "@/assets/images/testBag.png";
@@ -7,6 +8,7 @@ import { ApplyButton } from "@/components/custom/ApplyButton";
 
 export default function MyOrderList() {
   const [side, setSide] = useState<"front" | "back">("front");
+  const navigate = useNavigate();
 
   return (
     <div className="relative mx-auto h-dvh w-full max-w-97.5 overflow-hidden bg-[#F9F4F0]">
@@ -67,7 +69,13 @@ export default function MyOrderList() {
       <p className="pt-13 text-center font-bold text-[#888D96]">커스텀을 주문하시겠습니까?</p>
 
       <div className="pointer-events-auto absolute inset-x-0 bottom-25 flex justify-center">
-        <ApplyButton text="주문하기" onApply={() => {}} disabled={false} />
+        <ApplyButton
+          text="주문하기"
+          onApply={() => {
+            navigate("/custom/order/complete");
+          }}
+          disabled={false}
+        />
       </div>
 
       <div className="pointer-events-auto absolute inset-x-0 bottom-17 flex justify-center gap-2 font-bold text-[#B6B7BA]">
