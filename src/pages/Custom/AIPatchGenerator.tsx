@@ -11,13 +11,14 @@ const AIPatchGenerator = () => {
   // TODO: 로그인 사용자 정보 연결되면 실제 닉네임으로 변경할 예정임
   const nickname = "멋쟁이사자처럼";
 
+  // 이전 페이지로 이동함
   const handleBack = () => {
     navigate(-1);
   };
 
+  // 패치 생성 시작 시 사진 선택부터 진행하는 옵션 선택 페이지로 이동함
   const handleStartGenerate = () => {
-    // TODO: 다음 AI 패치 제작 설정 이슈에서 실제 경로로 연결할 예정임
-    console.log("패치 생성 시작");
+    navigate("/custom/ai-patch/options");
   };
 
   const handleReanalyze = () => {
@@ -41,16 +42,16 @@ const AIPatchGenerator = () => {
         <h1 className="text-2xl font-bold text-white">AI 사용자 분석</h1>
       </header>
 
-      {/* 큰 반원 배경 */}
-
+      {/* 큰 반원 배경임 */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute left-1/2 top-140 z-0 h-160 w-240 -translate-x-1/2 rounded-[90%] bg-[#F9F4F0]"
       />
+
       {/* 화면 높이가 작은 경우 본문 영역만 스크롤되게 해줌 */}
       <section className="relative z-10 h-[calc(100dvh-126px)] overflow-y-auto">
         <div className="mx-auto flex w-full flex-col items-center px-8 pb-14 pt-10">
-          {/* 여행 스타일 분석을 나타내는 아이콘 */}
+          {/* 여행 스타일 분석을 나타내는 아이콘임 */}
           <img
             src={analysisIcon}
             alt=""
@@ -112,7 +113,7 @@ const AIPatchGenerator = () => {
             ))}
           </div>
 
-          {/* 다음 AI 패치 제작 플로우로 넘어가는 버튼임 */}
+          {/* 사진 선택부터 시작하는 AI 패치 제작 페이지로 이동함 */}
           <button
             type="button"
             onClick={handleStartGenerate}
