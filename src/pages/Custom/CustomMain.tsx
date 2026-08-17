@@ -1,9 +1,18 @@
+import { useLocation } from "react-router-dom";
+import { useState } from "react";
+
 import { CustomizeButton, OrderButton, DPPButton } from "@/components/custom/CustomActionButton";
 
 import { ProductViewer } from "@/components/custom/viewer/ProductViewer";
 import floorBg from "@/assets/images/Floor.png";
+import OrderCompleteModal from "@/components/custom/OrderCompleteModal";
 
 export default function CustomMain() {
+  const location = useLocation();
+
+  const [isOrderCompleteModalOpen, setIsOrderCompleteModalOpen] = useState(
+    location.state?.showOrderCompleteModal ?? false,
+  );
   return (
     <main className="relative mx-auto h-dvh w-full max-w-97.5 overflow-hidden bg-[#F9F4F0]">
       {/*배경색 피그마 고정 배경 - F9F4F0, mx-auto:좌우 마진 중앙 위치, 삐져나온건 숨기기, 화면 높이 꽉채우고, 가로는 최대 390px*/}
@@ -50,12 +59,15 @@ export default function CustomMain() {
         </div>
 
         {/* 하단 버튼 영역 */}
-
         <div className="pointer-events-auto absolute bottom-45 left-0 right-0  flex flex-col items-center gap-4">
           <CustomizeButton />
           <OrderButton />
         </div>
       </div>
+      {/* 주문 완료 모달 */}
+      {isOrderCompleteModalOpen && (
+        <OrderCompleteModal onClose={() => setIsOrderCompleteModalOpen(false)} />
+      )}
     </main>
   );
 }

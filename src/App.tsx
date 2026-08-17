@@ -20,6 +20,10 @@ import CustomMain from "@/pages/Custom/CustomMain";
 import Customizing from "@/pages/Custom/Customizing";
 import AIPatchGenerator from "@/pages/Custom/AIPatchGenerator";
 
+import CustomOrder from "@/pages/Custom/CustomOrder";
+import CustomOrderComplete from "@/pages/Custom/CustomOrderComplete";
+import CustomOrderDetail from "@/pages/Custom/CustomOrderDetail";
+
 import OneToOneOrderMain from "@/pages/OneToOneOrder/OneToOneOrderMain";
 import CustomRequest from "@/pages/OneToOneOrder/CustomRequest";
 import CustomArtistSelect from "@/pages/OneToOneOrder/CustomArtistSelect";
@@ -64,6 +68,9 @@ function App() {
           {/* Custom - 제품 커스텀 페이지 */}
           <Route path="/custom" element={<CustomMain />} />
           <Route path="/custom/customizing" element={<Customizing />} />
+          <Route path="/custom/order" element={<CustomOrder />} />
+          <Route path="/custom/order/complete" element={<CustomOrderComplete />} />
+          <Route path="/custom/order/detail" element={<CustomOrderDetail />} />
           {/* Custom - AI 패치 생성 플로우 - 하단 네비게이션 없음 */}
           <Route path="/custom/ai-patch" element={<AIPatchGenerator />} />
 
