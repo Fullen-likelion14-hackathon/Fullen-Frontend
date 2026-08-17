@@ -1,10 +1,9 @@
 import type { TravelCategory } from "./Passport";
+import { getCountryFlagUrl } from "@/mocks/countryFlags.mock";
 
-import germanyImage from "@/assets/images/MainGermany.png"; // TODO: 실제 파일명으로 교체
-import japanImage from "@/assets/images/MainJapan.png"; // TODO: 실제 파일명으로 교체
+import germanyImage from "@/assets/images/MainGermany.png";
+import japanImage from "@/assets/images/MainJapan.png";
 
-// 개발 중 레이아웃 확인용 더미데이터
-// 커밋 전 Passport.tsx에서 이 import를 빈 배열로 되돌릴 것
 export const mockCategories: TravelCategory[] = [
   {
     id: "1",
@@ -15,6 +14,8 @@ export const mockCategories: TravelCategory[] = [
     startDate: "2026-07-31",
     endDate: "2026-08-07",
     feedCount: 5,
+    createdAt: "2026-08-01T00:00:00.000Z",
+    flagUrl: getCountryFlagUrl("GERMANY"),
   },
   {
     id: "2",
@@ -25,6 +26,8 @@ export const mockCategories: TravelCategory[] = [
     startDate: "2026-03-25",
     endDate: "2026-03-30",
     feedCount: 8,
+    createdAt: "2026-03-31T00:00:00.000Z",
+    flagUrl: getCountryFlagUrl("JAPAN"),
   },
   {
     id: "3",
@@ -35,6 +38,8 @@ export const mockCategories: TravelCategory[] = [
     startDate: "2026-12-05",
     endDate: "2026-12-10",
     feedCount: 3,
+    createdAt: "2026-12-11T00:00:00.000Z",
+    flagUrl: getCountryFlagUrl("GERMANY"),
   },
   {
     id: "4",
@@ -45,6 +50,8 @@ export const mockCategories: TravelCategory[] = [
     startDate: "2026-01-10",
     endDate: "2026-01-14",
     feedCount: 6,
+    createdAt: "2026-01-15T00:00:00.000Z",
+    flagUrl: getCountryFlagUrl("JAPAN"),
   },
   {
     id: "5", // 홀수 개수 레이아웃 확인용
@@ -55,5 +62,7 @@ export const mockCategories: TravelCategory[] = [
     startDate: "2026-09-01",
     endDate: "2026-09-15",
     feedCount: 12,
+    createdAt: "2026-09-16T00:00:00.000Z",
+    flagUrl: getCountryFlagUrl("GERMANY"),
   },
 ];

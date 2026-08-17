@@ -1,7 +1,7 @@
 // ============================================================
 // Passport.tsx — 메인 피드 페이지 (3번)
-// 국가별 여행 카테고리를 카드 그리드로 보여주고,
-// 지도 이동 / 카테고리 추가 진입점을 제공하는 화면
+// 대륙별로 그룹핑된 여행 카테고리를 가로 카드 형태로 보여주고,
+// 최근 등록순으로 오른쪽에 쌓이며 가로 슬라이드로 이전 기록 탐색 가능
 // ============================================================
 
 import { useNavigate } from "react-router-dom";
@@ -9,81 +9,102 @@ import { mockCategories } from "./passport.mock";
 // TODO: 실제 커밋 시엔 아래처럼 빈 배열로 교체
 // const mockCategories: TravelCategory[] = [];
 
-// 실제 에셋 (경로/파일명 확정됨)
-import leatherTexture from "@/assets/images/leather-texture.png"; // 배경 가죽 텍스처
-import globeIcon from "@/assets/icons/globe.png"; // 지도 보기 버튼 아이콘
-import diamondIcon from "@/assets/icons/Rectangle.png"; // 카드 하단 플랩 다이아몬드 워터마크
-import mcmWatermark from "@/assets/images/MainMcmLogo.png"; // 카드 하단 플랩 MCM 로고 워터마크
+import mainGlobeIcon from "@/assets/icons/mainglobe.png"; // 지도 보기 버튼 아이콘
+import planeIcon from "@/assets/icons/mainplane.png"; // 인사말 옆 비행기 아이콘
+import plusIcon from "@/assets/icons/plus.png"; // 여행 추가 버튼 + 아이콘
 
-// 국가별 여행 카테고리 데이터 타입
-// mock 파일(passport.mock.ts)과 실제 API 응답 둘 다 이 타입을 따름
 export type TravelCategory = {
   id: string;
   countryName: string;
   imageUrl: string;
-  continent: string; // "아시아" | "유럽" | "북아메리카" 등
+  continent: string;
   travelTitle: string;
-  startDate: string; // ISO 형식 "YYYY-MM-DD"
+  startDate: string;
   endDate: string;
   feedCount: number;
+  createdAt: string;
+  flagUrl?: string; // 국기 이미지 URL — PinCardCarousel(지도)의 MapPin.flagUrl과 동일한 패턴
 };
 
-const mockUserName = "멋사대학"; // TODO: 로그인 연동 후 실제 사용자명으로 교체
+const mockUserName = "멋쟁이사자처럼"; // TODO: 로그인 연동 후 실제 사용자명으로 교체
 
-interface TravelCardProps {
-  category: TravelCategory;
-  onClick: () => void;
+const CONTINENT_ORDER = [
+  "아시아",
+  "유럽",
+  "북아메리카",
+  "남아메리카",
+  "아프리카",
+  "오세아니아",
+  "남극",
+];
+
+interface ContinentGroupProps {
+  continent: string;
+  categories: TravelCategory[];
+  onOpen: (continent: string) => void;
 }
 
-// 사진 + 국가명은 완성본 유지, 하단 MCM 로고 + 다이아몬드 워터마크 플랩만 추가
-// 플랩 구조/수치는 피그마 익스포트 코드 기준 (MCM 로고 1.5배, 다이아몬드 아이콘 size-6로 확대)
-const TravelCard = ({ category, onClick }: TravelCardProps) => (
-  <button onClick={onClick} className="w-40 h-48 relative shrink-0 text-left">
-    <div className="w-32 h-40 left-1/2 -translate-x-1/2 top-0 absolute bg-neutral-50 rounded-[5px] overflow-hidden">
-      <img
-        src={category.imageUrl}
-        alt={category.countryName}
-        className="w-32 h-40 absolute inset-0 object-cover"
-      />
-      {/* 사진 안에서 세로 중앙 정렬 (top-1/2 -translate-y-1/2) */}
-      {/* font-['PT_Serif']는 프로젝트에 로드돼 있지 않아 폴백 폰트로 보이던 문제 → 실제 로드된 font-sans(Geist Variable)로 교체 */}
-      <div className="left-[9px] top-1/2 -translate-y-1/2 absolute text-white text-xl font-bold font-sans">
-        {category.countryName}
-      </div>
-    </div>
+// 대륙 하나 = 등록순(오래된→최신, 좌→우) 가로 카드 최대 3장 + 하단 정보 바(플랩)
+const ContinentGroup = ({ continent, categories, onOpen }: ContinentGroupProps) => {
+  const previewCategories = [...categories]
+    .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+    .slice(-3);
 
-    {/* 하단 플랩: 카드 전체 폭 기준, MCM 로고 + 다이아몬드 워터마크 장식
-          직접 조정 포인트:
-          - 가로 폭: w-42 숫자만 바꾸면 됨 (left-1/2 -translate-x-1/2로 항상 가운데 정렬 유지)
-          - 불투명도: bg-stone-300/70 의 /70(0~100) 숫자만 바꾸면 됨 (숫자가 클수록 불투명) */}
-    <div
-      aria-hidden="true"
-      className="w-42 h-24 left-1/2 -translate-x-1/2 top-22 absolute overflow-hidden rounded-bl-[10px] rounded-br-[10px] bg-stone-300/65 shadow-[0px_0px_2.5px_1px_rgba(0,0,0,0.10),0px_1.5px_2.5px_1.5px_rgba(81,48,24,0.30),inset_0px_0px_2.5px_2.5px_rgba(198,198,198,0.25)] outline-[0.5px] outline-offset-[-0.5px] outline-stone-400/30"
-    >
-      <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 px-2">
-        <div className="w-full flex items-center justify-between">
-          <img src={mcmWatermark} alt="" className="w-15 h-13 object-contain opacity-50" />
-          <img src={diamondIcon} alt="" className="size-6 opacity-70" />
-          <img src={mcmWatermark} alt="" className="w-15 h-13 object-contain opacity-50" />
-        </div>
-        <div className="w-full flex items-center justify-between">
-          <img src={diamondIcon} alt="" className="size-6 opacity-70" />
-          <img
-            src={mcmWatermark}
-            alt=""
-            className="w-15 h-13 rotate-180 object-contain opacity-50"
-          />
-          <img src={diamondIcon} alt="" className="size-6 opacity-70" />
-        </div>
+  return (
+    <div className="w-full h-44 relative overflow-hidden">
+      <div className="absolute left-8.5 right-8.5 top-1.5 flex items-center gap-3.5">
+        {previewCategories.map((category) => (
+          <button
+            key={category.id}
+            onClick={() => onOpen(continent)}
+            className="w-24 h-32 shrink-0 relative bg-neutral-50 rounded-[5px] shadow-[4px_4px_4px_0px_rgba(0,0,0,0.25)] overflow-hidden"
+          >
+            <img
+              src={category.imageUrl}
+              alt={category.countryName}
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+            {/* 국가명 텍스트: text-lg로 조정 */}
+            <span className="absolute inset-0 flex items-center justify-center text-neutral-50 text-lg font-bold font-['PT_Serif'] [text-shadow:_0px_4px_4px_rgb(0_0_0_/_0.25)]">
+              {category.countryName.toUpperCase()}
+            </span>
+          </button>
+        ))}
       </div>
+
+      {/* 하단 플랩(대륙 정보 바)
+            직접 조정 포인트:
+            - 불투명도: bg-stone-400/60 의 /60(0~100) 숫자만 바꾸면 됨 (숫자가 클수록 불투명)
+            - 색상: bg-stone-400 부분만 다른 Tailwind 색상 클래스로 교체 가능
+            - 세로 위치: top-[110px] 숫자만 바꾸면 위/아래로 이동 (기존 119px에서 위로 조정됨)
+            - 블러 효과: backdrop-blur-[2px]의 대괄호 안 px 숫자만 바꾸면 흐림 정도 조절 가능
+            - 장식 원↔텍스트 간격: 원(size-2, left-[7px]/right-[7px])과 텍스트 사이 35px 간격 확보를 위해
+              좌우 padding을 px-[50px]로 설정함 (7px + 8px(원 지름) + 35px = 50px) */}
+      <button
+        onClick={() => onOpen(continent)}
+        className="absolute left-1/2 top-[110px] -translate-x-1/2 w-[371px] h-[43px] flex items-center justify-between px-[50px] bg-stone-400/20 backdrop-blur-[2px] rounded-[10px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] overflow-hidden"
+      >
+        <div className="size-2 absolute left-[7px] top-1/2 -translate-y-1/2 bg-conic-63 from-black/20 to-stone-500/20 rounded-[50px]" />
+        <div className="size-2 absolute right-[7px] top-1/2 -translate-y-1/2 bg-conic-63 from-black/20 to-stone-500/20 rounded-[50px]" />
+
+        <span className="text-white text-base font-bold font-['Paperlogy']">{continent}</span>
+        <span className="text-white text-sm font-bold font-['Paperlogy']">
+          {categories.length}개의 여정
+        </span>
+      </button>
     </div>
-  </button>
-);
+  );
+};
 
 const Passport = () => {
   const navigate = useNavigate();
 
   const hasCategories = mockCategories.length > 0;
+
+  const groupedByContinent = CONTINENT_ORDER.map((continent) => ({
+    continent,
+    categories: mockCategories.filter((c) => c.continent === continent),
+  })).filter((group) => group.categories.length > 0);
 
   const handleAddCategory = () => {
     navigate("/passport/new");
@@ -98,73 +119,64 @@ const Passport = () => {
   };
 
   return (
-    // 전체 컨테이너: FooterNavigation과 동일한 폭 기준(w-full max-w-107.5)으로 맞춤, 배경은 가죽 텍스처 이미지
-    // min-h-dvh: 실제 뷰포트 높이가 844px보다 커도 가죽 배경이 하단 푸터까지 끊김 없이 이어지도록 함
-    // 카드가 absolute로 배치돼서 컨테이너 높이에 반영되지 않으므로, overflow-hidden을 없애
-    // 카테고리가 많아 화면을 넘어갈 때 (고정된 푸터는 그대로 두고) 페이지 자체가 스크롤되게 함
-    <div
-      className="relative w-full max-w-107.5 min-h-dvh mx-auto bg-[#AB6A37] bg-cover bg-center"
-      style={{ backgroundImage: `url(${leatherTexture})` }}
-    >
-      {/* 상단 그라데이션 오버레이 + 헤더(인사말 + 지도/카테고리 추가 버튼) */}
-      <div className="w-full h-64 left-0 top-0 absolute bg-linear-to-b from-black/50 to-transparent">
-        <div className="flex items-center gap-2 absolute right-[29px] top-[82px]">
-          {/* 지도 보기 버튼 - 원형 아이콘 버튼 */}
-          <button
-            onClick={handleOpenMap}
-            aria-label="지도 보기"
-            className="size-8 relative bg-white/50 rounded-[10px] flex items-center justify-center"
-          >
-            <img src={globeIcon} alt="" className="size-5" />
-          </button>
-          {/* 카테고리 추가하기 버튼 */}
+    <div className="relative w-full max-w-97.5 min-h-dvh mx-auto bg-[#F9F4F0]">
+      {/* 헤더: 상단 여백 pt-12로 조정하여 전체적으로 위로 이동 */}
+      <div className="relative w-full px-8.25 pt-12 pb-5 flex flex-col gap-0">
+        <div className="flex items-center justify-end gap-2.5">
+          {/* 버튼 아이콘 사이즈 확대: plus size-3.5→size-5, globe size-4→size-5 */}
           <button
             onClick={handleAddCategory}
-            className="px-3.5 py-2 bg-white/50 rounded-[10px] text-white text-xs font-semibold font-['Pretendard_Variable'] whitespace-nowrap"
+            className="w-[76px] h-[35px] flex items-center justify-center gap-1.25 bg-white/80 rounded-[10px] shadow-[0px_0px_5px_0px_rgba(25,39,60,0.10),inset_0px_3px_3px_0px_rgba(255,255,255,0.25),inset_0px_-1.5px_1.5px_0px_rgba(159,159,159,0.25)]"
           >
-            카테고리 추가하기
+            <img src={plusIcon} alt="" className="size-5" />
+            <span className="text-slate-800/80 text-base font-semibold font-['Paperlogy']">
+              여행
+            </span>
+          </button>
+
+          <button
+            onClick={handleOpenMap}
+            className="w-[76px] h-[35px] flex items-center justify-center gap-1.25 bg-white/80 rounded-[10px] shadow-[0px_0px_5px_0px_rgba(25,39,60,0.10),inset_0px_3px_3px_0px_rgba(255,255,255,0.25),inset_0px_-1.5px_1.5px_0px_rgba(159,159,159,0.25)]"
+          >
+            <img src={mainGlobeIcon} alt="" className="size-5" />
+            <span className="text-slate-800 text-base font-semibold font-['Paperlogy']">지도</span>
           </button>
         </div>
 
-        {/* 인사말 텍스트 */}
-        <p className="left-[49px] top-[83px] absolute text-white text-xl font-bold font-['Pretendard_Variable']">
-          반가워요,
-        </p>
-        <p className="left-[49px] top-[111px] absolute text-white text-3xl font-bold font-['Pretendard_Variable']">
-          @{mockUserName}
-        </p>
+        <div className="flex flex-col gap-1.25 min-w-0 -mt-px whitespace-nowrap">
+          <p className="text-slate-800 text-base font-medium font-['Paperlogy']">MCM과 함께한,</p>
+          <p className="leading-tight">
+            <span className="text-slate-800 text-2xl font-extrabold font-['Paperlogy'] align-middle">
+              {mockUserName}
+            </span>
+            <span className="text-slate-800 text-2xl font-extrabold font-['Paperlogy'] align-middle">
+              {" "}
+            </span>
+            <span className="inline-flex items-center gap-1 align-middle whitespace-nowrap">
+              <span className="text-slate-800 text-xl font-medium font-['Paperlogy']">
+                님의 여정
+              </span>
+              <img src={planeIcon} alt="" className="size-6 rotate-10" />
+            </span>
+          </p>
+        </div>
       </div>
 
-      {/* 카드 그리드 (카테고리 있을 때) vs 빈 상태 안내 문구 (없을 때) */}
-      {/* absolute 대신 일반 흐름(margin/padding)으로 배치 → 컨테이너 높이가 카테고리 수만큼 실제로 늘어나서
-            배경 가죽 텍스처가 스크롤 끝까지 끊기지 않고 이어짐 */}
       {hasCategories ? (
-        // w-fit + mx-auto: 카드 2장(w-40) + 간격(gap-5)이 실제로 필요로 하는 폭만큼만 차지하고
-        // 컨테이너 안에서 좌우 중앙 정렬되도록 함 (이전엔 w-80 고정폭이 카드+간격 합계보다 좁아서
-        // 카드가 찌그러지고 왼쪽으로 치우쳐 보였음)
-        <div className="w-fit mx-auto pt-45.75 flex flex-col gap-5 pb-32">
-          {/* 카테고리를 2개씩 묶어서 행(row) 단위로 렌더링 (2열 그리드) */}
-          {Array.from({ length: Math.ceil(mockCategories.length / 2) }).map((_, rowIdx) => (
-            <div key={rowIdx} className="flex items-center gap-5">
-              {mockCategories.slice(rowIdx * 2, rowIdx * 2 + 2).map((category) => (
-                <TravelCard
-                  key={category.id}
-                  category={category}
-                  onClick={() => handleOpenCategory(category.continent)}
-                />
-              ))}
-            </div>
+        <div className="flex flex-col gap-2.5 pb-32">
+          {groupedByContinent.map(({ continent, categories }) => (
+            <ContinentGroup
+              key={continent}
+              continent={continent}
+              categories={categories}
+              onOpen={handleOpenCategory}
+            />
           ))}
         </div>
       ) : (
-        // 빈 상태: 아직 등록된 카테고리가 없을 때 보여주는 안내 문구
-        <div className="w-80 mx-auto pt-55 flex flex-col items-center text-center gap-1">
-          <p className="text-white text-sm font-['Pretendard_Variable']">
-            아직 등록된 여행 기록이 없어요
-          </p>
-          <p className="text-white/70 text-xs font-['Pretendard_Variable']">
-            카테고리를 추가하고 첫 여행을 기록해보세요
-          </p>
+        <div className="w-80 mx-auto pt-20 flex flex-col items-center text-center gap-1 font-['Paperlogy']">
+          <p className="text-slate-800 text-sm">아직 등록된 여행 기록이 없어요</p>
+          <p className="text-slate-800/60 text-xs">카테고리를 추가하고 첫 여행을 기록해보세요</p>
         </div>
       )}
 

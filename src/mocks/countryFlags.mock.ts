@@ -14,6 +14,17 @@ const countryCodeMap: Record<string, string> = {
   일본: "jp",
   대한민국: "kr",
   리스본: "pt", // 카테고리명이 도시명으로 들어올 수도 있어서 별도 매핑
+
+  // Passport(3번)/PassportDetail(4번)에서는 countryName이 영문 대문자로 저장되어 있어 추가
+  GERMANY: "de",
+  JAPAN: "jp",
+  PORTUGAL: "pt",
+  POLAND: "pl",
+  FRANCE: "fr",
+  ITALY: "it",
+  SPAIN: "es",
+  KOREA: "kr",
+  LISBON: "pt",
 };
 
 export function getCountryFlagUrl(countryName: string): string | undefined {
@@ -21,3 +32,16 @@ export function getCountryFlagUrl(countryName: string): string | undefined {
   if (!code) return undefined;
   return `https://flagcdn.com/h80/${code}.png`;
 }
+
+// 영문 countryName -> 한글 표시명 (DetailCard 등에서 카드에 국가명 한글로 표시할 때 사용)
+export const countryNameKoMap: Record<string, string> = {
+  GERMANY: "독일",
+  JAPAN: "일본",
+  PORTUGAL: "포르투갈",
+  POLAND: "폴란드",
+  FRANCE: "프랑스",
+  ITALY: "이탈리아",
+  SPAIN: "스페인",
+  KOREA: "대한민국",
+  LISBON: "리스본",
+};

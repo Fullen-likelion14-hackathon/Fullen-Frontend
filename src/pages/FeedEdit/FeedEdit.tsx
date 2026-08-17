@@ -1,11 +1,15 @@
 // ============================================================
-// FeedNew.tsx — 새로운 게시물 생성 페이지
-// CategoryFeed(카테고리 내 피드 목록) 페이지의 "새 게시물 추가" 버튼에서 진입.
-// 사진 업로드(최대 5장) + 코멘트 + 공개/비공개 토글 + 생성하기
+// FeedEdit.tsx — 게시물 수정 페이지
+// FeedNew.tsx 기반, 기존 값으로 초기화 + 수정 로직 + 헤더만 변경
+//
+// 진입 경로 가정: FeedDetail 등에서 "수정하기" 클릭 시
+//   navigate(`/passport/${categoryId}/${feedId}/edit`, { state: feed })
+// 로 기존 피드 데이터를 넘겨준다고 가정했습니다.
+// 실제 데이터 조회 방식(API 훅 등)이 따로 있다면 아래 initialFeed 부분만 교체하면 됩니다.
 // ============================================================
 
-import { useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useMemo, useRef, useState } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import PageHeader from "@/components/common/PageHeader";
 import MCMWarningDialog, { type MCMWarningType } from "@/components/common/MCMWarningDialog";
 import LeaveConfirmDialog from "@/components/common/LeaveConfirmDialog";
@@ -18,15 +22,36 @@ const MAX_IMAGES = 5;
 
 type McmCheckResult = "valid" | MCMWarningType;
 
-const FeedNew = () => {
+type FeedEditState = {
+  images?: string[];
+  comment?: string;
+  isPublic?: boolean;
+};
+
+const FeedEdit = () => {
   const navigate = useNavigate();
-  const { categoryId } = useParams();
+  const { categoryId, feedId } = useParams();
+  const location = useLocation();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const [images, setImages] = useState<string[]>([]);
-  const [comment, setComment] = useState("");
-  const [isPublic, setIsPublic] = useState(false);
-  const [isCreating, setIsCreating] = useState(false);
+  // TODO: 실제 조회 API/훅이 있다면 이 부분을 useFeedDetail(feedId) 같은 훅으로 교체
+  const initialFeed = (location.state as FeedEditState | null) ?? null;
+
+  const initialValues = useMemo(
+    () => ({
+      images: initialFeed?.images ?? [],
+      comment: initialFeed?.comment ?? "",
+      isPublic: initialFeed?.isPublic ?? false,
+    }),
+    [initialFeed],
+  );
+  // useRef.current를 렌더 중에 읽으면 React Compiler가 금지하는 패턴이라 useState로 스냅샷 고정
+  const [initialSnapshot] = useState(initialValues);
+
+  const [images, setImages] = useState<string[]>(initialValues.images);
+  const [comment, setComment] = useState(initialValues.comment);
+  const [isPublic, setIsPublic] = useState(initialValues.isPublic);
+  const [isSaving, setIsSaving] = useState(false);
   const [isWarningOpen, setIsWarningOpen] = useState(false);
   const [warningType, setWarningType] = useState<MCMWarningType>("no-mcm-photo");
   const [isLeaveDialogOpen, setIsLeaveDialogOpen] = useState(false);
@@ -48,27 +73,34 @@ const FeedNew = () => {
   };
 
   const isFormValid = images.length > 0 && comment.trim() !== "";
-  const hasAnyInput = images.length > 0 || comment.trim() !== "";
+
+  // 최초 로드 값 대비 하나라도 바뀌었는지 (뒤로가기 시 경고모달 노출 조건)
+  const hasChanges =
+    images.length !== initialSnapshot.images.length ||
+    images.some((url, i) => url !== initialSnapshot.images[i]) ||
+    comment !== initialSnapshot.comment ||
+    isPublic !== initialSnapshot.isPublic;
 
   const checkIsMcmProduct = async (_imageUrls: string[]): Promise<McmCheckResult> => {
     return "no-mcm-photo";
   };
 
-  const handleCreate = async () => {
-    if (!isFormValid || isCreating) return;
+  const handleSave = async () => {
+    if (!isFormValid || isSaving) return;
 
-    setIsCreating(true);
+    setIsSaving(true);
     const result = await checkIsMcmProduct(images);
 
     if (result !== "valid") {
-      setIsCreating(false);
+      setIsSaving(false);
       setWarningType(result);
       setIsWarningOpen(true);
       return;
     }
 
+    // TODO: 실제 수정 API 연동 시 아래 setTimeout을 API 호출로 교체
     setTimeout(() => {
-      navigate(`/passport/${categoryId}`);
+      navigate(`/passport/${categoryId}/${feedId}`);
     }, 1500);
   };
 
@@ -76,9 +108,9 @@ const FeedNew = () => {
     setIsWarningOpen(false);
   };
 
-  // 뒤로가기: 일부만 입력된 상태(전부 입력도 전부 공백도 아님)에서 나가려 하면 확인 모달 노출
+  // 뒤로가기: 변경사항이 하나라도 있으면 확인 모달 노출
   const handleBack = () => {
-    if (hasAnyInput && !isFormValid) {
+    if (hasChanges) {
       setIsLeaveDialogOpen(true);
       return;
     }
@@ -92,8 +124,8 @@ const FeedNew = () => {
         className="absolute left-1/2 top-115 -translate-x-1/2 size-187.5 rounded-full bg-[#F9F4F0]"
       />
 
-      {/* 공용 PageHeader 사용. 일부입력 상태 이탈 확인 로직 때문에 onBackClick으로 커스텀 */}
-      <PageHeader title="게시물 생성" onBackClick={handleBack} />
+      {/* 공용 PageHeader 사용, 뒤로가기 시 변경사항 확인 로직을 위해 onBackClick으로 커스텀 */}
+      <PageHeader title="게시물 수정" onBackClick={handleBack} />
 
       <main className="relative z-10 flex flex-1 flex-col gap-5 px-7.5 pt-7.5 pb-10">
         <div className="flex flex-col items-center gap-3.5">
@@ -104,7 +136,7 @@ const FeedNew = () => {
             multiple
             className="hidden"
             onChange={handleImageChange}
-            disabled={isCreating || images.length >= MAX_IMAGES}
+            disabled={isSaving || images.length >= MAX_IMAGES}
           />
 
           {images.length === 0 ? (
@@ -115,7 +147,7 @@ const FeedNew = () => {
                 multiple
                 className="hidden"
                 onChange={handleImageChange}
-                disabled={isCreating}
+                disabled={isSaving}
               />
               <img src={uploadIcon} alt="" className="size-10 object-contain" />
               <p className="text-sm font-semibold tracking-tight text-[#AC917C] font-['Paperlogy']">
@@ -139,7 +171,7 @@ const FeedNew = () => {
                   <button
                     type="button"
                     onClick={() => handleRemoveImage(index)}
-                    disabled={isCreating}
+                    disabled={isSaving}
                     aria-label="사진 삭제"
                     className="absolute right-2 top-2 flex size-7 items-center justify-center rounded-full text-white"
                   >
@@ -152,7 +184,7 @@ const FeedNew = () => {
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  disabled={isCreating}
+                  disabled={isSaving}
                   className="flex h-72 w-24 shrink-0 items-center justify-center rounded-[10px] border-2 border-dashed border-stone-300 bg-white text-stone-300"
                 >
                   <img src={uploadIcon} alt="사진 추가" className="size-8 object-contain" />
@@ -165,7 +197,7 @@ const FeedNew = () => {
             value={comment}
             onChange={(e) => setComment(e.target.value)}
             placeholder="코멘트를 입력해주세요."
-            disabled={isCreating}
+            disabled={isSaving}
             style={{ fontFamily: "Paperlogy" }}
             className={`h-[162px] w-full resize-none rounded-[10px] border-2 bg-white p-3 text-sm font-normal leading-4 tracking-tight text-zinc-900 placeholder:font-semibold placeholder:text-[#AC917C] disabled:opacity-60 transition-colors placeholder-shown:pt-[70px] placeholder-shown:text-center ${
               comment ? "border-slate-800" : "border-stone-300"
@@ -184,7 +216,7 @@ const FeedNew = () => {
             <button
               type="button"
               onClick={() => setIsPublic((prev) => !prev)}
-              disabled={isCreating}
+              disabled={isSaving}
               aria-pressed={isPublic}
               aria-label="공개 여부 토글"
               className="relative h-9 w-16 shrink-0 rounded-full bg-stone-300 transition-colors"
@@ -204,10 +236,11 @@ const FeedNew = () => {
           </div>
         </div>
 
+        {/* 저장하기 버튼: 생성하기와 동일 스타일, 라벨/핸들러만 변경 */}
         <button
           type="button"
-          disabled={!isFormValid || isCreating}
-          onClick={handleCreate}
+          disabled={!isFormValid || isSaving}
+          onClick={handleSave}
           style={{ fontFamily: "Paperlogy" }}
           className={`h-14 rounded-[10px] px-6 text-xl font-semibold tracking-tight transition-colors ${
             isFormValid
@@ -215,7 +248,7 @@ const FeedNew = () => {
               : "cursor-not-allowed bg-stone-300 text-stone-100 shadow-[1px_1px_1px_0px_rgba(81,66,54,0.30),inset_0px_2px_2px_0px_rgba(255,255,255,0.6),inset_0px_-2px_2px_0px_rgba(120,100,80,0.2)]"
           }`}
         >
-          생성하기
+          저장하기
         </button>
       </main>
 
@@ -225,14 +258,14 @@ const FeedNew = () => {
         <LeaveConfirmDialog
           onContinue={() => setIsLeaveDialogOpen(false)}
           onLeave={() => navigate(-1)}
-          title="게시물 생성을 중단하시겠습니까?"
-          subtitle="지금까지 선택한 사항들이 전부 삭제됩니다"
-          continueLabel="이어서 생성하기"
-          leaveLabel="게시물 생성 중단하기"
+          title="수정을 중단하시겠습니까?"
+          subtitle="기존 입력사항으로 유지됩니다."
+          continueLabel="이어서 수정하기"
+          leaveLabel="수정 중단하기"
         />
       )}
     </div>
   );
 };
 
-export default FeedNew;
+export default FeedEdit;

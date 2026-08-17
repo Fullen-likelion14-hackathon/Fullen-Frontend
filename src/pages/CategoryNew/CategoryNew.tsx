@@ -1,16 +1,15 @@
 // ============================================================
 // CategoryNew.tsx — 카테고리(여행) 생성 페이지
 // Passport 페이지의 "카테고리 추가하기" 버튼에서 진입.
-// 1단계: 헤더 + 표지사진 업로드 + 입력 필드 뼈대 (정적 상태만 구현)
 // ============================================================
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
+import PageHeader from "@/components/common/PageHeader";
 import CountryAutocomplete from "@/components/common/CountryAutocomplete";
 import DateRangeField from "@/components/common/DateRangeField";
 import LeaveConfirmDialog from "@/components/common/LeaveConfirmDialog";
-import backIcon from "@/assets/icons/back.png";
 import uploadIcon from "@/assets/icons/Upload.png";
 
 const CategoryNew = () => {
@@ -60,29 +59,15 @@ const CategoryNew = () => {
         className="absolute left-1/2 top-115 -translate-x-1/2 size-187.5 rounded-full bg-[#F9F4F0]"
       />
 
-      {/* 헤더 */}
-      <header className="relative z-10 w-full h-32 shrink-0 bg-slate-800">
-        <button
-          type="button"
-          onClick={handleBack}
-          aria-label="뒤로가기"
-          className="absolute left-[34px] top-20.75 flex h-6 w-3.5 items-center justify-center text-stone-100"
-        >
-          <img src={backIcon} alt="" className="h-full w-full object-contain" />
-        </button>
+      {/* 공용 PageHeader 사용. 일부입력 상태 이탈 확인 로직 때문에 onBackClick으로 커스텀 */}
+      <PageHeader title="여행 생성" onBackClick={handleBack} />
 
-        <h1 className="absolute left-1/2 top-[81px] -translate-x-1/2 text-xl font-semibold tracking-tight text-stone-100 font-['Paperlogy']">
-          여행 생성
-        </h1>
-
-        <div className="absolute left-0 top-[125px] h-1.5 w-full bg-yellow-700" />
-      </header>
-
-      {/* 본문 */}
-      <main className="relative z-10 flex flex-1 flex-col gap-8 px-7.5 pt-7.5 pb-10">
+      {/* 본문: relative 추가 -> 로딩 오버레이가 헤더 높이를 픽셀로 고정하지 않고
+          이 컨테이너 기준 absolute inset-0로 자연스럽게 붙도록 함 */}
+      <main className="relative mt-[8px] z-10 flex flex-1 flex-col gap-8 px-7.5 pt-7.5 pb-10">
         <div className="flex flex-col items-center gap-5">
-          {/* 표지사진 업로드 */}
-          <label className="relative flex h-96 w-64 cursor-pointer items-center justify-center overflow-hidden rounded-[10.43px] border-2 border-stone-300 bg-neutral-50">
+          {/* 표지사진 업로드: 테두리 #D3C5BB, 크기 264x360, 안내 문구 색상 #AC917C */}
+          <label className="relative flex h-90 w-66 cursor-pointer items-center justify-center overflow-hidden rounded-[10.43px] border-2 border-[#D3C5BB] bg-neutral-50">
             <input
               type="file"
               accept="image/*"
@@ -95,7 +80,7 @@ const CategoryNew = () => {
             ) : (
               <div className="flex flex-col items-center gap-3.5 text-center">
                 <img src={uploadIcon} alt="" className="size-10 object-contain" />
-                <p className="text-sm font-semibold tracking-tight text-stone-300 font-['Paperlogy']">
+                <p className="text-sm font-semibold tracking-tight text-[#AC917C] font-['Paperlogy']">
                   카테고리 표지사진을
                   <br />
                   올려주세요
@@ -106,9 +91,6 @@ const CategoryNew = () => {
 
           {/* 입력 필드 */}
           <div className="flex w-full flex-col gap-1.5">
-            {/* font-['Paperlogy']를 className으로 넣으면 Input 내부 cn()(tailwind-merge)이
-                font-semibold와 같은 충돌 그룹으로 잘못 인식해 font-semibold를 지워버려서
-                (렌더링된 font-weight가 400으로 빠짐) 인라인 style로 분리함 */}
             <CountryAutocomplete value={country} onChange={setCountry} disabled={isCreating} />
             <Input
               value={travelType}
@@ -116,11 +98,10 @@ const CategoryNew = () => {
               placeholder="여행 유형을 적어주세요"
               disabled={isCreating}
               style={{ fontFamily: "Paperlogy" }}
-              className={`h-12 rounded-[10px] border-2 bg-white text-center text-sm font-semibold tracking-tight placeholder:text-stone-300 disabled:opacity-60 ${
-                travelType ? "border-slate-800" : "border-stone-300"
+              className={`h-12 rounded-[10px] border-2 bg-white text-center text-xl font-semibold tracking-tight text-[#19273C] placeholder:text-[#AC917C] placeholder:text-sm disabled:opacity-60 ${
+                travelType ? "border-slate-800" : "border-[#D3C5BB]"
               }`}
             />
-            {/* 날짜: range 캘린더 (시작일/종료일 선택) */}
             <DateRangeField
               startDate={startDate}
               endDate={endDate}
@@ -147,26 +128,27 @@ const CategoryNew = () => {
         >
           생성하기
         </button>
-      </main>
 
-      {/* 생성 중 로딩 오버레이: 헤더 포함 화면 전체를 덮음 */}
-      {isCreating && (
-        <div className="absolute inset-0 z-50 flex flex-col items-center justify-center gap-4 bg-black/60">
-          <div className="flex gap-2">
-            <span className="size-2 animate-bounce rounded-full bg-white [animation-delay:-0.3s]" />
-            <span className="size-2 animate-bounce rounded-full bg-white [animation-delay:-0.15s]" />
-            <span className="size-2 animate-bounce rounded-full bg-white" />
+        {/* 생성 중 로딩 오버레이: main 기준 inset-0라 헤더 높이가 바뀌어도 자동으로 맞음 */}
+        {isCreating && (
+          <div className="absolute inset-0 z-50 flex flex-col items-center justify-center gap-4 bg-black/60">
+            <div className="flex gap-2">
+              <span className="size-2 animate-bounce rounded-full bg-white [animation-delay:-0.3s]" />
+              <span className="size-2 animate-bounce rounded-full bg-white [animation-delay:-0.15s]" />
+              <span className="size-2 animate-bounce rounded-full bg-white" />
+            </div>
+
+            <p
+              style={{ fontFamily: "Paperlogy" }}
+              className="text-center text-2xl font-bold tracking-wide text-stone-100"
+            >
+              새 여행을
+              <br />
+              등록 중입니다.
+            </p>
           </div>
-          <p
-            style={{ fontFamily: "Paperlogy" }}
-            className="text-center text-2xl font-bold tracking-wide text-stone-100"
-          >
-            새 카테고리를
-            <br />
-            생성중입니다
-          </p>
-        </div>
-      )}
+        )}
+      </main>
 
       {/* 미입력 상태 이탈 확인 모달 */}
       {isLeaveDialogOpen && (

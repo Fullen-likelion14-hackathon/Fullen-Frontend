@@ -32,17 +32,13 @@ const CountryAutocomplete = ({ value, onChange, disabled }: CountryAutocompleteP
   };
 
   return (
-    // h-12: 버튼이 검색창으로 교체돼도(absolute라 흐름에서 빠짐) 래퍼가 높이를 유지하도록 고정
     <div className="relative h-12">
       {isOpen ? (
         <>
-          {/* 바깥 영역 클릭 시 닫기 */}
           <div aria-hidden="true" className="fixed inset-0 z-10" onClick={() => setIsOpen(false)} />
 
-          {/* 필드 자리에서 검색창+목록이 하나의 테두리로 이어지도록 교체 (틈/이중 테두리 없이 병합) */}
           <div className="absolute inset-x-0 top-0 z-20 overflow-hidden rounded-[10px] border-2 border-slate-800 bg-white shadow-lg">
-            {/* 검색 입력 */}
-            <div className="flex h-12 items-center gap-2 border-b border-stone-200 px-4">
+            <div className="flex h-12 items-center gap-2 border-b border-[#D3C5BB] px-4">
               <Search className="size-5 shrink-0 text-slate-800" />
               <input
                 autoFocus
@@ -50,7 +46,7 @@ const CountryAutocomplete = ({ value, onChange, disabled }: CountryAutocompleteP
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="나라 검색"
                 style={{ fontFamily: "Paperlogy" }}
-                className="min-w-0 flex-1 bg-transparent text-center text-lg font-bold tracking-tight text-slate-800 outline-none placeholder:text-stone-300"
+                className="min-w-0 flex-1 bg-transparent text-center text-lg font-bold tracking-tight text-slate-800 outline-none placeholder:text-[#AC917C]"
               />
               <button
                 type="button"
@@ -62,7 +58,6 @@ const CountryAutocomplete = ({ value, onChange, disabled }: CountryAutocompleteP
               </button>
             </div>
 
-            {/* 나라 목록 */}
             <ul className="max-h-64 overflow-y-auto bg-white">
               {filteredCountries.length > 0 ? (
                 filteredCountries.map((c) => (
@@ -79,7 +74,7 @@ const CountryAutocomplete = ({ value, onChange, disabled }: CountryAutocompleteP
                 ))
               ) : (
                 <li
-                  className="px-4 py-3 text-center text-sm text-stone-300"
+                  className="px-4 py-3 text-center text-sm text-[#AC917C]"
                   style={{ fontFamily: "Paperlogy" }}
                 >
                   검색 결과가 없어요
@@ -89,7 +84,6 @@ const CountryAutocomplete = ({ value, onChange, disabled }: CountryAutocompleteP
           </div>
         </>
       ) : (
-        // 필드 본체: 선택된 나라가 있으면 굵은 텍스트+진한 테두리로 표시
         <button
           type="button"
           onClick={handleOpen}
@@ -98,7 +92,7 @@ const CountryAutocomplete = ({ value, onChange, disabled }: CountryAutocompleteP
           className={`h-12 w-full rounded-[10px] border-2 bg-white text-center tracking-tight disabled:opacity-60 ${
             value
               ? "border-slate-800 text-3xl font-bold text-slate-800"
-              : "border-stone-300 text-sm font-semibold text-stone-300"
+              : "border-[#D3C5BB] text-sm font-semibold text-[#AC917C]"
           }`}
         >
           {value || "나라를 입력해주세요"}
