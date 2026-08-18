@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import PageHeader from "@/components/common/PageHeader";
 import bag from "@/assets/images/testBag.png";
 import bagback from "@/assets/images/testBag.png";
-import { ApplyButton } from "@/components/custom/ApplyButton";
+import { ApplyButton } from "@/components/custom/common/ApplyButton";
 
 export default function MyOrderList() {
   const [side, setSide] = useState<"front" | "back">("front");

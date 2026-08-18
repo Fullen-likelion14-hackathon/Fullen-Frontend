@@ -1,8 +1,8 @@
 import { useState } from "react";
 import PatchTypeButton from "@/components/custom/patch/PatchTypeButton";
-import { CustomGenerateButton } from "@/components/custom/CustomGenerate";
+import { CustomGenerateButton } from "@/components/custom/common/CustomGenerate";
 import InfoButton from "@/components/common/button/InfoButton";
-import { ApplyButton } from "@/components/custom/ApplyButton";
+import { ApplyButton } from "@/components/custom/common/ApplyButton";
 
 import ticketImg from "@/assets/images/patchButtons/ticket.png";
 import stampImg from "@/assets/images/patchButtons/stamp.png";

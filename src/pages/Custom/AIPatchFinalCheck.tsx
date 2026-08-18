@@ -57,13 +57,15 @@ const AIPatchFinalCheck = () => {
     });
   };
 
-  // 현재 선택값으로 AI 패치 생성 시작함
+  // 선택한 옵션을 기반으로 AI 패치 생성 결과 페이지로 이동함
   const handleGenerate = () => {
-    // TODO: 실제 AI 패치 생성 API 및 생성 결과 페이지 연결 예정임
-    console.log("AI 패치 생성", {
-      selectedImage,
-      selectedArtistId,
-      selectedFrame,
+    // TODO: 실제 AI 패치 생성 API 연결 후 응답 결과로 이동하도록 변경 예정임
+    navigate("/custom/ai-patch/result", {
+      state: {
+        selectedImage,
+        selectedArtistId,
+        selectedFrame,
+      },
     });
   };
 

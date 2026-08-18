@@ -1,8 +1,8 @@
 import { useState } from "react";
 import InfoButton from "@/components/common/button/InfoButton";
 import NoticeToast from "@/components/common/NoticeToast";
-import { CustomGenerateButton } from "@/components/custom/CustomGenerate";
-import { ApplyButton } from "@/components/custom/ApplyButton";
+import { CustomGenerateButton } from "@/components/custom/common/CustomGenerate";
+import { ApplyButton } from "@/components/custom/common/ApplyButton";
 import InitialEditor from "@/components/custom/initials/InitialEditor";
 import InitialCreateModal from "@/components/custom/initials/InitialCreateModal";
 
