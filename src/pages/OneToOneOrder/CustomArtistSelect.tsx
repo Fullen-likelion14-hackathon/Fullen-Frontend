@@ -7,9 +7,9 @@ import ArtistSlider from "@/components/oneToOneOrder/ArtistSlider";
 import ArtistCard from "@/components/oneToOneOrder/ArtistCard";
 import ArtistDetailModal from "@/components/oneToOneOrder/ArtistDetailModal";
 
-import { recommendedArtists, otherArtists } from "@/components/oneToOneOrder/ArtistData";
+import { recommendedArtists, otherArtists } from "@/mocks/ArtistData";
 
-import type { Artist } from "@/components/oneToOneOrder/ArtistData";
+import type { Artist } from "@/mocks/ArtistData";
 import type { FrameType } from "@/components/custom/common/selection/FrameSelectBox";
 
 interface ArtistSelectLocationState {
