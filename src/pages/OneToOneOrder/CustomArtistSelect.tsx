@@ -115,7 +115,7 @@ export default function CustomArtistSelect() {
   };
 
   return (
-    <div className="relative min-h-screen bg-[#F9F4F0]">
+    <div className="relative min-h-screen max-w-97 mx-auto bg-[#F9F4F0]">
       {/* 상단 헤더 */}
       <PageHeader title="작가 선택" />
 

@@ -11,7 +11,7 @@ const infoItems = [
 
 export default function DigitalProductPassport() {
   return (
-    <div className="min-h-dvh bg-[#faf5f0] pb-16 font-['Pretendard_Variable'] text-[#192940]">
+    <div className="min-h-dvh max-w-97 mx-auto bg-[#faf5f0] pb-16 font-['Pretendard_Variable'] text-[#192940]">
       <PageHeader title="제품 디지털 여권 (DDP)" backTo="/mypage" />
       <main className="mx-auto max-w-107 px-6 pt-8">
         <section className="text-center">

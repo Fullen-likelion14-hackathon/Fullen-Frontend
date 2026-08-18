@@ -11,7 +11,7 @@ export default function MyPage() {
     { label: "나의 주문 목록", icon: <PackageCheck />, onClick: () => navigate("/mypage/orders") },
   ];
   return (
-    <div className="min-h-dvh bg-[#faf5f0] pb-32 font-['Pretendard_Variable'] text-[#192940]">
+    <div className="min-h-dvh max-w-97 mx-auto bg-[#faf5f0] pb-32 font-['Pretendard_Variable'] text-[#192940]">
       <header className="border-b-8 border-[#aa6829] px-6 pb-5 pt-10 text-center">
         <h1 className="text-[24px] font-bold">마이페이지</h1>
       </header>
