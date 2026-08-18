@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import ArtistFrame from "@/components/oneToOneOrder/ArtistFrame";
-import type { Artist } from "@/components/oneToOneOrder/ArtistData";
+import type { Artist } from "@/mocks/ArtistData";
 
 type ArtistSliderProps = {
   artists: Artist[];

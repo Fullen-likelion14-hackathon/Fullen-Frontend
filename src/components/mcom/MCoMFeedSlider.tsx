@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import MCoMFeedCard from "@/components/mcom/MCoMFeedCard";
 
-import type { MCoMFeed } from "@/components/mcom/mcom";
+import type { MCoMFeed } from "@/mocks/mcom";
 
 type MCoMFeedSliderProps = {
   feed: MCoMFeed;
