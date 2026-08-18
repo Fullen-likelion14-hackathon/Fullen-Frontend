@@ -175,11 +175,10 @@ export default function CustomArtistSelect() {
           해당 작가 선택하기
         </button>
       </div>
-
-      {/* 다른 작가 목록 패널임 */}
+      {/* 다른 작가 목록 패널 */}
       {isMoreOpen && (
-        <div className="fixed inset-x-0 bottom-0 top-25.5 z-30 bg-[#F9F4F0]">
-          {/* 다른 작가 목록 스크롤 영역임 */}
+        <div className="max-w-97 mx-auto fixed inset-x-0 bottom-0 top-25.5 z-30 bg-[#F9F4F0]">
+          {/* 스크롤 영역 */}
           <div className="h-full overflow-y-auto px-6 pb-32">
             {/* 다른 작가 목록 닫기 버튼임 */}
             <button
@@ -206,8 +205,8 @@ export default function CustomArtistSelect() {
             </div>
           </div>
 
-          {/* 다른 작가 목록 하단 고정 선택 버튼임 */}
-          <div className="fixed inset-x-0 bottom-0 z-40 bg-[#F9F4F0] px-6 pb-6 pt-3">
+          {/* 하단 고정 작가 선택 버튼 */}
+          <div className="max-w-97 mx-auto fixed inset-x-0 bottom-0 z-40 bg-[#F9F4F0] px-6 pb-6 pt-3">
             <button
               type="button"
               disabled={selectedArtistId === null}

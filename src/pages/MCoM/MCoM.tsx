@@ -3,7 +3,7 @@ import { useState } from "react";
 import MCoMGallery from "@/components/mcom/MCoMGallery";
 import MCoMTabs from "@/components/mcom/MCoMTabs";
 
-import type { MCoMTab } from "@/mocks/mcom";
+import type { MCoMTab } from "@/types/mcom";
 
 export default function MCoM() {
   const [MCoMTab, setMCoM] = useState<MCoMTab>("country");
