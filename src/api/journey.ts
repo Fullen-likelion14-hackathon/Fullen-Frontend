@@ -1,4 +1,6 @@
 // src/api/journey.ts
+import api from "@/api/axios";
+
 export type Continent =
   | "ASIA"
   | "EUROPE"
@@ -7,10 +9,8 @@ export type Continent =
   | "AFRICA"
   | "OCEANIA"
   | "ANTARCTICA";
-  
-import api from "@/api/axios";
 
-interface JourneyRaw {
+export interface JourneyItem {
   journeyId: number;
   nationKRName: string;
   nationENName: string;
@@ -23,11 +23,11 @@ interface JourneyRaw {
 
 interface ContinentGroupRaw {
   count: number;
-  journeys: JourneyRaw[];
+  journeys: JourneyItem[];
 }
 
 interface JourneysResponse {
-  continents: Record<string, ContinentGroupRaw>;
+  continents: Partial<Record<Continent, ContinentGroupRaw>>;
 }
 
 export const getJourneys = async () => {
@@ -39,4 +39,19 @@ export const getJourneys = async () => {
   }>("/api/journeys");
 
   return response.data.data.continents;
+};
+
+export interface JourneyDetail extends JourneyItem {
+  postCount: number;
+}
+
+export const getJourney = async (journeyId: number) => {
+  const response = await api.get<{
+    success: boolean;
+    code: number;
+    message: string;
+    data: JourneyDetail;
+  }>(`/api/journeys/${journeyId}`);
+
+  return response.data.data;
 };
