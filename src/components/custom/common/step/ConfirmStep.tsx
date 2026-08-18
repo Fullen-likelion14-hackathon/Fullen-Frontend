@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 interface ConfirmStepProps {
   step: number;
   title: string;
-  onEdit: () => void;
+  onEdit?: () => void;
   children: ReactNode;
 }
 
@@ -19,13 +19,15 @@ export default function ConfirmStep({ step, title, onEdit, children }: ConfirmSt
           <h2 className="text-xl font-bold">{title}</h2>
         </div>
 
-        <button
-          type="button"
-          onClick={onEdit}
-          className="rounded-md border-2 border-[#B89B84] bg-white px-3 py-1.5 text-sm font-bold"
-        >
-          수정하기
-        </button>
+        {onEdit && (
+          <button
+            type="button"
+            onClick={onEdit}
+            className="rounded-md border-2 border-[#B89B84] bg-white px-3 py-1.5 text-sm font-bold"
+          >
+            수정하기
+          </button>
+        )}
       </div>
 
       {children}

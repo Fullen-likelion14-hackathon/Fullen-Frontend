@@ -185,7 +185,7 @@ const CustomRequest = () => {
         requestText,
       },
     });
-    // TODO: API 연결 후 완료 페이지로 이동
+    //  API 연결 후 완료 페이지로 이동
   };
 
   return (
