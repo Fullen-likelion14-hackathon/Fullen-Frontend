@@ -4,18 +4,33 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import PageHeader from "@/components/common/PageHeader";
 import { DetailCard } from "@/components/common/DetailCard";
-import { mockCategories } from "@/pages/Passport/passport.mock";
+import { useJourneys } from "@/hooks/queries/useJourneys";
+import type { Continent, JourneyItem } from "@/api/journey";
 import bgDetail from "@/assets/images/BG_detail.png";
 import planeIcon from "@/assets/icons/plane1.png";
 
-// MCoMFeedSlider(components/mcom/MCoMFeedSlider.tsx)의 포인터 드래그 스와이프 방식을 그대로 적용.
 const CARD_STEP = 288.5;
 const SWIPE_THRESHOLD = 60;
 const ANIMATION_DURATION = 300;
 
+const CONTINENT_LABELS: Record<Continent, string> = {
+  ASIA: "아시아",
+  EUROPE: "유럽",
+  NORTH_AMERICA: "북아메리카",
+  SOUTH_AMERICA: "남아메리카",
+  AFRICA: "아프리카",
+  OCEANIA: "오세아니아",
+  ANTARCTICA: "남극",
+};
+// URL의 한글 라벨 → 백엔드 enum 키로 역매핑 (예: "아시아" → "ASIA")
+const LABEL_TO_CONTINENT = Object.fromEntries(
+  Object.entries(CONTINENT_LABELS).map(([key, label]) => [label, key as Continent]),
+) as Record<string, Continent>;
+
 export default function PassportDetail() {
   const navigate = useNavigate();
   const { continent } = useParams<{ continent: string }>();
+  const { data: continents } = useJourneys();
 
   const [homeContinent] = useState(() => (continent && continent !== "all" ? continent : null));
 
@@ -23,12 +38,18 @@ export default function PassportDetail() {
     continent && continent !== "all" ? "continent" : "all",
   );
 
-  const filteredCategories =
-    mode === "continent"
-      ? mockCategories.filter((c) => c.continent === continent)
-      : [...mockCategories].sort(
-          (a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime(),
-        );
+  // "전체": 모든 대륙의 journey를 합쳐서 startDate순 정렬
+  // 특정 대륙: 해당 대륙 그룹의 journeys만 그대로 사용
+  const filteredCategories: JourneyItem[] = (() => {
+    if (!continents) return [];
+    if (mode === "continent" && homeContinent) {
+      const key = LABEL_TO_CONTINENT[homeContinent];
+      return key ? (continents[key]?.journeys ?? []) : [];
+    }
+    return Object.values(continents)
+      .flatMap((group) => group?.journeys ?? [])
+      .sort((a, b) => a.startDate.localeCompare(b.startDate));
+  })();
 
   const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -121,7 +142,7 @@ export default function PassportDetail() {
 
   const handleOpen = () => {
     const current = filteredCategories[selectedIndex];
-    if (current) navigate(`/passport/${current.id}`);
+    if (current) navigate(`/passport/${current.journeyId}`);
   };
 
   return (
@@ -129,10 +150,8 @@ export default function PassportDetail() {
       className="relative mx-auto h-dvh w-full max-w-97.5 overflow-hidden bg-stone-100 bg-cover bg-center"
       style={{ backgroundImage: `url(${bgDetail})` }}
     >
-      {/* 공용 PageHeader 사용 (고정 타이틀 "나의 여정", 대륙/전체 토글은 아래 별도 세그먼트로 분리) */}
       <PageHeader title="나의 여정" backTo="/" />
 
-      {/* 전체/대륙 토글: 헤더 바로 아래 세그먼트 컨트롤로 분리, 활성 탭은 흰 배경+진한 텍스트 */}
       {homeContinent && (
         <div className="mx-auto mt-9.5 flex h-[42px] w-[300px] items-center gap-0.5 rounded-[10px] bg-stone-300 p-0.5">
           <button
@@ -154,10 +173,6 @@ export default function PassportDetail() {
         </div>
       )}
 
-      {/* 카드 캐러셀: MCoMFeedSlider와 동일하게 이전/현재/다음 카드를 포인터 드래그로 좌우 전환
-            TODO: 카드 내부 디자인(국기 배지 원형/그라데이션 오버레이/국가명·여행제목·날짜·피드개수 배치)은
-            DetailCard 컴포넌트 쪽에서 다뤄야 함 — 이 파일에는 DetailCard 코드가 없어 반영하지 못함 */}
-      {/* 카드 캐러셀: 토글 세그먼트 컨트롤과 35px 간격 확보 */}
       <div
         className="relative mt-7 flex h-105.25 select-none items-center justify-center overflow-hidden touch-pan-y"
         onPointerDown={handlePointerDown}
@@ -200,7 +215,6 @@ export default function PassportDetail() {
         )}
       </div>
 
-      {/* 진행 인디케이터: 얇은 회색 바(track) + 진한 원형 배지 안에 비행기 아이콘이 좌우로 이동 */}
       <div className="mt-10 flex justify-center">
         <div className="relative h-2 w-72">
           <div className="h-full w-full overflow-hidden rounded-full bg-stone-300" />
@@ -213,7 +227,6 @@ export default function PassportDetail() {
         </div>
       </div>
 
-      {/* 열기 버튼 */}
       <div className="mt-8 flex justify-center pb-10">
         <button
           onClick={handleOpen}
