@@ -1,4 +1,4 @@
-import type { MCoMTab } from "@/mocks/mcom";
+import type { MCoMTab } from "@/types/mcom";
 
 type MCoMTabsProps = {
   MCoMTab: MCoMTab;
