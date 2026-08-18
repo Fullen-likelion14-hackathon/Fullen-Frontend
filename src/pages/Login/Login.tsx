@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import bagFloor from "@/assets/images/bagFloor.png";
 import bagCarrier from "@/assets/images/bagCarrier.png";
 import loginPlane from "@/assets/icons/loginplane.png";
+import { useLogin } from "@/hooks/queries/useLogin";
 
 // ── 비행기 경로/각도 조절값 (SVG viewBox 0 0 320 160 기준, 숫자만 바꾸며 테스트 가능) ──
 const PLANE_START = { x: 0, y: 20 }; // 시작점: 왼쪽 벽, 시작하자마자
@@ -20,6 +21,7 @@ export default function Login() {
   const geometryPathRef = useRef<SVGPathElement>(null); // 좌표 계산 전용, 화면엔 안 보임
   const revealRef = useRef<HTMLDivElement>(null); // clip-path로 점선을 진행률만큼 드러내는 래퍼
   const planeRef = useRef<HTMLImageElement>(null);
+  const { mutate: login, isPending } = useLogin();
 
   useEffect(() => {
     const geometryPath = geometryPathRef.current;
@@ -61,8 +63,17 @@ export default function Login() {
   }, []);
 
   const handleTestLogin = () => {
-    // TODO: 실제 로그인/회원가입 기능 미구현 상태, 테스트용 버튼으로 임시 대체
-    navigate("/nfc-tagging");
+    // TODO: 실제 로그인/회원가입 UI는 미구현, 테스트 계정으로 API 연동 확인용
+    login(
+      { email: "test@test.com", password: "password123!" },
+      {
+        onSuccess: () => navigate("/nfc-tagging"),
+        onError: (error) => {
+          console.error("로그인 실패:", error);
+          alert("로그인에 실패했습니다.");
+        },
+      },
+    );
   };
 
   return (
@@ -121,9 +132,10 @@ export default function Login() {
       {/* 시작 버튼 */}
       <Button
         onClick={handleTestLogin}
+        disabled={isPending}
         className="absolute bottom-[60px] left-1/2 h-14 w-80 max-w-full -translate-x-1/2 shrink-0 rounded-[10px] bg-stone-300 px-6 py-2 text-xl font-bold tracking-tight text-slate-800 shadow-[0_0_10px_0_rgba(81,66,54,0.20),inset_0_1px_1px_1px_rgba(255,255,255,0.10),inset_0_-1px_1px_1px_rgba(0,0,0,0.10)] hover:bg-stone-300/90"
       >
-        테스트 버튼으로 시작하기
+        {isPending ? "로그인 중..." : "테스트 버튼으로 시작하기"}
       </Button>
     </div>
   );
