@@ -38,7 +38,7 @@ interface ContinentGroupProps {
   continentLabel: string;
   journeys: {
     journeyId: number;
-    nationKRName: string;
+    nationENName: string;
     coverImgUrl: string;
   }[];
   count: number;
@@ -61,12 +61,12 @@ const ContinentGroup = ({ continentLabel, journeys, count, onOpen }: ContinentGr
           >
             <img
               src={journey.coverImgUrl}
-              alt={journey.nationKRName}
+              alt={journey.nationENName}
               className="absolute inset-0 w-full h-full object-cover"
             />
             {/* 국가명 텍스트: text-lg로 조정 */}
             <span className="absolute inset-0 flex items-center justify-center text-neutral-50 text-lg font-bold font-['PT_Serif'] [text-shadow:_0px_4px_4px_rgb(0_0_0_/_0.25)]">
-              {journey.nationKRName.toUpperCase()}
+              {journey.nationENName.toUpperCase()}
             </span>
           </button>
         ))}
@@ -178,7 +178,7 @@ const Passport = () => {
               continentLabel={label}
               journeys={journeys.map((j) => ({
                 journeyId: j.journeyId,
-                nationKRName: j.nationKRName,
+                nationENName: j.nationENName,
                 coverImgUrl: j.coverImgUrl,
               }))}
               count={count}
@@ -187,7 +187,7 @@ const Passport = () => {
           ))}
         </div>
       ) : (
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-center gap-1 font-['Paperlogy']">
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center gap-1 font-['Paperlogy'] pointer-events-none">
           <p className="text-slate-800 text-sm">아직 등록된 여행 기록이 없어요</p>
           <p className="text-slate-800/60 text-xs">카테고리를 추가하고 첫 여행을 기록해보세요</p>
         </div>

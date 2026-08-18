@@ -2,13 +2,7 @@
 import api from "@/api/axios";
 
 export type Continent =
-  | "ASIA"
-  | "EUROPE"
-  | "NORTH_AMERICA"
-  | "SOUTH_AMERICA"
-  | "AFRICA"
-  | "OCEANIA"
-  | "ANTARCTICA";
+  "ASIA" | "EUROPE" | "NORTH_AMERICA" | "SOUTH_AMERICA" | "AFRICA" | "OCEANIA" | "ANTARCTICA";
 
 export interface JourneyItem {
   journeyId: number;
@@ -52,6 +46,54 @@ export const getJourney = async (journeyId: number) => {
     message: string;
     data: JourneyDetail;
   }>(`/api/journeys/${journeyId}`);
+
+  return response.data.data;
+};
+
+export interface CreateJourneyRequest {
+  imgUrl: string;
+  nationName: string;
+  type: string;
+  startDate: string; // "YYYY-MM-DD"
+  endDate: string; // "YYYY-MM-DD"
+}
+
+export const createJourney = async (payload: CreateJourneyRequest) => {
+  const response = await api.post<{
+    success: boolean;
+    code: number;
+    message: string;
+    data: JourneyDetail;
+  }>("/api/journeys", payload);
+
+  return response.data.data;
+};
+
+export const deleteJourney = async (journeyId: number) => {
+  const response = await api.delete<{
+    success: boolean;
+    code: number;
+    message: string;
+    data: string;
+  }>(`/api/journeys/${journeyId}`);
+
+  return response.data.data;
+};
+
+export interface UpdateJourneyRequest {
+  imgUrl: string;
+  type: string;
+  startDate: string; // "YYYY-MM-DD"
+  endDate: string;
+}
+
+export const updateJourney = async (journeyId: number, payload: UpdateJourneyRequest) => {
+  const response = await api.put<{
+    success: boolean;
+    code: number;
+    message: string;
+    data: JourneyDetail;
+  }>(`/api/journeys/${journeyId}`, payload);
 
   return response.data.data;
 };
