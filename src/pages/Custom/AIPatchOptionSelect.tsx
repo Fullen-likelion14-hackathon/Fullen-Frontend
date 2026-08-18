@@ -11,7 +11,7 @@ import PhotoSelectBox from "@/components/custom/common/selection/PhotoSelectBox"
 import CustomStep from "@/components/custom/common/step/CustomStep";
 import CustomStepButton from "@/components/custom/common/step/CustomStepButton";
 
-import { recommendedArtists, otherArtists } from "@/components/oneToOneOrder/ArtistData";
+import { recommendedArtists, otherArtists } from "@/mocks/ArtistData";
 
 // 이전 페이지에서 전달받는 state 타입
 type AIPatchOptionLocationState = {

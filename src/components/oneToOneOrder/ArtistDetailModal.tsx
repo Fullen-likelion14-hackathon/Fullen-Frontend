@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { X } from "lucide-react";
 
-import type { Artist } from "@/components/oneToOneOrder/ArtistData";
+import type { Artist } from "@/mocks/ArtistData";
 
 type ArtistDetailModalProps = {
   artist: Artist | null;

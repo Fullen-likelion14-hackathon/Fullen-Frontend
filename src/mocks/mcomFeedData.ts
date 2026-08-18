@@ -5,7 +5,7 @@ import germanyFlag from "@/assets/images/flags/germany.png";
 import japanFlag from "@/assets/images/flags/japan.png";
 import franceFlag from "@/assets/images/flags/france.png";
 
-import type { MCoMFeed } from "@/components/mcom/mcom";
+import type { MCoMFeed } from "@/mocks/mcom";
 
 export const mcomFeedMockData: MCoMFeed[] = [
   {
