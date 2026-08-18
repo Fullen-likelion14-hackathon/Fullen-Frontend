@@ -78,12 +78,22 @@ export default function CustomArtistSelect() {
       return;
     }
 
-    // 별도 source가 없으면 기존 1:1 커스텀 주문 흐름으로 이동함
-    navigate("/onetooneorder/request", {
-      state: {
-        selectedArtistId,
-      },
-    });
+    // 1:1 커스텀 주문에서 들어온 경우
+    if (locationState?.source === "onetoone") {
+      navigate("/onetooneorder/request", {
+        state: {
+          selectedArtistId,
+
+          // 기존에 선택했던 사진 유지
+          selectedImage: locationState.selectedImage,
+
+          // 작가 선택 완료 후 위치 선택 단계로 이동
+          currentStep: 3,
+        },
+      });
+
+      return;
+    }
   };
 
   // 다른 작가 목록 열기 / 닫기
