@@ -3,12 +3,12 @@ import { useNavigate } from "react-router-dom";
 
 import MCoMFeedCard from "@/components/mcom/MCoMFeedCard";
 
-import type { MCoMFeed } from "@/mocks/mcom";
+import type { PostPreviewResponse } from "@/types/mcom";
 
 type MCoMFeedSliderProps = {
-  feed: MCoMFeed;
-  previousFeed: MCoMFeed | null;
-  nextFeed: MCoMFeed | null;
+  feed: PostPreviewResponse;
+  previousFeed: PostPreviewResponse | null;
+  nextFeed: PostPreviewResponse | null;
 };
 
 const CARD_STEP = 310;
@@ -64,7 +64,7 @@ export default function MCoMFeedSlider({ feed, previousFeed, nextFeed }: MCoMFee
       setDragOffset(-CARD_STEP);
 
       setTimeout(() => {
-        navigate(`/mcom/view/${nextFeed.feedId}`);
+        navigate(`/mcom/view/${nextFeed.postId}`);
         setDragOffset(0);
         setIsAnimating(false);
       }, ANIMATION_DURATION);
@@ -77,7 +77,7 @@ export default function MCoMFeedSlider({ feed, previousFeed, nextFeed }: MCoMFee
       setDragOffset(CARD_STEP);
 
       setTimeout(() => {
-        navigate(`/mcom/view/${previousFeed.feedId}`);
+        navigate(`/mcom/view/${previousFeed.postId}`);
         setDragOffset(0);
         setIsAnimating(false);
       }, ANIMATION_DURATION);
