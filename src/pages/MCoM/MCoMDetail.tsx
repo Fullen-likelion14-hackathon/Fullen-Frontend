@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { ChevronLeft } from "lucide-react";
 
-import { mcomFeedMockData } from "@/components/mcom/mcomFeedData";
+import { mcomFeedMockData } from "@/mocks/mcomFeedData";
 
 export default function MCoMDetail() {
   const navigate = useNavigate();

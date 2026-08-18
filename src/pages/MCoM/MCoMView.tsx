@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 
 import MCoMFeedSlider from "@/components/mcom/MCoMFeedSlider";
-import { mcomFeedMockData } from "@/components/mcom/mcomFeedData";
+import { mcomFeedMockData } from "@/mocks/mcomFeedData";
 import PageHeader from "@/components/common/PageHeader";
 
 export default function MCoMView() {

@@ -2,7 +2,7 @@ import bagImage from "@/assets/images/testBag.png";
 
 import ConfirmStep from "@/components/custom/common/step/ConfirmStep";
 
-import type { Artist } from "@/components/oneToOneOrder/ArtistData";
+import type { Artist } from "@/mocks/ArtistData";
 import type { PatchLocation } from "@/components/custom/common/selection/LocationSelectBox";
 
 interface OrderDetailContentProps {

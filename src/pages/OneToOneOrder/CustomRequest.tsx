@@ -14,7 +14,7 @@ import CustomStepButton from "@/components/custom/common/step/CustomStepButton";
 
 import type { PatchLocation } from "@/components/custom/common/selection/LocationSelectBox";
 
-import { recommendedArtists, otherArtists } from "@/components/oneToOneOrder/ArtistData";
+import { recommendedArtists, otherArtists } from "@/mocks/ArtistData";
 
 type CustomRequestLocationState = {
   // 작가 선택 페이지에서 전달받은 작가 id

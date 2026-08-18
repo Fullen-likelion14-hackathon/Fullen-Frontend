@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import countryImage from "@/assets/images/country.png";
 import globalImage from "@/assets/images/global.png";
 
-import { mcomFeedMockData } from "@/components/mcom/mcomFeedData";
-import type { MCoMTab } from "@/components/mcom/mcom";
+import { mcomFeedMockData } from "@/mocks/mcomFeedData";
+import type { MCoMTab } from "@/mocks/mcom";
 
 type MCoMGalleryProps = {
   MCoMTab: MCoMTab;

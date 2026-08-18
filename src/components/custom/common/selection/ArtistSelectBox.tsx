@@ -1,4 +1,4 @@
-import type { Artist } from "@/components/oneToOneOrder/ArtistData";
+import type { Artist } from "@/mocks/ArtistData";
 
 interface ArtistSelectBoxProps {
   selectedArtist: Artist | null;

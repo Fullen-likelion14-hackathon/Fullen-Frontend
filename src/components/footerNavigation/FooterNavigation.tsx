@@ -34,10 +34,10 @@ const navigationItems: NavigationItem[] = [
     inactiveIcon: mcomInactiveIcon,
   },
   {
-    label: "커스텀",
-    path: "/custom",
-    activeIcon: customActiveIcon,
-    inactiveIcon: customInactiveIcon,
+    label: "1:1 커스텀",
+    path: "/onetooneorder",
+    activeIcon: orderActiveIcon,
+    inactiveIcon: orderInActiveIcon,
   },
   {
     label: "나의 여정",
@@ -46,10 +46,10 @@ const navigationItems: NavigationItem[] = [
     inactiveIcon: passportInactiveIcon,
   },
   {
-    label: "1:1 커스텀",
-    path: "/onetooneorder",
-    activeIcon: orderActiveIcon,
-    inactiveIcon: orderInActiveIcon,
+    label: "커스텀",
+    path: "/custom",
+    activeIcon: customActiveIcon,
+    inactiveIcon: customInactiveIcon,
   },
   {
     label: "마이페이지",
@@ -111,7 +111,7 @@ export default function FooterNavigation() {
       aria-label="하단 네비게이션"
       className="
       fixed bottom-0 left-1/2 z-50
-      h-23 w-full max-w-107.5
+      h-23 w-full max-w-97
       -translate-x-1/2
       overflow-visible bg-transparent
       pb-[env(safe-area-inset-bottom)]

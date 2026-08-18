@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import PageHeader from "@/components/common/PageHeader";
 import OrderDetailContent from "@/components/oneToOneOrder/OrderDetailContent";
 
-import { recommendedArtists, otherArtists } from "@/components/oneToOneOrder/ArtistData";
+import { recommendedArtists, otherArtists } from "@/mocks/ArtistData";
 
 import type { PatchLocation } from "@/components/custom/common/selection/LocationSelectBox";
 

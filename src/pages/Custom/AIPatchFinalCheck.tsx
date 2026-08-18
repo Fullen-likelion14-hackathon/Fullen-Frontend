@@ -6,7 +6,7 @@ import type { FrameType } from "@/components/custom/common/selection/FrameSelect
 import PhotoSelectBox from "@/components/custom/common/selection/PhotoSelectBox";
 import CustomStepButton from "@/components/custom/common/step/CustomStepButton";
 
-import { recommendedArtists, otherArtists } from "@/components/oneToOneOrder/ArtistData";
+import { recommendedArtists, otherArtists } from "@/mocks/ArtistData";
 
 // 옵션 선택 페이지에서 전달받는 최종 선택값 타입임
 type AIPatchFinalCheckLocationState = {

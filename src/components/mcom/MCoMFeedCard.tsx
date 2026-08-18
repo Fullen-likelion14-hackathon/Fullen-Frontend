@@ -1,4 +1,4 @@
-import type { MCoMFeed } from "@/components/mcom/mcom";
+import type { MCoMFeed } from "@/mocks/mcom";
 import { useNavigate } from "react-router-dom";
 
 type MCoMFeedCardProps = {
