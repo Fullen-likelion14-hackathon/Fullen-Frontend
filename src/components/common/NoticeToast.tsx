@@ -4,9 +4,16 @@ interface NoticeToastProps {
 
   // 화면에 보여줄 문구 받음
   message: string;
+
+  // 페이지별 토스트 위치 조절용 클래스임
+  positionClassName?: string;
 }
 
-export default function NoticeToast({ type, message }: NoticeToastProps) {
+export default function NoticeToast({
+  type,
+  message,
+  positionClassName = "top-24",
+}: NoticeToastProps) {
   // 타입에 따라 배경색 정함
   const backgroundColor = type === "created" ? "#EBF7D5" : "#F7EBBF";
 
@@ -15,21 +22,21 @@ export default function NoticeToast({ type, message }: NoticeToastProps) {
 
   return (
     <div
-      className="
+      className={`
         pointer-events-none
         fixed
         left-1/2
-        top-24
         z-9999
         -translate-x-1/2
-      "
+        ${positionClassName}
+      `}
     >
       {/* 완료 안내창임 */}
       <div
         className="
           flex
+          h-12
           w-75
-           h-12
           items-center
           gap-3
           rounded-lg

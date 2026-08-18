@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ProductViewer } from "@/components/custom/viewer/ProductViewer";
-import { CustomModeToggle } from "@/components/custom/CustomModeToggle";
+import { CustomModeToggle } from "@/components/custom/common/CustomModeToggle";
 import PatchPanel from "@/components/custom/patch/PatchPanel";
 import InitialPanel from "@/components/custom/initials/InitialsPanel";
 

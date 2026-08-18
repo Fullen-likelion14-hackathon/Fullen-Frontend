@@ -23,6 +23,7 @@ import Customizing from "@/pages/Custom/Customizing";
 import AIPatchGenerator from "@/pages/Custom/AIPatchGenerator";
 import AIPatchOptionSelect from "@/pages/Custom/AIPatchOptionSelect";
 import AIPatchFinalCheck from "@/pages/Custom/AIPatchFinalCheck";
+import AIPatchResult from "@/pages/Custom/AIPatchResult";
 
 import CustomOrder from "@/pages/Custom/CustomOrder";
 import CustomOrderComplete from "@/pages/Custom/CustomOrderComplete";
@@ -86,6 +87,7 @@ function App() {
           <Route path="/custom/ai-patch" element={<AIPatchGenerator />} />
           <Route path="/custom/ai-patch/options" element={<AIPatchOptionSelect />} />
           <Route path="/custom/ai-patch/final-check" element={<AIPatchFinalCheck />} />
+          <Route path="/custom/ai-patch/result" element={<AIPatchResult />} />
 
           {/* Custom - 1:1 커스텀 신청 메인 화면 */}
           <Route path="/onetooneorder" element={<OneToOneOrderMain />} />
