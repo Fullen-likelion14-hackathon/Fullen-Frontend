@@ -1,149 +1,339 @@
-import { Upload } from "lucide-react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import type { ChangeEvent } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import PageHeader from "@/components/common/PageHeader";
 
 import ArtistSelectBox from "@/components/custom/common/selection/ArtistSelectBox";
+import PhotoSelectBox from "@/components/custom/common/selection/PhotoSelectBox";
+import LocationSelectBox from "@/components/custom/common/selection/LocationSelectBox";
+import RequestTextBox from "@/components/custom/common/selection/RequestTextBox";
 
-import CustomRequestBox from "@/components/oneToOneOrder/CustomRequestBox";
-import OneToOneOrderButton from "@/components/oneToOneOrder/OneToOneOrderButton";
+import CustomStep from "@/components/custom/common/step/CustomStep";
+import CustomStepButton from "@/components/custom/common/step/CustomStepButton";
+
+import type { PatchLocation } from "@/components/custom/common/selection/LocationSelectBox";
 
 import { recommendedArtists, otherArtists } from "@/components/oneToOneOrder/ArtistData";
 
-// 작가 선택 페이지에서 전달받는 state 타입임
 type CustomRequestLocationState = {
+  // 작가 선택 페이지에서 전달받은 작가 id
   selectedArtistId?: number;
+
+  // 이전 단계에서 선택한 사진
+  selectedImage?: string;
+
+  // 현재 진행 단계
+  currentStep?: number;
+
+  // 위치 선택 페이지에서 전달받은 위치
+  selectedLocation?: PatchLocation;
+
+  // 작성 중이던 요청사항
+  requestText?: string;
 };
 
-export default function CustomRequest() {
+const CustomRequest = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // 작가 선택 페이지에서 전달받은 state임
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const locationState = location.state as CustomRequestLocationState | null;
 
-  // 업로드한 이미지 미리보기 URL임
-  const [image, setImage] = useState<string | null>(null);
+  // 1:1 커스텀 주문은 총 4단계
+  const totalSteps = 4;
 
-  // 사용자가 입력한 요청사항임
-  const [requestText, setRequestText] = useState("");
+  // 현재 단계
+  const [currentStep, setCurrentStep] = useState(locationState?.currentStep ?? 1);
 
-  // 현재 선택된 작가 id임
-  // 작가 선택 페이지에서 돌아온 경우 전달받은 id를 초기값으로 사용함
+  // 선택한 사진
+  const [selectedImage, setSelectedImage] = useState<string | undefined>(
+    locationState?.selectedImage,
+  );
+
+  // 선택한 작가 id
   const [selectedArtistId, setSelectedArtistId] = useState<number | null>(
     locationState?.selectedArtistId ?? null,
   );
 
-  // 추천 작가와 다른 작가 데이터를 하나로 합쳐줌
+  // 선택한 위치
+  const [selectedLocation, setSelectedLocation] = useState<PatchLocation | null>(
+    locationState?.selectedLocation ?? null,
+  );
+
+  // 요청사항
+  const [requestText, setRequestText] = useState(locationState?.requestText ?? "");
+
+  // 추천 작가 + 다른 작가
   const allArtists = [...recommendedArtists, ...otherArtists];
 
-  // 선택된 id와 일치하는 실제 작가 정보를 찾음
+  // 선택된 작가 정보
   const selectedArtist = allArtists.find((artist) => artist.id === selectedArtistId) ?? null;
 
-  // 이미지 파일을 선택하면 미리보기 URL을 만들어줌
-  const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
+  // 사진 선택창 열기
+  const handleOpenPhotoPicker = () => {
+    fileInputRef.current?.click();
+  };
+
+  // 사진 선택
+  const handlePhotoChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
 
     if (!file) return;
 
+    if (selectedImage) {
+      URL.revokeObjectURL(selectedImage);
+    }
+
     const imageUrl = URL.createObjectURL(file);
 
-    setImage(imageUrl);
+    setSelectedImage(imageUrl);
   };
 
-  // 공통 작가 선택 페이지로 이동함
+  // 사진 삭제
+  const handleRemovePhoto = () => {
+    if (selectedImage) {
+      URL.revokeObjectURL(selectedImage);
+    }
+
+    setSelectedImage(undefined);
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  // 1단계 → 2단계
+  const handlePhotoNext = () => {
+    if (!selectedImage) return;
+
+    setCurrentStep(2);
+  };
+
+  // 작가 선택 페이지 이동
   const handleArtistSelect = () => {
     navigate("/onetooneorder/artist", {
       state: {
         source: "onetoone",
         returnTo: "/onetooneorder/request",
+
+        selectedImage,
+        selectedArtistId,
+        currentStep: 2,
+        selectedLocation,
+        requestText,
       },
     });
   };
 
-  // 선택된 작가를 해제함
+  // 작가 선택 해제
   const handleArtistRemove = () => {
     setSelectedArtistId(null);
   };
 
-  // 다음 단계로 이동함
-  const handleNext = () => {
-    // TODO: 다음 1:1 주문 단계 경로 연결 예정임
-    navigate("/onetooneorder/");
+  // 2단계 → 3단계
+  const handleArtistNext = () => {
+    if (!selectedArtist) return;
+
+    setCurrentStep(3);
+  };
+
+  // 위치 선택 페이지 이동
+  const handleLocationSelect = () => {
+    navigate("/onetooneorder/location", {
+      state: {
+        returnTo: "/onetooneorder/request",
+
+        selectedImage,
+        selectedArtistId,
+        currentStep: 3,
+        selectedLocation,
+        requestText,
+      },
+    });
+  };
+
+  // 위치 선택 해제
+  const handleLocationRemove = () => {
+    setSelectedLocation(null);
+  };
+
+  // 3단계 → 4단계
+  const handleLocationNext = () => {
+    if (!selectedLocation) return;
+
+    setCurrentStep(4);
+  };
+
+  // 이전 단계
+  const handlePrevious = () => {
+    if (currentStep > 1) {
+      setCurrentStep((prev) => prev - 1);
+    }
+  };
+
+  // 최종 입력 완료
+  const handleSubmit = () => {
+    if (!requestText.trim()) return;
+
+    navigate("/onetooneorder/confirm", {
+      state: {
+        selectedImage,
+        selectedArtistId,
+        selectedLocation,
+        requestText,
+      },
+    });
+    //  API 연결 후 완료 페이지로 이동
   };
 
   return (
-    <main className="relative min-h-dvh overflow-hidden bg-[#EEE4D8]">
-      {/* 상단 배경 곡선 */}
-      <div className="pointer-events-none absolute top-105 left-1/2 h-80 w-150 -translate-x-1/2 rounded-[50%] bg-[#F9F4F0]" />
+    <main className="relative mx-auto h-dvh w-full max-w-97.5 overflow-hidden bg-[#F9F4F0] text-[#192C44]">
+      {/* 헤더 */}
+      <PageHeader title="1:1 커스텀 주문" backTo="/onetooneorder" />
 
-      {/* 하단 배경 */}
-      <div className="pointer-events-none absolute top-135 bottom-0 left-0 w-full bg-[#F9F4F0]" />
+      {/* 사진 input */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        onChange={handlePhotoChange}
+        className="hidden"
+      />
 
-      {/* 페이지 내용 */}
-      <div className="relative">
-        <PageHeader title="1:1 커스텀 신청" backTo="/onetooneorder" />
+      {/* 본문 */}
+      <section className="flex h-[calc(100dvh-126px)] flex-col overflow-y-auto px-8 pb-12 pt-10">
+        <div className="flex-1">
+          {/* 1단계 */}
+          {currentStep === 1 && (
+            <CustomStep
+              step={1}
+              totalSteps={totalSteps}
+              title="사진 선택"
+              description="나의 여행 중 커스텀할 사진 한장을 고르세요"
+              status="active"
+            >
+              <PhotoSelectBox
+                imageUrl={selectedImage}
+                onSelect={handleOpenPhotoPicker}
+                onRemove={handleRemovePhoto}
+              />
+            </CustomStep>
+          )}
 
-        <div className="flex flex-col items-center gap-5 py-8">
-          {/* 사진 업로드 영역 */}
-          <label htmlFor="custom-image" className="cursor-pointer">
-            <CustomRequestBox isFilled={!!image} className="h-90 flex-col gap-3 overflow-hidden">
-              {image ? (
-                // 사진이 선택된 경우
-                <img
-                  src={image}
-                  alt="선택한 커스텀 이미지"
-                  className="h-full w-full object-cover"
+          {/* 2단계 */}
+          {currentStep === 2 && (
+            <div className="flex flex-col gap-4">
+              <CustomStep step={1} totalSteps={totalSteps} title="사진 선택" status="completed" />
+
+              <CustomStep
+                step={2}
+                totalSteps={totalSteps}
+                title="작가 선택"
+                description="이 여행을 어떤 작가의 시선으로 담아볼까요?"
+                status="active"
+              >
+                <ArtistSelectBox
+                  selectedArtist={selectedArtist}
+                  onSelect={handleArtistSelect}
+                  onRemove={handleArtistRemove}
                 />
-              ) : (
-                // 아직 사진을 선택하지 않은 경우
-                <>
-                  <Upload className="size-15 text-[#C9C9C9]" />
+              </CustomStep>
+            </div>
+          )}
 
-                  <p className="text-[18px] font-semibold text-[#C9C9C9]">
-                    커스텀할 사진을 고르세요
-                  </p>
-                </>
-              )}
-            </CustomRequestBox>
-          </label>
+          {/* 3단계 */}
+          {currentStep === 3 && (
+            <div className="flex flex-col gap-4">
+              <CustomStep step={1} totalSteps={totalSteps} title="사진 선택" status="completed" />
 
-          {/* 실제 사진 선택 input */}
-          <input
-            id="custom-image"
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            className="hidden"
-          />
+              <CustomStep step={2} totalSteps={totalSteps} title="작가 선택" status="completed" />
 
-          {/* 작가 선택 영역 */}
-          {/* AI 패치 생성 페이지와 공통으로 사용하는 컴포넌트임 */}
-          <div className="w-85">
-            <ArtistSelectBox
-              selectedArtist={selectedArtist}
-              onSelect={handleArtistSelect}
-              onRemove={handleArtistRemove}
+              <CustomStep
+                step={3}
+                totalSteps={totalSteps}
+                title="위치 선택"
+                description="커스텀 받을 위치를 선택해주세요."
+                status="active"
+              >
+                <LocationSelectBox
+                  selectedLocation={selectedLocation}
+                  onSelect={handleLocationSelect}
+                  onRemove={handleLocationRemove}
+                />
+              </CustomStep>
+            </div>
+          )}
+
+          {/* 4단계 */}
+          {currentStep === 4 && (
+            <div className="flex flex-col gap-4">
+              <CustomStep step={1} totalSteps={totalSteps} title="사진 선택" status="completed" />
+
+              <CustomStep step={2} totalSteps={totalSteps} title="작가 선택" status="completed" />
+
+              <CustomStep step={3} totalSteps={totalSteps} title="위치 선택" status="completed" />
+
+              <CustomStep
+                step={4}
+                totalSteps={totalSteps}
+                title="요청사항 작성"
+                description="작가님에게 요청사항을 입력해주세요!"
+                status="active"
+              >
+                <RequestTextBox value={requestText} onChange={setRequestText} />
+              </CustomStep>
+            </div>
+          )}
+        </div>
+
+        {/* 1단계 버튼 */}
+        {currentStep === 1 && (
+          <div className="mt-8">
+            <CustomStepButton onNext={handlePhotoNext} disabled={!selectedImage} />
+          </div>
+        )}
+
+        {/* 2단계 버튼 */}
+        {currentStep === 2 && (
+          <div className="mt-8">
+            <CustomStepButton
+              onNext={handleArtistNext}
+              onPrevious={handlePrevious}
+              disabled={!selectedArtist}
+              showPrevious
             />
           </div>
+        )}
 
-          {/* 요청사항 입력 영역 */}
-          <CustomRequestBox isFilled={requestText.trim().length > 0}>
-            <textarea
-              value={requestText}
-              onChange={(event) => setRequestText(event.target.value)}
-              placeholder="요청사항을 입력해주세요"
-              rows={1}
-              className="field-sizing-content w-full resize-none overflow-hidden bg-transparent px-4 py-5 text-left text-[18px] font-semibold outline-none placeholder:text-center placeholder:text-[#C9C9C9] focus:placeholder-transparent"
+        {/* 3단계 버튼 */}
+        {currentStep === 3 && (
+          <div className="mt-8">
+            <CustomStepButton
+              onNext={handleLocationNext}
+              onPrevious={handlePrevious}
+              disabled={!selectedLocation}
+              showPrevious
             />
-          </CustomRequestBox>
+          </div>
+        )}
 
-          {/* 다음 단계 버튼 */}
-          <OneToOneOrderButton label="다음" onClick={handleNext} />
-        </div>
-      </div>
+        {/* 4단계 버튼 */}
+        {currentStep === 4 && (
+          <div className="mt-8">
+            <CustomStepButton
+              onNext={handleSubmit}
+              onPrevious={handlePrevious}
+              nextLabel="입력 완료하기"
+              disabled={!requestText.trim()}
+              showPrevious
+            />
+          </div>
+        )}
+      </section>
     </main>
   );
-}
+};
+
+export default CustomRequest;

@@ -2,6 +2,8 @@ import { useRef, useState } from "react";
 import type { ChangeEvent } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
+import PageHeader from "@/components/common/PageHeader";
+
 import ArtistSelectBox from "@/components/custom/common/selection/ArtistSelectBox";
 import FrameSelectBox from "@/components/custom/common/selection/FrameSelectBox";
 import type { FrameType } from "@/components/custom/common/selection/FrameSelectBox";
@@ -73,18 +75,6 @@ const AIPatchOptionSelect = () => {
 
   // 선택한 작가 정보
   const selectedArtist = allArtists.find((artist) => artist.id === selectedArtistId) ?? null;
-
-  // 수정 화면 헤더 제목
-  const editTitle = {
-    1: "사진 선택 수정하기",
-    2: "작가 선택 수정하기",
-    3: "프레임 선택 수정하기",
-  } as const;
-
-  // 뒤로가기
-  const handleBack = () => {
-    navigate(-1);
-  };
 
   // 숨겨둔 파일 input 실행
   const handleOpenPhotoPicker = () => {
@@ -200,22 +190,7 @@ const AIPatchOptionSelect = () => {
   return (
     <main className="relative mx-auto h-dvh w-full max-w-97.5 overflow-hidden bg-[#F9F4F0] text-[#192C44]">
       {/* 상단 헤더 영역 */}
-      <header className="relative flex h-31.5 shrink-0 items-end justify-center border-b-[7px] border-[#A3642B] bg-[#192C44] px-8 pb-6">
-        {/* 뒤로가기 버튼 */}
-        <button
-          type="button"
-          onClick={handleBack}
-          aria-label="뒤로가기"
-          className="absolute bottom-7 left-8 flex h-10 w-10 items-center justify-center"
-        >
-          <span className="block h-5 w-5 rotate-45 border-b-[3px] border-l-[3px] border-white" />
-        </button>
-
-        {/* 일반 모드 / 수정 모드 제목 */}
-        <h1 className="text-2xl font-bold text-white">
-          {isEditMode && editStep ? editTitle[editStep] : "AI 패치 생성"}
-        </h1>
-      </header>
+      <PageHeader title="1:1 커스텀 주문" backTo="/custom" />
 
       {/* 본문 영역 */}
       <section className="flex h-[calc(100dvh-126px)] flex-col overflow-y-auto px-8 pb-12 pt-8">
