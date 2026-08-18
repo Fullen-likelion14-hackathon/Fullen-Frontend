@@ -7,6 +7,8 @@ import CustomStepButton from "@/components/custom/common/step/CustomStepButton";
 
 import { aiPatchResultMock, type AIPatchResultItem } from "@/mocks/aiPatchResult.mock";
 
+import { useAIPatchStore } from "@/stores/aiPatchStore";
+
 type ToastState = {
   type: "created" | "applied";
   message: string;
@@ -16,19 +18,25 @@ const AIPatchResult = () => {
   const navigate = useNavigate();
 
   // 현재는 mock 데이터 사용함
-  // 추후 AI 패치 생성 API 응답값으로 교체 예정임
+  // 추후 실제 AI 패치 생성 API 응답으로 변경 예정임
   const [patches, setPatches] = useState<AIPatchResultItem[]>(aiPatchResultMock);
 
-  // 현재 화면 가운데에 표시되는 패치 번호임
+  // 현재 가운데 표시되는 패치 번호임
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // 저장 완료된 패치 id 목록임
-  const [savedPatchIds, setSavedPatchIds] = useState<number[]>([]);
-
-  // 저장 결과 안내 토스트 상태임
+  // 저장 결과 토스트 상태임
   const [toast, setToast] = useState<ToastState>(null);
 
-  // 현재 선택된 패치 정보임
+  // 선택했던 프레임 타입을 Zustand에서 가져옴
+  const selectedFrame = useAIPatchStore((state) => state.selectedFrame);
+
+  // 저장된 패치 추가 함수임
+  const addSavedPatch = useAIPatchStore((state) => state.addSavedPatch);
+
+  // 이미 저장된 패치인지 확인하는 함수임
+  const isPatchSaved = useAIPatchStore((state) => state.isPatchSaved);
+
+  // 현재 선택된 AI 패치 결과임
   const currentPatch = patches[currentIndex];
 
   // 토스트를 일정 시간 뒤 자동으로 닫아줌
@@ -49,12 +57,14 @@ const AIPatchResult = () => {
     setCurrentIndex(index);
   };
 
-  // 현재 선택한 패치 저장 처리함
+  // 현재 선택한 패치를 저장함
   const handleSave = () => {
-    if (!currentPatch) return;
+    if (!currentPatch || !selectedFrame) {
+      return;
+    }
 
-    // 이미 저장한 패치인 경우 안내함
-    if (savedPatchIds.includes(currentPatch.id)) {
+    // 같은 생성 결과와 같은 프레임 조합이 이미 저장됐는지 확인함
+    if (isPatchSaved(currentPatch.id, selectedFrame)) {
       setToast({
         type: "created",
         message: "이미 저장한 패치입니다",
@@ -63,8 +73,17 @@ const AIPatchResult = () => {
       return;
     }
 
-    // TODO: 실제 패치 저장 API 연결 예정임
-    setSavedPatchIds((prev) => [...prev, currentPatch.id]);
+    // 실제 API 연결 전이라 Zustand에 임시 저장함
+    addSavedPatch({
+      // mock id가 항상 1, 2, 3이므로 별도 고유 id 생성함
+      id: crypto.randomUUID(),
+
+      resultId: currentPatch.id,
+
+      image: currentPatch.image,
+
+      frameType: selectedFrame,
+    });
 
     setToast({
       type: "created",
@@ -72,19 +91,16 @@ const AIPatchResult = () => {
     });
   };
 
-  // 선택한 옵션 기준으로 AI 패치 디자인 다시 생성 요청함
+  // AI 패치 디자인 다시 생성 요청함
   const handleRegenerate = () => {
     // TODO: 실제 AI 패치 재생성 API 연결 예정임
     console.log("AI 패치 디자인 다시 생성 요청");
 
-    // 현재는 API가 없어서 mock 데이터로 다시 설정함
+    // 현재는 mock 데이터로 다시 설정함
     setPatches([...aiPatchResultMock]);
 
-    // 새로운 결과의 첫 번째 패치부터 보여줌
+    // 첫 번째 패치부터 표시함
     setCurrentIndex(0);
-
-    // 새로운 결과이므로 기존 저장 상태 초기화함
-    setSavedPatchIds([]);
 
     // 기존 토스트 초기화함
     setToast(null);
@@ -107,7 +123,7 @@ const AIPatchResult = () => {
         <h1 className="text-2xl font-bold text-white">AI 패치 저장</h1>
       </header>
 
-      {/* AI 패치 생성 결과 본문임 */}
+      {/* 결과 본문 영역임 */}
       <section className="flex h-[calc(100dvh-126px)] flex-col overflow-y-auto pb-8">
         {/* 생성 완료 안내 영역임 */}
         <div className="px-8 pt-12 text-center">
@@ -117,7 +133,7 @@ const AIPatchResult = () => {
             마음에 드는 디자인을 저장해주세요
           </p>
 
-          {/* 디자인 다시 생성하기 버튼임 */}
+          {/* 디자인 다시 생성 버튼임 */}
           <button
             type="button"
             onClick={handleRegenerate}
@@ -130,7 +146,7 @@ const AIPatchResult = () => {
           </button>
         </div>
 
-        {/* AI가 생성한 패치 3개 슬라이더 영역임 */}
+        {/* AI가 생성한 패치 3개임 */}
         <div className="mt-10">
           <AIPatchResultSlider
             patches={patches}
