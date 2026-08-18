@@ -50,7 +50,7 @@ export default function MCoMGallery({ MCoMTab }: MCoMGalleryProps) {
             <img
               src={countryImage}
               alt="현재 국가 아카이브"
-              className="block aspect-[3/2] w-full rounded-2xl object-cover"
+              className="block aspect-3/2 w-full rounded-2xl object-cover"
             />
           )}
 

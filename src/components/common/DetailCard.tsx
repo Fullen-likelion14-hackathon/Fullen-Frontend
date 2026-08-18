@@ -1,5 +1,6 @@
 // src/components/common/DetailCard.tsx
-import type { TravelCategory } from "@/pages/Passport/Passport";
+import type { JourneyItem } from "@/api/journey";
+import { useJourney } from "@/hooks/queries/useJourney";
 import fileIcon from "@/assets/icons/file.png"; // TODO: 실제 파일명으로 교체
 import { countryNameKoMap } from "@/mocks/countryFlags.mock";
 
@@ -7,14 +8,15 @@ const BADGE_SHADOW =
   "shadow-[0_0_6.63px_0_rgba(94,140,136,0.25),inset_0_-0.99px_0.99px_0_rgba(159,159,159,0.25),inset_0_1.99px_1.99px_0_rgba(255,255,255,0.25)]";
 
 interface DetailCardProps {
-  category: TravelCategory;
+  category: JourneyItem;
   isActive: boolean;
 }
 
-const formatDate = (dateString: string) => dateString.replaceAll("-", ".");
-
 export function DetailCard({ category, isActive }: DetailCardProps) {
-  const { countryName, imageUrl, travelTitle, startDate, endDate, feedCount, flagUrl } = category;
+  const { journeyId, nationKRName, coverImgUrl, type, startDate, endDate, flagImgUrl } = category;
+
+  // postCount는 단일 조회 API에만 있어서, 이 카드가 화면에 뜬 시점에 별도로 가져옴
+  const { data: detail } = useJourney(journeyId);
 
   return (
     <div
@@ -23,20 +25,20 @@ export function DetailCard({ category, isActive }: DetailCardProps) {
       }`}
     >
       <img
-        src={imageUrl}
-        alt={countryName}
+        src={coverImgUrl}
+        alt={nationKRName}
         className="absolute inset-0 h-full w-full rounded-xl object-cover"
       />
 
-      {flagUrl && (
+      {flagImgUrl && (
         <div
           className={`absolute right-3 top-3 flex items-center justify-center overflow-hidden rounded-full bg-stone-100 ${
             isActive ? "size-14" : "size-12"
           } ${BADGE_SHADOW}`}
         >
           <img
-            src={flagUrl}
-            alt={`${countryName} 국기`}
+            src={flagImgUrl}
+            alt={`${nationKRName} 국기`}
             className={isActive ? "h-5 w-7 object-cover" : "h-4 w-6 object-cover"}
           />
         </div>
@@ -47,28 +49,24 @@ export function DetailCard({ category, isActive }: DetailCardProps) {
           isActive ? "h-44" : "h-36"
         }`}
       >
-        {/* 텍스트 묶음 부분 */}
         <div
           className={`absolute flex flex-col items-start ${isActive ? "left-8 top-14 w-48" : "left-7 top-10"}`}
         >
-          {/* 국가 부분 */}
           <div
             className={`font-['Paperlogy'] font-bold tracking-wide text-white ${isActive ? "text-2xl" : "text-1xl"}`}
           >
-            {countryNameKoMap[countryName] ?? countryName}
+            {countryNameKoMap[nationKRName] ?? nationKRName}
           </div>
-          {/* 여행 내용 부분 */}
           <div
             className={`font-['Paperlogy'] font-semibold tracking-tight text-white ${isActive ? "text-base" : "text-sm"}`}
           >
-            {travelTitle}
+            {type}
           </div>
-          {/* 여행 날짜 */}
           <div className="flex items-center gap-0.5 whitespace-nowrap">
             <span
               className={`font-['Paperlogy'] font-semibold text-stone-100 ${isActive ? "text-sm" : "text-xs"}`}
             >
-              {formatDate(startDate)}
+              {startDate}
             </span>
             <span
               className={`font-['Paperlogy'] font-semibold text-stone-100 ${isActive ? "text-sm" : "text-sm"}`}
@@ -78,12 +76,11 @@ export function DetailCard({ category, isActive }: DetailCardProps) {
             <span
               className={`font-['Paperlogy'] font-semibold text-stone-100 ${isActive ? "text-sm" : "text-xs"}`}
             >
-              {formatDate(endDate)}
+              {endDate}
             </span>
           </div>
         </div>
 
-        {/* 피드개수 아이콘: 카드 기준 절대 위치, 비활성 카드는 크기 축소(h-9 w-7 → h-7 w-5.5) */}
         <div
           className={`absolute overflow-hidden ${
             isActive ? "left-59 top-23 h-[36px] w-[30px]" : "left-48 top-18 h-7 w-5.5"
@@ -96,7 +93,7 @@ export function DetailCard({ category, isActive }: DetailCardProps) {
               isActive ? "text-sm" : "text-xs"
             }`}
           >
-            {feedCount}
+            {detail?.postCount ?? "-"}
           </span>
         </div>
       </div>

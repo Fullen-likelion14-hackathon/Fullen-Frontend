@@ -5,68 +5,68 @@
 // ============================================================
 
 import { useNavigate } from "react-router-dom";
-import { mockCategories } from "./passport.mock";
-// TODO: 실제 커밋 시엔 아래처럼 빈 배열로 교체
-// const mockCategories: TravelCategory[] = [];
+import { useJourneys } from "@/hooks/queries/useJourneys";
+import type { Continent } from "@/api/journey";
 
 import mainGlobeIcon from "@/assets/icons/mainglobe.png"; // 지도 보기 버튼 아이콘
 import planeIcon from "@/assets/icons/mainplane.png"; // 인사말 옆 비행기 아이콘
 import plusIcon from "@/assets/icons/plus.png"; // 여행 추가 버튼 + 아이콘
 
-export type TravelCategory = {
-  id: string;
-  countryName: string;
-  imageUrl: string;
-  continent: string;
-  travelTitle: string;
-  startDate: string;
-  endDate: string;
-  feedCount: number;
-  createdAt: string;
-  flagUrl?: string; // 국기 이미지 URL — PinCardCarousel(지도)의 MapPin.flagUrl과 동일한 패턴
-};
-
 const mockUserName = "멋쟁이사자처럼"; // TODO: 로그인 연동 후 실제 사용자명으로 교체
 
-const CONTINENT_ORDER = [
-  "아시아",
-  "유럽",
-  "북아메리카",
-  "남아메리카",
-  "아프리카",
-  "오세아니아",
-  "남극",
+// 백엔드 Continent enum 키 → 화면에 보여줄 한글 대륙명 + 렌더링 순서
+const CONTINENT_LABELS: Record<Continent, string> = {
+  ASIA: "아시아",
+  EUROPE: "유럽",
+  NORTH_AMERICA: "북아메리카",
+  SOUTH_AMERICA: "남아메리카",
+  AFRICA: "아프리카",
+  OCEANIA: "오세아니아",
+  ANTARCTICA: "남극",
+};
+const CONTINENT_ORDER: Continent[] = [
+  "ASIA",
+  "EUROPE",
+  "NORTH_AMERICA",
+  "SOUTH_AMERICA",
+  "AFRICA",
+  "OCEANIA",
+  "ANTARCTICA",
 ];
 
 interface ContinentGroupProps {
-  continent: string;
-  categories: TravelCategory[];
-  onOpen: (continent: string) => void;
+  continentLabel: string;
+  journeys: {
+    journeyId: number;
+    nationKRName: string;
+    coverImgUrl: string;
+  }[];
+  count: number;
+  onOpen: (continentLabel: string) => void;
 }
 
-// 대륙 하나 = 등록순(오래된→최신, 좌→우) 가로 카드 최대 3장 + 하단 정보 바(플랩)
-const ContinentGroup = ({ continent, categories, onOpen }: ContinentGroupProps) => {
-  const previewCategories = [...categories]
-    .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
-    .slice(-3);
+// 대륙 하나 = 가로 카드 최대 3장 + 하단 정보 바(플랩)
+// createdAt이 응답에 없어 별도 정렬 없이 API가 주는 순서 그대로, 최근 3개만 사용
+const ContinentGroup = ({ continentLabel, journeys, count, onOpen }: ContinentGroupProps) => {
+  const previewJourneys = journeys.slice(-3);
 
   return (
     <div className="w-full h-44 relative overflow-hidden">
       <div className="absolute left-8.5 right-8.5 top-1.5 flex items-center gap-3.5">
-        {previewCategories.map((category) => (
+        {previewJourneys.map((journey) => (
           <button
-            key={category.id}
-            onClick={() => onOpen(continent)}
+            key={journey.journeyId}
+            onClick={() => onOpen(continentLabel)}
             className="w-24 h-32 shrink-0 relative bg-neutral-50 rounded-[5px] shadow-[4px_4px_4px_0px_rgba(0,0,0,0.25)] overflow-hidden"
           >
             <img
-              src={category.imageUrl}
-              alt={category.countryName}
+              src={journey.coverImgUrl}
+              alt={journey.nationKRName}
               className="absolute inset-0 w-full h-full object-cover"
             />
             {/* 국가명 텍스트: text-lg로 조정 */}
             <span className="absolute inset-0 flex items-center justify-center text-neutral-50 text-lg font-bold font-['PT_Serif'] [text-shadow:_0px_4px_4px_rgb(0_0_0_/_0.25)]">
-              {category.countryName.toUpperCase()}
+              {journey.nationKRName.toUpperCase()}
             </span>
           </button>
         ))}
@@ -81,16 +81,14 @@ const ContinentGroup = ({ continent, categories, onOpen }: ContinentGroupProps) 
             - 장식 원↔텍스트 간격: 원(size-2, left-[7px]/right-[7px])과 텍스트 사이 35px 간격 확보를 위해
               좌우 padding을 px-[50px]로 설정함 (7px + 8px(원 지름) + 35px = 50px) */}
       <button
-        onClick={() => onOpen(continent)}
+        onClick={() => onOpen(continentLabel)}
         className="absolute left-1/2 top-[110px] -translate-x-1/2 w-[371px] h-[43px] flex items-center justify-between px-[50px] bg-stone-400/20 backdrop-blur-[2px] rounded-[10px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] overflow-hidden"
       >
         <div className="size-2 absolute left-[7px] top-1/2 -translate-y-1/2 bg-conic-63 from-black/20 to-stone-500/20 rounded-[50px]" />
         <div className="size-2 absolute right-[7px] top-1/2 -translate-y-1/2 bg-conic-63 from-black/20 to-stone-500/20 rounded-[50px]" />
 
-        <span className="text-white text-base font-bold font-['Paperlogy']">{continent}</span>
-        <span className="text-white text-sm font-bold font-['Paperlogy']">
-          {categories.length}개의 여정
-        </span>
+        <span className="text-white text-base font-bold font-['Paperlogy']">{continentLabel}</span>
+        <span className="text-white text-sm font-bold font-['Paperlogy']">{count}개의 여정</span>
       </button>
     </div>
   );
@@ -98,13 +96,7 @@ const ContinentGroup = ({ continent, categories, onOpen }: ContinentGroupProps) 
 
 const Passport = () => {
   const navigate = useNavigate();
-
-  const hasCategories = mockCategories.length > 0;
-
-  const groupedByContinent = CONTINENT_ORDER.map((continent) => ({
-    continent,
-    categories: mockCategories.filter((c) => c.continent === continent),
-  })).filter((group) => group.categories.length > 0);
+  const { data: continents, isLoading, isError } = useJourneys();
 
   const handleAddCategory = () => {
     navigate("/passport/new");
@@ -114,9 +106,17 @@ const Passport = () => {
     navigate("/map");
   };
 
-  const handleOpenCategory = (continent: string) => {
-    navigate(`/passport/detail/${continent}`);
+  const handleOpenCategory = (continentLabel: string) => {
+    navigate(`/passport/detail/${continentLabel}`);
   };
+
+  // enum 순서대로, 실제 데이터가 있는 대륙만 필터링
+  const groups = CONTINENT_ORDER.map((key) => {
+    const group = continents?.[key];
+    return group ? { key, label: CONTINENT_LABELS[key], ...group } : null;
+  }).filter((g): g is NonNullable<typeof g> => g !== null);
+
+  const hasJourneys = groups.length > 0;
 
   return (
     <div className="relative w-full max-w-97.5 min-h-dvh mx-auto bg-[#F9F4F0]">
@@ -162,19 +162,32 @@ const Passport = () => {
         </div>
       </div>
 
-      {hasCategories ? (
+      {isLoading ? (
+        <div className="w-80 mx-auto pt-20 text-center text-slate-800/60 text-sm font-['Paperlogy']">
+          불러오는 중...
+        </div>
+      ) : isError ? (
+        <div className="w-80 mx-auto pt-20 text-center text-slate-800/60 text-sm font-['Paperlogy']">
+          여행 목록을 불러오지 못했어요
+        </div>
+      ) : hasJourneys ? (
         <div className="flex flex-col gap-2.5 pb-32">
-          {groupedByContinent.map(({ continent, categories }) => (
+          {groups.map(({ key, label, journeys, count }) => (
             <ContinentGroup
-              key={continent}
-              continent={continent}
-              categories={categories}
+              key={key}
+              continentLabel={label}
+              journeys={journeys.map((j) => ({
+                journeyId: j.journeyId,
+                nationKRName: j.nationKRName,
+                coverImgUrl: j.coverImgUrl,
+              }))}
+              count={count}
               onOpen={handleOpenCategory}
             />
           ))}
         </div>
       ) : (
-        <div className="w-80 mx-auto pt-20 flex flex-col items-center text-center gap-1 font-['Paperlogy']">
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center gap-1 font-['Paperlogy']">
           <p className="text-slate-800 text-sm">아직 등록된 여행 기록이 없어요</p>
           <p className="text-slate-800/60 text-xs">카테고리를 추가하고 첫 여행을 기록해보세요</p>
         </div>
