@@ -76,18 +76,6 @@ const AIPatchOptionSelect = () => {
   // 선택한 작가 정보
   const selectedArtist = allArtists.find((artist) => artist.id === selectedArtistId) ?? null;
 
-  // 수정 화면 헤더 제목
-  const editTitle = {
-    1: "사진 선택 수정하기",
-    2: "작가 선택 수정하기",
-    3: "프레임 선택 수정하기",
-  } as const;
-
-  // 뒤로가기
-  const handleBack = () => {
-    navigate(-1);
-  };
-
   // 숨겨둔 파일 input 실행
   const handleOpenPhotoPicker = () => {
     fileInputRef.current?.click();

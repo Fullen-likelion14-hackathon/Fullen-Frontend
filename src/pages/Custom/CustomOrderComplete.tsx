@@ -134,7 +134,7 @@ export default function MyOrderList() {
       <button
         type="button"
         onClick={handleMoveMain}
-        className="absolute bottom-25 left-1/2 h-14 w-83 -translate-x-1/2 rounded-xl border-2 border-[#A9672A] bg-[#F9F4F0] text-[18px] font-bold text-[#A9672A] shadow-lg"
+        className="absolute bottom-10 left-1/2 h-14 w-83 -translate-x-1/2 rounded-xl border-2 border-[#A9672A] bg-[#F9F4F0] text-[18px] font-bold text-[#A9672A] shadow-lg"
       >
         메인 화면으로 이동하기
       </button>

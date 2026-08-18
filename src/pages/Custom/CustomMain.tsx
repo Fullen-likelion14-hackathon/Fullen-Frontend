@@ -66,7 +66,7 @@ export default function CustomMain() {
       </div>
       {/* 주문 완료 모달 */}
       {isOrderCompleteModalOpen && (
-        <OrderCompleteModal onClose={() => setIsOrderCompleteModalOpen(false)} />
+        <OrderCompleteModal orderType="custom" onClose={() => setIsOrderCompleteModalOpen(false)} />
       )}
     </main>
   );
