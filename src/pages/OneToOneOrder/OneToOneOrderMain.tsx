@@ -1,10 +1,18 @@
+import { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Button } from "@base-ui/react/button";
+
 import floorBg from "@/assets/images/Floor.png";
 import { ProductViewer } from "@/components/custom/viewer/ProductViewer";
-import { Button } from "@base-ui/react/button";
-import { useNavigate } from "react-router-dom";
+import OrderCompleteModal from "@/components/custom/OrderCompleteModal";
 
 export default function OneToOneOrderMain() {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const [isOrderCompleteModalOpen, setIsOrderCompleteModalOpen] = useState(
+    location.state?.showOrderCompleteModal ?? false,
+  );
 
   return (
     <main className="relative mx-auto h-dvh w-full max-w-97.5 overflow-hidden bg-[#F9F4F0]">
@@ -41,6 +49,7 @@ export default function OneToOneOrderMain() {
       <div className="absolute inset-0">
         <ProductViewer />
       </div>
+
       {/* 주문 버튼 */}
       <Button
         onClick={() => navigate("/onetooneorder/request")}
@@ -48,6 +57,14 @@ export default function OneToOneOrderMain() {
       >
         1:1 커스텀 주문하기
       </Button>
+
+      {/* 주문 완료 모달 */}
+      {isOrderCompleteModalOpen && (
+        <OrderCompleteModal
+          orderType="onetoone"
+          onClose={() => setIsOrderCompleteModalOpen(false)}
+        />
+      )}
     </main>
   );
 }

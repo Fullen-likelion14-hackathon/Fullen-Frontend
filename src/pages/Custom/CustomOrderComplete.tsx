@@ -8,12 +8,15 @@ import {
   Stamp,
   Truck,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import PageHeader from "@/components/common/PageHeader";
 
 export default function MyOrderList() {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const orderType = location.state?.orderType;
 
   const orderSteps = [
     { icon: <ReceiptText size={28} strokeWidth={2.5} />, active: true },
@@ -36,7 +39,7 @@ export default function MyOrderList() {
 
         {/* 주문 완료 문구 */}
         <h1 className="mt-4 text-center text-[28px] font-extrabold leading-[1.35] text-[#192940]">
-          나의 커스텀
+          나의 {orderType === "onetoone" ? "1:1 커스텀" : "커스텀"}
           <br />
           주문이 완료되었습니다.
         </h1>
@@ -84,11 +87,23 @@ export default function MyOrderList() {
       {/* 메인 화면 버튼 */}
       <button
         type="button"
-        onClick={() =>
-          navigate("/custom", {
-            state: { showOrderCompleteModal: true },
-          })
-        }
+        onClick={() => {
+          if (orderType === "onetoone") {
+            navigate("/onetooneorder", {
+              state: {
+                showOrderCompleteModal: true,
+                orderType: "onetoone",
+              },
+            });
+          } else {
+            navigate("/custom", {
+              state: {
+                showOrderCompleteModal: true,
+                orderType: "custom",
+              },
+            });
+          }
+        }}
         className="absolute bottom-25 left-1/2 h-14 w-83 -translate-x-1/2 rounded-xl border-2 border-[#A9672A] bg-[#F9F4F0] text-[18px] font-bold text-[#A9672A] shadow-lg"
       >
         메인 화면으로 이동하기

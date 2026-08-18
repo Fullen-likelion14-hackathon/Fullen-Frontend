@@ -46,13 +46,11 @@ export default function CustomRequestConfirm() {
 
   // 최종 주문
   const handleOrder = () => {
-    console.log({
-      selectedImage,
-      selectedArtistId,
-      selectedLocation,
-      requestText,
+    navigate("/custom/order/complete", {
+      state: {
+        orderType: "onetoone",
+      },
     });
-
     // TODO: 주문 API 연결
   };
 
