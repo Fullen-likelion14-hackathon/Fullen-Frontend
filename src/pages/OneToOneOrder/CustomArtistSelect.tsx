@@ -10,28 +10,35 @@ import ArtistDetailModal from "@/components/oneToOneOrder/ArtistDetailModal";
 import { recommendedArtists, otherArtists } from "@/components/oneToOneOrder/ArtistData";
 
 import type { Artist } from "@/components/oneToOneOrder/ArtistData";
+import type { FrameType } from "@/components/custom/common/selection/FrameSelectBox";
 
 interface ArtistSelectLocationState {
-  // 작가 선택 완료 후 돌아갈 경로임
+  // 작가 선택 완료 후 돌아갈 경로
   returnTo?: string;
 
-  // 어떤 플로우에서 작가 선택 페이지로 들어왔는지 구분함
+  // 어떤 플로우에서 들어왔는지 구분
   source?: "ai-patch" | "onetoone";
 
-  // AI 패치에서 기존에 선택한 사진을 유지하기 위한 값임
+  // AI 패치에서 기존 선택값 유지
   selectedImage?: string;
+  selectedFrame?: FrameType;
+
+  // AI 패치 수정 모드 유지
+  mode?: "edit";
+  editStep?: 1 | 2 | 3;
 }
 
 export default function CustomArtistSelect() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // 이전 페이지에서 전달받은 state
   const locationState = location.state as ArtistSelectLocationState | null;
 
-  // 실제 선택한 작가
+  // 실제 선택한 작가 id
   const [selectedArtistId, setSelectedArtistId] = useState<number | null>(null);
 
-  // 다른 작가 더보기
+  // 다른 작가 더보기 상태
   const [isMoreOpen, setIsMoreOpen] = useState(false);
 
   // 상세 모달에서 보여줄 작가
@@ -57,20 +64,26 @@ export default function CustomArtistSelect() {
     setDetailArtist(null);
   };
 
-  // 선택한 작가를 진입한 플로우에 맞는 페이지로 전달함
+  // 선택한 작가를 진입한 플로우에 맞는 페이지로 전달
   const handleSelectButtonClick = () => {
     if (selectedArtistId === null) return;
 
-    // AI 패치 생성에서 들어온 경우 AI 패치 페이지로 돌아감
+    // AI 패치 생성 / 수정 플로우에서 들어온 경우
     if (locationState?.source === "ai-patch" && locationState.returnTo) {
       navigate(locationState.returnTo, {
         state: {
+          // 새로 선택한 작가
           selectedArtistId,
 
-          // 기존에 선택했던 사진도 다시 전달해줌
+          // 기존 선택값 유지
           selectedImage: locationState.selectedImage,
+          selectedFrame: locationState.selectedFrame,
 
-          // 작가 선택 단계로 돌아가게 해줌
+          // 수정 모드 유지
+          mode: locationState.mode,
+          editStep: locationState.editStep,
+
+          // 일반 AI 패치 작가 선택일 경우 2단계 복귀
           currentStep: 2,
         },
       });
@@ -78,7 +91,7 @@ export default function CustomArtistSelect() {
       return;
     }
 
-    // 별도 source가 없으면 기존 1:1 커스텀 주문 흐름으로 이동함
+    // 1:1 커스텀 주문 플로우
     navigate("/onetooneorder/request", {
       state: {
         selectedArtistId,
@@ -93,6 +106,7 @@ export default function CustomArtistSelect() {
 
   return (
     <div className="relative min-h-screen bg-[#F9F4F0]">
+      {/* 상단 헤더 */}
       <PageHeader title="작가 선택" />
 
       {/* AI 추천 작가 3명 */}
@@ -116,7 +130,7 @@ export default function CustomArtistSelect() {
           <ChevronDown size={30} color="#192A40" />
         </button>
 
-        {/* 작가 선택 버튼 */}
+        {/* 작가 선택 완료 버튼 */}
         <button
           type="button"
           disabled={selectedArtistId === null}
@@ -136,7 +150,7 @@ export default function CustomArtistSelect() {
         <div className="fixed inset-x-0 bottom-0 top-25.5 z-30 bg-[#F9F4F0]">
           {/* 스크롤 영역 */}
           <div className="h-full overflow-y-auto px-6 pb-32">
-            {/* 다른 작가 더보기 */}
+            {/* 다른 작가 더보기 닫기 */}
             <button
               type="button"
               onClick={handleMoreArtistClick}
