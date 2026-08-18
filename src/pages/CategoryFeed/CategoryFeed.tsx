@@ -5,12 +5,18 @@ import DeleteConfirmDialog from "@/components/common/DeleteConfirmDialog";
 import editIcon from "@/assets/icons/edit2.png";
 import deleteIcon from "@/assets/icons/delete2.png";
 import { categoryFeedMockData } from "./categoryFeed.mock";
-import { feedDetailMockData } from "@/pages/FeedDetail/feedDetail.mock";
+import { useJourney } from "@/hooks/queries/useJourney";
+import { useDeleteJourney } from "@/hooks/queries/useDeleteJourney";
 
 export default function CategoryFeed() {
   const navigate = useNavigate();
   const { categoryId } = useParams();
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const { mutateAsync: deleteJourney, isPending: isDeleting } = useDeleteJourney();
+
+  // 실제 생성 시 업로드한 표지사진(coverImgUrl)을 가져오기 위한 단일 조회.
+  // TODO: 피드 목록 자체는 아직 categoryFeedMockData 사용 중이라 헤더 정보는 목업, coverImgUrl만 실데이터로 보강
+  const { data: journeyDetail } = useJourney(Number(categoryId));
 
   const category = categoryFeedMockData.find((item) => item.categoryId === Number(categoryId));
 
@@ -18,24 +24,17 @@ export default function CategoryFeed() {
     return <div>카테고리 데이터 없음</div>;
   }
 
-  const handleDeleteCategory = () => {
-    // TODO: 카테고리 삭제 API 연동 (지금은 목업 배열에서 직접 제거)
-    const categoryIndex = categoryFeedMockData.findIndex(
-      (item) => item.categoryId === Number(categoryId),
-    );
-    if (categoryIndex !== -1) {
-      categoryFeedMockData.splice(categoryIndex, 1);
-    }
+  const handleDeleteCategory = async () => {
+    if (!categoryId || isDeleting) return;
 
-    // 이 카테고리에 속한 피드 상세 데이터도 함께 제거
-    for (let i = feedDetailMockData.length - 1; i >= 0; i--) {
-      if (feedDetailMockData[i].categoryId === Number(categoryId)) {
-        feedDetailMockData.splice(i, 1);
-      }
+    try {
+      await deleteJourney(Number(categoryId));
+      setIsDeleteOpen(false);
+      navigate("/passport");
+    } catch (error) {
+      console.error(error);
+      // TODO: 실패 시 사용자 안내(토스트 등) 추가 필요
     }
-
-    setIsDeleteOpen(false);
-    navigate("/passport");
   };
 
   return (
@@ -95,16 +94,14 @@ export default function CategoryFeed() {
                 aria-label="카테고리 수정"
                 onClick={() =>
                   // CategoryEdit이 location.state로 기존 값을 초기화하므로 함께 전달
-                  // ⚠️ CategoryFeedData에 별도 표지사진(coverImage) 필드가 없어서
-                  // 임시로 feeds[0] 사진을 표지사진 자리에 사용 중. 추후 coverImage 필드
-                  // 자체를 CategoryFeedData/생성 로직에 추가하는 걸 권장
+                  // journeyDetail(실제 API 응답)을 우선 사용, 아직 로딩 전이면 목업으로 임시 fallback
                   navigate(`/passport/${categoryId}/edit`, {
                     state: {
-                      coverImageUrl: category.feeds[0]?.thumbnail,
-                      country: category.countryName,
-                      travelType: category.title,
-                      startDate: category.startDate,
-                      endDate: category.endDate,
+                      coverImageUrl: journeyDetail?.coverImgUrl ?? category.feeds[0]?.thumbnail,
+                      country: journeyDetail?.nationKRName ?? category.countryName,
+                      travelType: journeyDetail?.type ?? category.title,
+                      startDate: journeyDetail?.startDate ?? category.startDate,
+                      endDate: journeyDetail?.endDate ?? category.endDate,
                     },
                   })
                 }

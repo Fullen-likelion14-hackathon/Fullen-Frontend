@@ -11,10 +11,22 @@ import CountryAutocomplete from "@/components/common/CountryAutocomplete";
 import DateRangeField from "@/components/common/DateRangeField";
 import LeaveConfirmDialog from "@/components/common/LeaveConfirmDialog";
 import uploadIcon from "@/assets/icons/Upload.png";
+import { uploadImage } from "@/api/image";
+import { useCreateJourney } from "@/hooks/queries/useCreateJourney";
+
+// Date -> "YYYY-MM-DD" (요청 body 포맷, 화면 표시용 점포맷과 다름)
+const formatDate = (date: Date) => {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+};
 
 const CategoryNew = () => {
   const navigate = useNavigate();
+  const { mutateAsync: createJourney } = useCreateJourney();
 
+  const [coverImageFile, setCoverImageFile] = useState<File | null>(null);
   const [coverImage, setCoverImage] = useState<string | null>(null);
   const [country, setCountry] = useState("");
   const [travelType, setTravelType] = useState("");
@@ -24,6 +36,7 @@ const CategoryNew = () => {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    setCoverImageFile(file);
     setCoverImage(URL.createObjectURL(file));
   };
 
@@ -42,13 +55,29 @@ const CategoryNew = () => {
     navigate(-1);
   };
 
-  const handleCreate = () => {
-    if (!isFormValid || isCreating) return;
+  const handleCreate = async () => {
+    if (!isFormValid || isCreating || !coverImageFile || !startDate || !endDate) return;
     setIsCreating(true);
-    // TODO: 실제 생성 API 연동 시 아래 setTimeout을 API 호출로 교체
-    setTimeout(() => {
+
+    try {
+      // 1. 표지사진 업로드 -> imgUrl 획득
+      const imgUrl = await uploadImage(coverImageFile, "NATION"); // TODO: dirName 실제 enum값 확인 필요
+
+      // 2. 여행 생성
+      await createJourney({
+        imgUrl,
+        nationName: country,
+        type: travelType,
+        startDate: formatDate(startDate),
+        endDate: formatDate(endDate),
+      });
+
       navigate("/");
-    }, 1500);
+    } catch (error) {
+      console.error(error);
+      setIsCreating(false);
+      // TODO: 실패 시 사용자 안내(토스트 등) 추가 필요
+    }
   };
 
   return (

@@ -2,10 +2,12 @@
 // CategoryEdit.tsx — 카테고리(여행) 수정 페이지
 // CategoryNew.tsx 기반, 기존 값으로 초기화 + 수정 로직 + 헤더 텍스트만 변경
 //
-// 진입 경로 가정: CategoryFeed 등에서 "수정하기" 클릭 시
+// 진입 경로: CategoryFeed 등에서 "수정하기" 클릭 시
 //   navigate(`/passport/${categoryId}/edit`, { state: category })
-// 로 기존 카테고리 데이터를 넘겨준다고 가정했습니다.
-// 실제 데이터 조회 방식(API 훅 등)이 따로 있다면 아래 initialCategory 부분만 교체하면 됩니다.
+// 로 기존 카테고리 데이터를 넘겨준다고 가정.
+//
+// ⚠️ PUT /api/journeys/{journeyId}는 nationName을 받지 않음(imgUrl/type/startDate/endDate만).
+// 그래서 나라 필드는 화면엔 남겨두되 수정 불가(readonly) 처리함.
 // ============================================================
 
 import { useMemo, useState } from "react";
@@ -16,6 +18,8 @@ import CountryAutocomplete from "@/components/common/CountryAutocomplete";
 import DateRangeField from "@/components/common/DateRangeField";
 import LeaveConfirmDialog from "@/components/common/LeaveConfirmDialog";
 import uploadIcon from "@/assets/icons/Upload.png";
+import { uploadImage } from "@/api/image";
+import { useUpdateJourney } from "@/hooks/queries/useUpdateJourney";
 
 type CategoryEditState = {
   coverImageUrl?: string;
@@ -33,12 +37,21 @@ const parseDotDate = (value?: string): Date | null => {
   return new Date(year, month - 1, day);
 };
 
+// Date -> "YYYY-MM-DD" (요청 body 포맷)
+const formatDate = (date: Date) => {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+};
+
 const CategoryEdit = () => {
   const navigate = useNavigate();
   const { categoryId } = useParams();
   const location = useLocation();
+  const { mutateAsync: updateJourney } = useUpdateJourney();
 
-  // TODO: 실제 조회 API/훅이 있다면 이 부분을 useCategoryDetail(categoryId) 같은 훅으로 교체
+  // TODO: 실제 조회 API/훅이 있다면 이 부분을 useJourney(categoryId) 같은 훅으로 교체
   const initialCategory = (location.state as CategoryEditState | null) ?? null;
 
   const initialValues = useMemo(
@@ -53,11 +66,11 @@ const CategoryEdit = () => {
   );
   // 변경 여부 비교 기준값 (최초 로드 시점 값으로 고정).
   // useRef.current를 렌더 중에 읽으면 React Compiler가 금지하는 패턴이라 useState로 스냅샷을 잡음
-  // (setInitialSnapshot은 아래에서 호출하지 않으므로 마운트 시점 값 그대로 유지됨)
   const [initialSnapshot] = useState(initialValues);
 
+  const [coverImageFile, setCoverImageFile] = useState<File | null>(null);
   const [coverImage, setCoverImage] = useState<string | null>(initialValues.coverImage);
-  const [country, setCountry] = useState(initialValues.country);
+  const [country] = useState(initialValues.country); // 수정 API가 nationName을 안 받아서 readonly
   const [travelType, setTravelType] = useState(initialValues.travelType);
   const [startDate, setStartDate] = useState<Date | null>(initialValues.startDate);
   const [endDate, setEndDate] = useState<Date | null>(initialValues.endDate);
@@ -65,16 +78,16 @@ const CategoryEdit = () => {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    setCoverImageFile(file);
     setCoverImage(URL.createObjectURL(file));
   };
 
   // 모든 필수 항목이 채워졌는지 여부 (저장하기 버튼 활성화 조건)
   const isFormValid = Boolean(coverImage && country && travelType && startDate && endDate);
 
-  // 최초 로드 값 대비 하나라도 바뀌었는지 (뒤로가기 시 경고모달 노출 조건)
+  // 최초 로드 값 대비 하나라도 바뀌었는지 (뒤로가기 시 경고모달 노출 조건). 나라는 readonly라 비교 제외
   const hasChanges =
     coverImage !== initialSnapshot.coverImage ||
-    country !== initialSnapshot.country ||
     travelType !== initialSnapshot.travelType ||
     startDate?.getTime() !== initialSnapshot.startDate?.getTime() ||
     endDate?.getTime() !== initialSnapshot.endDate?.getTime();
@@ -91,13 +104,32 @@ const CategoryEdit = () => {
     navigate(-1);
   };
 
-  const handleSave = () => {
-    if (!isFormValid || isSaving) return;
+  const handleSave = async () => {
+    if (!isFormValid || isSaving || !categoryId || !startDate || !endDate) return;
     setIsSaving(true);
-    // TODO: 실제 수정 API 연동 시 아래 setTimeout을 API 호출로 교체
-    setTimeout(() => {
+
+    try {
+      // 표지사진을 새로 올린 경우에만 업로드, 아니면 기존 URL 그대로 사용
+      const imgUrl = coverImageFile
+        ? await uploadImage(coverImageFile, "NATION") // TODO: 카테고리용 dirName 생기면 교체
+        : (coverImage as string);
+
+      await updateJourney({
+        journeyId: Number(categoryId),
+        payload: {
+          imgUrl,
+          type: travelType,
+          startDate: formatDate(startDate),
+          endDate: formatDate(endDate),
+        },
+      });
+
       navigate(`/passport/${categoryId}`);
-    }, 1500);
+    } catch (error) {
+      console.error(error);
+      setIsSaving(false);
+      // TODO: 실패 시 사용자 안내(토스트 등) 추가 필요
+    }
   };
 
   return (
@@ -139,7 +171,8 @@ const CategoryEdit = () => {
 
           {/* 입력 필드 (CategoryNew와 동일 컴포넌트, 초기값만 채워서 사용) */}
           <div className="flex w-full flex-col gap-1.5">
-            <CountryAutocomplete value={country} onChange={setCountry} disabled={isSaving} />
+            {/* 나라는 수정 API가 지원하지 않아 readonly. onChange는 CountryAutocomplete가 요구하는 prop이라 no-op으로 전달 */}
+            <CountryAutocomplete value={country} onChange={() => {}} disabled />
             <Input
               value={travelType}
               onChange={(e) => setTravelType(e.target.value)}

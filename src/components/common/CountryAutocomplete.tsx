@@ -5,7 +5,7 @@
 
 import { useState } from "react";
 import { Search, X } from "lucide-react";
-import { COUNTRIES } from "@/mocks/countries.mock";
+import { useNations } from "@/hooks/queries/useNations";
 
 interface CountryAutocompleteProps {
   value: string;
@@ -16,8 +16,9 @@ interface CountryAutocompleteProps {
 const CountryAutocomplete = ({ value, onChange, disabled }: CountryAutocompleteProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const { data: countries = [] } = useNations();
 
-  const filteredCountries = COUNTRIES.filter((c) => c.includes(query));
+  const filteredCountries = countries.filter((c) => c.includes(query));
 
   const handleSelect = (country: string) => {
     onChange(country);
