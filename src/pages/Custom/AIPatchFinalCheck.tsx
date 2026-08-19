@@ -8,64 +8,29 @@ import CustomStepButton from "@/components/custom/common/step/CustomStepButton";
 
 import { recommendedArtists, otherArtists } from "@/mocks/ArtistData";
 
-import { useAIAnalysis } from "@/hooks/queries/ai/useAIAnalysis";
-import { useGenerateAIPatch } from "@/hooks/mutations/ai/useGenerateAIPatch";
-
 import { useAIPatchStore } from "@/stores/aiPatchStore";
-
-import type { AIPatchApiType } from "@/types/ai";
 
 const AIPatchFinalCheck = () => {
   const navigate = useNavigate();
 
-  // AI 여행 분석 조회 Query
-  const {
-    data: analysis,
-    isLoading: isAnalysisLoading,
-    isError: isAnalysisError,
-  } = useAIAnalysis();
-
-  // AI 패치 생성 Mutation
-  const { mutateAsync: generateAIPatch, isPending: isGenerating } = useGenerateAIPatch();
-
-  // 선택 피드 사진 id
-  const selectedPhotoId = useAIPatchStore((state) => state.selectedPhotoId);
-
-  // 선택 피드 사진 이미지 URL
+  // AI 패치 선택값을 Zustand에서 가져옴
   const selectedImage = useAIPatchStore((state) => state.selectedImage);
 
-  // 선택 작가 id
   const selectedArtistId = useAIPatchStore((state) => state.selectedArtistId);
 
-  // 선택 프레임
   const selectedFrame = useAIPatchStore((state) => state.selectedFrame);
 
-  // AI 생성 결과 저장 함수
-  const setGeneratedPatches = useAIPatchStore((state) => state.setGeneratedPatches);
+  // TODO: 로그인 사용자 정보 및 AI 분석 결과 연결 예정임
+  const nickname = "멋사";
+  const travelStyle = "Urban Minimalist";
 
-  // 전체 작가 데이터
+  // 전체 작가 데이터를 합쳐줌
   const allArtists = [...recommendedArtists, ...otherArtists];
 
-  // 선택 작가 정보
+  // 선택한 작가 정보 찾음
   const selectedArtist = allArtists.find((artist) => artist.id === selectedArtistId) ?? null;
 
-  // AI 분석 사용자 이름
-  const nickname = analysis?.username ?? "";
-
-  // AI 분석 여행 스타일
-  const travelStyle = analysis?.travelStyle ?? "";
-
-  // 프론트 프레임 타입 서버 프레임 타입 변환값
-  const apiFrameType: AIPatchApiType | null =
-    selectedFrame === "ticket"
-      ? "TICKET"
-      : selectedFrame === "stamp"
-        ? "STAMP"
-        : selectedFrame === "label"
-          ? "LABEL"
-          : null;
-
-  // 수정 대상 단계 이동 처리
+  // 수정할 단계로 이동함
   const handleEdit = (step: 1 | 2 | 3) => {
     navigate("/custom/ai-patch/options", {
       state: {
@@ -75,68 +40,17 @@ const AIPatchFinalCheck = () => {
     });
   };
 
-  // AI 패치 생성 요청 처리
-  const handleGenerate = async () => {
-    if (
-      selectedPhotoId === null ||
-      selectedArtistId === null ||
-      !apiFrameType ||
-      !travelStyle ||
-      isGenerating
-    ) {
-      return;
-    }
-
-    try {
-      const response = await generateAIPatch({
-        // 피드 사진 id
-        photoId: selectedPhotoId,
-
-        // AI 여행 스타일 전달 문구
-        message: `여행 스타일은 ${travelStyle}`,
-
-        // 서버 패치 프레임 타입
-        type: apiFrameType,
-
-        // 선택 작가 id
-        artistId: selectedArtistId,
-      });
-
-      // 서버 AI 생성 이미지 URL 목록
-      const generatedImages = response.data.answer;
-
-      // Zustand AI 생성 결과 저장 처리
-      setGeneratedPatches(
-        generatedImages.map((image, index) => ({
-          id: index + 1,
-          image,
-        })),
-      );
-
-      // AI 패치 결과 페이지 이동 처리
-      navigate("/custom/ai-patch/result");
-    } catch (error) {
-      console.error("AI 패치 생성 실패", error);
-    }
+  // AI 패치 생성 결과 페이지로 이동함
+  const handleGenerate = () => {
+    // TODO: 실제 AI 패치 생성 API 연결 예정임
+    navigate("/custom/ai-patch/result");
   };
-
-  // AI 패치 생성 가능 여부
-  const isGenerateDisabled =
-    selectedPhotoId === null ||
-    !selectedImage ||
-    !selectedArtist ||
-    !selectedFrame ||
-    !analysis ||
-    isAnalysisLoading ||
-    isAnalysisError ||
-    isGenerating;
 
   return (
     <main className="relative mx-auto h-dvh w-full max-w-97.5 overflow-hidden bg-[#F9F4F0] text-[#192C44]">
-      {/* 상단 헤더 영역 */}
+      {/* 상단 헤더 영역임 */}
       <PageHeader title="AI 패치 생성" backTo="/custom/customizing" />
-
-      {/* 최종 확인 스크롤 영역 */}
+      {/* 최종 확인 스크롤 영역임 */}
       <section className="h-[calc(100dvh-126px)] overflow-y-auto pb-40">
         <div className="relative px-8 pb-8 pt-10 text-center">
           <h2 className="text-2xl font-bold text-black">이대로 패치를 생성할까요?</h2>
@@ -147,38 +61,12 @@ const AIPatchFinalCheck = () => {
         </div>
 
         <div className="px-6">
-          {/* 여행 스타일 영역 */}
+          {/* 여행 스타일 영역임 */}
           <div className="mb-5 flex items-center justify-between px-2">
             <div className="border-l-4 border-[#B89B84] pl-2">
-              {isAnalysisLoading && (
-                <>
-                  <p className="text-base font-bold leading-tight text-[#8C8C8C]">
-                    여행 스타일 분석 정보
-                  </p>
+              <p className="text-base font-bold leading-tight">{nickname}님의 여행 스타일</p>
 
-                  <p className="mt-1 text-xl font-bold leading-none text-[#B89B84]">불러오는 중</p>
-                </>
-              )}
-
-              {isAnalysisError && (
-                <>
-                  <p className="text-base font-bold leading-tight text-[#8C8C8C]">
-                    여행 스타일 분석 정보
-                  </p>
-
-                  <p className="mt-1 text-xl font-bold leading-none text-[#B89B84]">조회 실패</p>
-                </>
-              )}
-
-              {!isAnalysisLoading && !isAnalysisError && analysis && (
-                <>
-                  <p className="text-base font-bold leading-tight">{nickname}님의 여행 스타일</p>
-
-                  <p className="mt-1 text-2xl font-bold leading-none text-[#A3642B]">
-                    {travelStyle}
-                  </p>
-                </>
-              )}
+              <p className="mt-1 text-2xl font-bold leading-none text-[#A3642B]">{travelStyle}</p>
             </div>
 
             <button
@@ -192,7 +80,7 @@ const AIPatchFinalCheck = () => {
 
           <div className="h-0.5 w-full bg-[#DFCAB7]" />
 
-          {/* 사진 선택 결과 영역 */}
+          {/* 사진 선택 결과임 */}
           <section className="py-5">
             <div className="mb-4 flex items-center justify-between px-2">
               <div className="flex items-center gap-3">
@@ -206,8 +94,7 @@ const AIPatchFinalCheck = () => {
               <button
                 type="button"
                 onClick={() => handleEdit(1)}
-                disabled={isGenerating}
-                className="rounded-md border-2 border-[#B89B84] px-3 py-1.5 text-sm font-bold text-[#192C44] disabled:cursor-not-allowed disabled:opacity-50"
+                className="rounded-md border-2 border-[#B89B84] px-3 py-1.5 text-sm font-bold text-[#192C44]"
               >
                 수정하기
               </button>
@@ -218,7 +105,7 @@ const AIPatchFinalCheck = () => {
 
           <div className="h-0.5 w-full bg-[#DFCAB7]" />
 
-          {/* 작가 선택 결과 영역 */}
+          {/* 작가 선택 결과임 */}
           <section className="py-5">
             <div className="mb-4 flex items-center justify-between px-2">
               <div className="flex items-center gap-3">
@@ -232,8 +119,7 @@ const AIPatchFinalCheck = () => {
               <button
                 type="button"
                 onClick={() => handleEdit(2)}
-                disabled={isGenerating}
-                className="rounded-md border-2 border-[#B89B84] px-3 py-1.5 text-sm font-bold text-[#192C44] disabled:cursor-not-allowed disabled:opacity-50"
+                className="rounded-md border-2 border-[#B89B84] px-3 py-1.5 text-sm font-bold text-[#192C44]"
               >
                 수정하기
               </button>
@@ -244,7 +130,7 @@ const AIPatchFinalCheck = () => {
 
           <div className="h-0.5 w-full bg-[#DFCAB7]" />
 
-          {/* 프레임 선택 결과 영역 */}
+          {/* 프레임 선택 결과임 */}
           <section className="py-5">
             <div className="mb-4 flex items-center justify-between px-2">
               <div className="flex items-center gap-3">
@@ -258,8 +144,7 @@ const AIPatchFinalCheck = () => {
               <button
                 type="button"
                 onClick={() => handleEdit(3)}
-                disabled={isGenerating}
-                className="rounded-md border-2 border-[#B89B84] px-3 py-1.5 text-sm font-bold text-[#192C44] disabled:cursor-not-allowed disabled:opacity-50"
+                className="rounded-md border-2 border-[#B89B84] px-3 py-1.5 text-sm font-bold text-[#192C44]"
               >
                 수정하기
               </button>
@@ -270,12 +155,12 @@ const AIPatchFinalCheck = () => {
         </div>
       </section>
 
-      {/* 하단 생성 버튼 영역 */}
+      {/* 하단 생성 버튼 영역임 */}
       <div className="absolute inset-x-0 bottom-0 z-40 rounded-t-4xl bg-[#F9F4F0] px-6 pb-7 pt-6 shadow-[0_-8px_20px_rgba(0,0,0,0.06)]">
         <CustomStepButton
           onNext={handleGenerate}
-          nextLabel={isGenerating ? "패치 생성 중" : "이대로 생성하기"}
-          disabled={isGenerateDisabled}
+          nextLabel="이대로 생성하기"
+          disabled={!selectedImage || !selectedArtist || !selectedFrame}
         />
       </div>
     </main>
