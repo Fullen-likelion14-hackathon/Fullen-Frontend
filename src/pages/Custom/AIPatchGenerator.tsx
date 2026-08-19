@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import { aiPatchAnalysisMock } from "@/mocks/aiPatchAnalysis.mock";
 import analysisIcon from "@/assets/icons/analysisIcon.png";
@@ -6,6 +6,7 @@ import PageHeader from "@/components/common/PageHeader";
 
 const AIPatchGenerator = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const analysis = aiPatchAnalysisMock;
 
@@ -17,26 +18,36 @@ const AIPatchGenerator = () => {
     navigate("/custom/ai-patch/options");
   };
 
-  const handleReanalyze = () => {
-    // TODO: 실제 AI 분석 API 연결 후 재요청 로직 추가할 예정임
-    console.log("다시 분석");
+  // 여행 스타일 분석 수정 페이지로 이동
+  const handleEditAnalysis = () => {
+    // 기존 분석 내용을 수정 페이지 textarea 초기값으로 전달
+    const analysisText = [analysis.description, ...analysis.analysis].join("\n");
+
+    navigate("/custom/analysis/edit", {
+      state: {
+        analysisText,
+
+        // 수정 완료 후 현재 AI 사용자 분석 페이지로 돌아오기 위함
+        returnTo: location.pathname,
+      },
+    });
   };
 
   return (
     <main className="relative mx-auto h-dvh w-full max-w-97.5 overflow-hidden bg-[#EDE6DF] text-[#19273C]">
-      {/* 상단 헤더 영역임 */}
+      {/* 상단 헤더 영역 */}
       <PageHeader title="AI 사용자 분석" backTo="/custom/customizing" />
 
-      {/* 큰 반원 배경임 */}
+      {/* 큰 반원 배경 */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute left-1/2 top-120 z-0 h-160 w-240 -translate-x-1/2 rounded-[90%] bg-[#F9F4F0]"
       />
 
-      {/* 화면 높이가 작은 경우 본문 영역만 스크롤되게 해줌 */}
+      {/* 화면 높이가 작은 경우 본문 영역만 스크롤 */}
       <section className="relative z-10 h-[calc(100dvh-126px)] overflow-y-auto">
         <div className="mx-auto flex w-full flex-col items-center px-8 pb-10 pt-5">
-          {/* 여행 스타일 분석을 나타내는 아이콘임 */}
+          {/* 여행 스타일 분석 아이콘 */}
           <img
             src={analysisIcon}
             alt=""
@@ -44,23 +55,23 @@ const AIPatchGenerator = () => {
             className="mb-2 h-16 w-16 object-contain"
           />
 
-          {/* 사용자명 + 분석 안내 문구임 */}
+          {/* 사용자명 + 분석 안내 문구 */}
           <p className="mb-5 text-center text-xl font-bold leading-relaxed">
             <span className="text-[#A3642B]">{nickname}</span>
             <span>님의 여행 스타일은</span>
           </p>
 
-          {/* AI가 분석한 여행 스타일 이름임 */}
+          {/* AI가 분석한 여행 스타일 이름 */}
           <h2 className="mb-3 text-center text-3xl font-extrabold leading-tight">
             {analysis.travelStyle}
           </h2>
 
-          {/* 상세 분석 결과 영역임 */}
+          {/* 상세 분석 결과 */}
           <p className="mb-5 max-w-82.5 text-center text-lg font-semibold leading-relaxed text-[#4C5561]">
             {analysis.description}
           </p>
 
-          {/* 여행 스타일 한 줄 설명임 */}
+          {/* 여행 스타일 한 줄 설명 */}
           <div className="mb-5 space-y-1 text-center">
             {analysis.analysis.map((text) => (
               <p key={text} className="text-sm font-medium leading-relaxed text-[#8C8C8C]">
@@ -68,7 +79,8 @@ const AIPatchGenerator = () => {
               </p>
             ))}
           </div>
-          {/* AI 분석 결과 키워드 태그임 */}
+
+          {/* AI 분석 결과 키워드 태그 */}
           <div className="mb-15 mx-10 flex flex-wrap justify-center gap-2">
             {analysis.keywords.map((keyword) => (
               <span
@@ -79,29 +91,30 @@ const AIPatchGenerator = () => {
               </span>
             ))}
           </div>
-          {/* 분석 기반 패치 추천 안내 영역임 */}
+
+          {/* 분석 기반 패치 추천 안내 */}
           <p className="mb-5 max-w-85 text-center text-sm leading-relaxed text-[#B2967E]">
             분석을 바탕으로 <strong className="text-[#A3642B]">3인의 아티스트 추천</strong> 및
             <br />
             <strong className="text-[#A3642B]">맞춤형 트래블 패치</strong>를 제작해드리겠습니다
           </p>
 
-          {/* 사진 선택부터 시작하는 AI 패치 제작 페이지로 이동함 */}
+          {/* AI 패치 제작 페이지로 이동 */}
           <button
             type="button"
             onClick={handleStartGenerate}
-            className="mb-3 h-14.5 w-full rounded-xl bg-[#19273C] text-base font-bold text-white shadow-md transition-opacity hover:opacity-90"
+            className="mb-3 h-14.5 w-full cursor-pointer rounded-xl bg-[#19273C] text-base font-bold text-white shadow-md transition-opacity hover:opacity-90"
           >
             패치 생성 시작하기
           </button>
 
-          {/* AI 사용자 분석을 다시 요청하는 버튼임 */}
+          {/* 여행 스타일 분석 수정 페이지로 이동 */}
           <button
             type="button"
-            onClick={handleReanalyze}
-            className="h-14.5 w-full rounded-xl border-2 border-[#B2967E] bg-white text-base font-bold text-[#B2967E] shadow-sm transition-colors hover:bg-[#F8F2ED]"
+            onClick={handleEditAnalysis}
+            className="h-14.5 w-full cursor-pointer rounded-xl border-2 border-[#B2967E] bg-white text-base font-bold text-[#B2967E] shadow-sm transition-colors hover:bg-[#F8F2ED]"
           >
-            다시 분석하기
+            분석 수정하기
           </button>
         </div>
       </section>
