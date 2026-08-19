@@ -10,7 +10,7 @@ import PhotoSelectBox from "@/components/custom/common/selection/PhotoSelectBox"
 import CustomStep from "@/components/custom/common/step/CustomStep";
 import CustomStepButton from "@/components/custom/common/step/CustomStepButton";
 
-import { recommendedArtists, otherArtists } from "@/mocks/ArtistData";
+import { useArtists } from "@/hooks/queries/artist/useArtists";
 
 import { useAIPatchStore } from "@/stores/aiPatchStore";
 
@@ -59,6 +59,9 @@ const AIPatchOptionSelect = () => {
 
   const setSelectedFrame = useAIPatchStore((state) => state.setSelectedFrame);
 
+  // 작가 리스트 API 조회
+  const { data: artists = [], isPending: isArtistsPending, isError: isArtistsError } = useArtists();
+
   // AI 패치 전체 단계 수임
   const totalSteps = 3;
 
@@ -66,11 +69,8 @@ const AIPatchOptionSelect = () => {
   const nickname = "멋사";
   const travelStyle = "Urban Minimalist";
 
-  // 전체 작가 데이터임
-  const allArtists = [...recommendedArtists, ...otherArtists];
-
-  // 선택한 작가 정보를 찾음
-  const selectedArtist = allArtists.find((artist) => artist.id === selectedArtistId) ?? null;
+  // API 작가 리스트에서 선택한 작가 정보를 찾음
+  const selectedArtist = artists.find((artist) => artist.artistId === selectedArtistId) ?? null;
 
   useEffect(() => {
     if (locationState?.selectedImage) {
@@ -172,6 +172,14 @@ const AIPatchOptionSelect = () => {
 
     navigate("/custom/ai-patch/final-check");
   };
+
+  if (isArtistsPending) {
+    return <div>작가 정보를 불러오는 중...</div>;
+  }
+
+  if (isArtistsError) {
+    return <div>작가 정보를 불러오지 못했습니다.</div>;
+  }
 
   return (
     <main className="relative mx-auto h-dvh w-full max-w-97.5 overflow-hidden bg-[#F9F4F0] text-[#192C44]">

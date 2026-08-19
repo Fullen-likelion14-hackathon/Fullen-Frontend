@@ -12,17 +12,19 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 import PageHeader from "@/components/common/PageHeader";
 
-export default function MyOrderList() {
+type OrderCompleteLocationState = {
+  orderType?: "onetoone" | "custom";
+  premiumOrderId?: number;
+};
+
+export default function CustomOrderComplete() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const orderType = location.state?.orderType;
+  const locationState = location.state as OrderCompleteLocationState | null;
 
-  // 1:1 커스텀 주문 데이터
-  const selectedImage = location.state?.selectedImage;
-  const selectedArtistId = location.state?.selectedArtistId;
-  const selectedLocation = location.state?.selectedLocation;
-  const requestText = location.state?.requestText;
+  const orderType = locationState?.orderType;
+  const premiumOrderId = locationState?.premiumOrderId;
 
   const orderSteps = [
     { icon: <ReceiptText size={28} strokeWidth={2.5} />, active: true },
@@ -35,19 +37,18 @@ export default function MyOrderList() {
 
   // 주문내용 상세보기
   const handleOrderDetail = () => {
+    // 1:1 커스텀 주문
     if (orderType === "onetoone") {
-      navigate("/onetooneorder/detail", {
-        state: {
-          selectedImage,
-          selectedArtistId,
-          selectedLocation,
-          requestText,
-        },
-      });
+      if (premiumOrderId === undefined) {
+        console.error("premiumOrderId가 없습니다.");
+        return;
+      }
 
+      navigate(`/onetooneorder/detail/${premiumOrderId}`);
       return;
     }
 
+    // 일반 커스텀 주문
     navigate("/custom/order/detail");
   };
 

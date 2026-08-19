@@ -6,8 +6,7 @@ import FrameSelectBox from "@/components/custom/common/selection/FrameSelectBox"
 import PhotoSelectBox from "@/components/custom/common/selection/PhotoSelectBox";
 import CustomStepButton from "@/components/custom/common/step/CustomStepButton";
 
-import { recommendedArtists, otherArtists } from "@/mocks/ArtistData";
-
+import { useArtists } from "@/hooks/queries/artist/useArtists";
 import { useAIPatchStore } from "@/stores/aiPatchStore";
 
 const AIPatchFinalCheck = () => {
@@ -20,15 +19,15 @@ const AIPatchFinalCheck = () => {
 
   const selectedFrame = useAIPatchStore((state) => state.selectedFrame);
 
+  // 작가 리스트 API 조회
+  const { data: artists = [], isPending: isArtistsPending, isError: isArtistsError } = useArtists();
+
   // TODO: 로그인 사용자 정보 및 AI 분석 결과 연결 예정임
   const nickname = "멋사";
   const travelStyle = "Urban Minimalist";
 
-  // 전체 작가 데이터를 합쳐줌
-  const allArtists = [...recommendedArtists, ...otherArtists];
-
-  // 선택한 작가 정보 찾음
-  const selectedArtist = allArtists.find((artist) => artist.id === selectedArtistId) ?? null;
+  // API 작가 리스트에서 선택한 작가 찾음
+  const selectedArtist = artists.find((artist) => artist.artistId === selectedArtistId) ?? null;
 
   // 수정할 단계로 이동함
   const handleEdit = (step: 1 | 2 | 3) => {
@@ -46,10 +45,19 @@ const AIPatchFinalCheck = () => {
     navigate("/custom/ai-patch/result");
   };
 
+  if (isArtistsPending) {
+    return <div>작가 정보를 불러오는 중...</div>;
+  }
+
+  if (isArtistsError) {
+    return <div>작가 정보를 불러오지 못했습니다.</div>;
+  }
+
   return (
     <main className="relative mx-auto h-dvh w-full max-w-97.5 overflow-hidden bg-[#F9F4F0] text-[#192C44]">
       {/* 상단 헤더 영역임 */}
       <PageHeader title="AI 패치 생성" backTo="/custom/customizing" />
+
       {/* 최종 확인 스크롤 영역임 */}
       <section className="h-[calc(100dvh-126px)] overflow-y-auto pb-40">
         <div className="relative px-8 pb-8 pt-10 text-center">
