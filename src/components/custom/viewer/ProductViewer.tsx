@@ -4,7 +4,8 @@ import { Canvas } from "@react-three/fiber";
 
 import { Environment, OrbitControls } from "@react-three/drei";
 
-import { Product } from "./Product";
+import { Product, type ProductCustomMode } from "./Product";
+
 import { FloatingShadow } from "./FloatingShadow";
 
 import type { ProductMode } from "./Product";
@@ -21,10 +22,19 @@ const MIN_PATCH_SCALE = 0.25;
 // 패치 최대 크기임
 const MAX_PATCH_SCALE = 1.2;
 
+// 이니셜 최소 크기임
+const MIN_INITIAL_SCALE = 0.25;
+
+// 이니셜 최대 크기임
+const MAX_INITIAL_SCALE = 1.2;
+
 // ProductViewer에서 사용할 props 타입임
 interface ProductViewerProps {
   // 현재 가방 화면 동작 모드임
   mode?: ProductMode;
+
+  // 현재 편집 중인 커스텀 종류임
+  customMode?: ProductCustomMode;
 
   // 위치 선택 모드에서 선택한 위치 전달 함수임
   onLocationChange?: (location: PatchLocation) => void;
@@ -48,7 +58,11 @@ const getPointerDistance = (first: PointerPosition, second: PointerPosition) => 
   return Math.sqrt(dx * dx + dy * dy);
 };
 
-export function ProductViewer({ mode = "view", onLocationChange }: ProductViewerProps) {
+export function ProductViewer({
+  mode = "view",
+  customMode = "patch",
+  onLocationChange,
+}: ProductViewerProps) {
   // 현재 화면을 누르고 있는 포인터 목록임
   const activePointersRef = useRef(new Map<number, PointerPosition>());
 
@@ -58,21 +72,39 @@ export function ProductViewer({ mode = "view", onLocationChange }: ProductViewer
   // 현재 패치 편집 중 여부임
   const isEditingPatch = useBagCustomStore((state) => state.isEditingPatch);
 
-  // 현재 선택된 가방 위 패치 id임
+  // 현재 이니셜 편집 중 여부임
+  const isEditingInitial = useBagCustomStore((state) => state.isEditingInitial);
+
+  // 현재 선택된 패치 id임
   const selectedPlacedPatchId = useBagCustomStore((state) => state.selectedPlacedPatchId);
 
-  // 현재 편집 중인 패치 목록임
+  // 현재 선택된 이니셜 id임
+  const selectedPlacedInitialId = useBagCustomStore((state) => state.selectedPlacedInitialId);
+
+  // 현재 편집 패치 목록임
   const draftPatches = useBagCustomStore((state) => state.draftPatches);
+
+  // 현재 편집 이니셜 목록임
+  const draftInitials = useBagCustomStore((state) => state.draftInitials);
 
   // 패치 크기 변경 함수임
   const resizeDraftPatch = useBagCustomStore((state) => state.resizeDraftPatch);
 
+  // 이니셜 크기 변경 함수임
+  const resizeDraftInitial = useBagCustomStore((state) => state.resizeDraftInitial);
+
   // 패치 편집 상태 변경 함수임
   const setIsEditingPatch = useBagCustomStore((state) => state.setIsEditingPatch);
 
+  // 이니셜 편집 상태 변경 함수임
+  const setIsEditingInitial = useBagCustomStore((state) => state.setIsEditingInitial);
+
+  // 패치 또는 이니셜 편집 중 여부임
+  const isEditingCustom = isEditingPatch || isEditingInitial;
+
   // 포인터 시작 처리함
   const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
-    // 패치 편집 모드가 아니면 pinch 기능 사용하지 않음
+    // draft 모드가 아니면 pinch 기능 사용하지 않음
     if (mode !== "draft") {
       return;
     }
@@ -89,14 +121,20 @@ export function ProductViewer({ mode = "view", onLocationChange }: ProductViewer
 
       previousPinchDistanceRef.current = getPointerDistance(pointers[0], pointers[1]);
 
-      // 카메라 회전 및 확대 잠금용 상태임
-      setIsEditingPatch(true);
+      // 패치 모드 pinch 상태 설정함
+      if (customMode === "patch") {
+        setIsEditingPatch(true);
+
+        return;
+      }
+
+      // 이니셜 모드 pinch 상태 설정함
+      setIsEditingInitial(true);
     }
   };
 
   // 포인터 이동 처리함
   const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
-    // 패치 편집 모드에서만 pinch 동작함
     if (mode !== "draft") {
       return;
     }
@@ -112,11 +150,6 @@ export function ProductViewer({ mode = "view", onLocationChange }: ProductViewer
       y: event.clientY,
     });
 
-    // 선택된 패치가 없으면 크기 조절하지 않음
-    if (!selectedPlacedPatchId) {
-      return;
-    }
-
     // 두 손가락 미만이면 pinch 처리하지 않음
     if (activePointersRef.current.size < 2) {
       return;
@@ -129,33 +162,62 @@ export function ProductViewer({ mode = "view", onLocationChange }: ProductViewer
 
     const previousDistance = previousPinchDistanceRef.current;
 
-    // 이전 거리 없는 경우 기준값만 저장함
+    // 이전 거리 없는 경우 기준값 저장함
     if (!previousDistance) {
       previousPinchDistanceRef.current = currentDistance;
 
       return;
     }
 
-    // 현재 선택 패치 찾음
-    const selectedPatch = draftPatches.find((patch) => patch.id === selectedPlacedPatchId);
+    // 현재 pinch 비율 계산함
+    const ratio = currentDistance / previousDistance;
 
-    if (!selectedPatch) {
+    // 패치 모드 pinch 크기 변경함
+    if (customMode === "patch") {
+      if (!selectedPlacedPatchId) {
+        return;
+      }
+
+      const selectedPatch = draftPatches.find((patch) => patch.id === selectedPlacedPatchId);
+
+      if (!selectedPatch) {
+        return;
+      }
+
+      const nextScale = Math.min(
+        MAX_PATCH_SCALE,
+        Math.max(MIN_PATCH_SCALE, selectedPatch.scale * ratio),
+      );
+
+      resizeDraftPatch(selectedPatch.id, nextScale);
+
+      previousPinchDistanceRef.current = currentDistance;
+
       return;
     }
 
-    // 이전 거리 대비 현재 거리 비율임
-    const ratio = currentDistance / previousDistance;
+    // 이니셜 선택되지 않은 경우 처리하지 않음
+    if (!selectedPlacedInitialId) {
+      return;
+    }
 
-    // 패치 최대 / 최소 크기 범위 제한함
+    // 현재 선택된 이니셜 찾음
+    const selectedInitial = draftInitials.find((initial) => initial.id === selectedPlacedInitialId);
+
+    if (!selectedInitial) {
+      return;
+    }
+
+    // 이니셜 최대 / 최소 크기 제한함
     const nextScale = Math.min(
-      MAX_PATCH_SCALE,
-      Math.max(MIN_PATCH_SCALE, selectedPatch.scale * ratio),
+      MAX_INITIAL_SCALE,
+      Math.max(MIN_INITIAL_SCALE, selectedInitial.scale * ratio),
     );
 
-    // 선택 패치 크기 변경함
-    resizeDraftPatch(selectedPatch.id, nextScale);
+    // 선택 이니셜 크기 변경함
+    resizeDraftInitial(selectedInitial.id, nextScale);
 
-    // 다음 이동 계산용 현재 거리 저장함
+    // 다음 계산용 현재 거리 저장함
     previousPinchDistanceRef.current = currentDistance;
   };
 
@@ -170,6 +232,9 @@ export function ProductViewer({ mode = "view", onLocationChange }: ProductViewer
 
       // 패치 편집 상태 종료함
       setIsEditingPatch(false);
+
+      // 이니셜 편집 상태 종료함
+      setIsEditingInitial(false);
     }
   };
 
@@ -180,8 +245,6 @@ export function ProductViewer({ mode = "view", onLocationChange }: ProductViewer
         inset-0
         touch-none
       "
-
-      // draft 모드에서 pinch 제어용 포인터 이벤트임
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
@@ -199,8 +262,7 @@ export function ProductViewer({ mode = "view", onLocationChange }: ProductViewer
         <directionalLight position={[4, 6, 5]} intensity={1.5} />
 
         {/* 실제 3D 가방 렌더링임 */}
-        {/* view / location-select / draft / applied 전체 모드 지원함 */}
-        <Product mode={mode} onLocationChange={onLocationChange} />
+        <Product mode={mode} customMode={customMode} onLocationChange={onLocationChange} />
 
         {/* 가방 아래 가짜 그림자임 */}
         <FloatingShadow />
@@ -213,11 +275,11 @@ export function ProductViewer({ mode = "view", onLocationChange }: ProductViewer
           makeDefault
           enablePan={false}
 
-          // 패치 위치 / 크기 편집 중 카메라 회전 막음
-          enableRotate={!isEditingPatch}
+          // 패치 또는 이니셜 편집 중 카메라 회전 막음
+          enableRotate={!isEditingCustom}
 
-          // 패치 위치 / 크기 편집 중 카메라 확대 막음
-          enableZoom={!isEditingPatch}
+          // 패치 또는 이니셜 편집 중 카메라 확대 막음
+          enableZoom={!isEditingCustom}
 
           // 가방 중심점임
           target={[0, 1.5, 0]}

@@ -50,7 +50,7 @@ export default function InitialCreateModal({ onClose, onCreate }: InitialCreateM
       "
     >
       {/* 팝업 전체 영역임 */}
-      <div className="relative w-[340px] rounded-xl bg-[#F9F4F0] p-3">
+      <div className="relative w-85 rounded-xl bg-[#F9F4F0] p-3">
         {/* X 누르면 팝업 닫힘 */}
         <button
           type="button"

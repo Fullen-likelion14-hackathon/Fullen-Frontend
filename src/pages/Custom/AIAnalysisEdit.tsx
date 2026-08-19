@@ -23,9 +23,6 @@ export default function AIAnalysisEdit() {
   // 수정 중인 분석 내용
   const [analysisText, setAnalysisText] = useState(initialAnalysis);
 
-  // 수정 중단 모달 상태
-  const [isExitModalOpen, setIsExitModalOpen] = useState(false);
-
   // 입력값 존재 여부
   const isValid = analysisText.trim().length > 0;
 
