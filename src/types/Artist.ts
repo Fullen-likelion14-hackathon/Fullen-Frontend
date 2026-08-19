@@ -4,6 +4,8 @@ export interface Artist {
   artistId: number;
   artistName: string;
   imgUrl: string;
+  nationImgUrl: string;
+  introSummary: string;
 }
 
 // 작가 리스트 조회 API 응답

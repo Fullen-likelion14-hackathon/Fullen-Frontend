@@ -5,12 +5,25 @@ import OrderDetailContent from "@/components/oneToOneOrder/OrderDetailContent";
 
 import { recommendedArtists, otherArtists } from "@/mocks/ArtistData";
 
-import type { PatchLocation } from "@/components/custom/common/selection/LocationSelectBox";
+import { useBags } from "@/hooks/queries/useBags";
+import { useCreatePremiumOrder } from "@/hooks/mutations/useCreatePremiumOrder";
+
+import type { PatchLocation } from "@/types/patchLocation";
 
 type ConfirmLocationState = {
+  // 주문 API에 전달할 사진 id
+  selectedPhotoId?: number;
+
+  // 화면에 보여줄 사진 URL
   selectedImage?: string;
+
+  // 선택한 작가 id
   selectedArtistId?: number;
+
+  // 선택한 패치 위치
   selectedLocation?: PatchLocation;
+
+  // 요청사항
   requestText?: string;
 };
 
@@ -20,19 +33,32 @@ export default function CustomRequestConfirm() {
 
   const locationState = location.state as ConfirmLocationState | null;
 
+  const selectedPhotoId = locationState?.selectedPhotoId;
   const selectedImage = locationState?.selectedImage;
   const selectedArtistId = locationState?.selectedArtistId;
   const selectedLocation = locationState?.selectedLocation;
   const requestText = locationState?.requestText ?? "";
 
+  // 사용자 소유 가방 조회
+  const { data: bags = [], isPending: isBagsPending, isError: isBagsError } = useBags();
+
+  // 현재 사용하는 가방 id
+  const userBagId = bags[0]?.userBagId;
+
+  // 1:1 커스텀 주문 생성 mutation
+  const { mutate: createPremiumOrder, isPending: isOrderPending } = useCreatePremiumOrder();
+
+  // 추천 작가 + 다른 작가
   const allArtists = [...recommendedArtists, ...otherArtists];
 
+  // 선택한 작가 정보
   const selectedArtist = allArtists.find((artist) => artist.id === selectedArtistId) ?? null;
 
   // 수정할 단계로 돌아가기
   const handleEdit = (step: number) => {
     navigate("/onetooneorder/request", {
       state: {
+        selectedPhotoId,
         selectedImage,
         selectedArtistId,
         selectedLocation,
@@ -44,18 +70,53 @@ export default function CustomRequestConfirm() {
 
   // 최종 주문
   const handleOrder = () => {
-    navigate("/custom/order/complete", {
-      state: {
-        orderType: "onetoone",
-        selectedImage,
-        selectedArtistId,
-        selectedLocation,
-        requestText,
-      },
-    });
+    // 주문에 필요한 값이 없는 경우 요청하지 않음
+    if (
+      userBagId === undefined ||
+      selectedPhotoId === undefined ||
+      selectedArtistId === undefined ||
+      !selectedLocation ||
+      !requestText.trim()
+    ) {
+      return;
+    }
 
-    // TODO: 주문 API 연결
+    createPremiumOrder(
+      {
+        userBagId,
+        photoId: selectedPhotoId,
+        artistId: selectedArtistId,
+        requestDetail: requestText,
+        side: selectedLocation.side,
+        posX: selectedLocation.posX,
+        posY: selectedLocation.posY,
+        rotation: selectedLocation.rotation,
+      },
+      {
+        // 주문 생성 성공
+        onSuccess: () => {
+          navigate("/custom/order/complete", {
+            state: {
+              orderType: "onetoone",
+            },
+          });
+        },
+
+        // 주문 생성 실패
+        onError: (error) => {
+          console.error("1:1 커스텀 주문 생성 실패:", error);
+        },
+      },
+    );
   };
+
+  if (isBagsPending) {
+    return <div>가방 정보를 불러오는 중입니다.</div>;
+  }
+
+  if (isBagsError || userBagId === undefined) {
+    return <div>가방 정보를 불러오지 못했습니다.</div>;
+  }
 
   return (
     <main className="mx-auto min-h-dvh w-full max-w-97.5 bg-[#F9F4F0] text-[#192C44]">
@@ -86,9 +147,12 @@ export default function CustomRequestConfirm() {
         <button
           type="button"
           onClick={handleOrder}
-          className="h-16 w-full rounded-xl bg-[#192C44] text-lg font-bold text-white shadow-md"
+          disabled={isOrderPending}
+          className={`h-16 w-full rounded-xl text-lg font-bold text-white shadow-md ${
+            isOrderPending ? "cursor-not-allowed bg-[#D9D9D9]" : "bg-[#192C44]"
+          }`}
         >
-          이대로 주문하기
+          {isOrderPending ? "주문 중..." : "이대로 주문하기"}
         </button>
       </div>
     </main>

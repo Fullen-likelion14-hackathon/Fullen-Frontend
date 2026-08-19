@@ -1,16 +1,30 @@
+import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import PageHeader from "@/components/common/PageHeader";
 import floorBg from "@/assets/images/Floor.png";
 import { ProductViewer } from "@/components/custom/viewer/ProductViewer";
 
-import type { PatchLocation } from "@/components/custom/common/selection/LocationSelectBox";
+import type { PatchLocation } from "@/types/patchLocation";
 
 type LocationSelectState = {
+  // 선택한 사진 id
+  selectedPhotoId?: number;
+
+  // 선택한 사진 URL
   selectedImage?: string;
+
+  // 선택한 작가 id
   selectedArtistId?: number;
+
+  // 작성 중인 요청사항
   requestText?: string;
+
+  // 위치 선택 완료 후 돌아갈 경로
   returnTo?: string;
+
+  // 기존에 선택한 위치
+  selectedLocation?: PatchLocation;
 };
 
 export default function LocationSelect() {
@@ -19,22 +33,30 @@ export default function LocationSelect() {
 
   const locationState = location.state as LocationSelectState | null;
 
-  // TODO: 실제 프레임 드래그 기능 구현 후 좌표값으로 변경
-  const selectedLocation: PatchLocation = {
-    x: 72,
-    y: 62,
-  };
+  // 현재 선택한 패치 위치
+  const [selectedLocation, setSelectedLocation] = useState<PatchLocation | null>(
+    locationState?.selectedLocation ?? null,
+  );
 
   // 위치 선택 완료
   const handleLocationSelect = () => {
+    if (!selectedLocation) return;
+
     navigate(locationState?.returnTo ?? "/onetooneorder/request", {
       state: {
-        // 기존에 선택한 값 유지
+        // 기존에 선택한 사진 id 유지
+        selectedPhotoId: locationState?.selectedPhotoId,
+
+        // 기존에 선택한 사진 URL 유지
         selectedImage: locationState?.selectedImage,
+
+        // 기존에 선택한 작가 유지
         selectedArtistId: locationState?.selectedArtistId,
+
+        // 기존 요청사항 유지
         requestText: locationState?.requestText,
 
-        // 선택한 위치 전달
+        // 새로 선택한 위치 전달
         selectedLocation,
 
         // 위치 선택 단계로 돌아감
@@ -72,19 +94,19 @@ export default function LocationSelect() {
       {/* 본문 */}
       <section className="relative z-10 flex h-[calc(100dvh-126px)] flex-col px-6 pt-12">
         {/* 제품 정보 */}
-        <div className="text-center">
+        <div className="relative z-20 text-center">
           <h2 className="text-[24px] font-extrabold text-[#192C44]">Ottomar 비세토스 위켄더</h2>
 
-          <p className=" text-[18px] font-bold text-[#9197A0]">50.5 cm (19.9 in)</p>
+          <p className="text-[18px] font-bold text-[#9197A0]">50.5 cm (19.9 in)</p>
         </div>
 
-        {/* 제품 */}
+        {/* 3D 가방 */}
         <div className="absolute inset-0">
-          <ProductViewer />
+          <ProductViewer mode="location-select" onLocationChange={setSelectedLocation} />
         </div>
 
         {/* 안내 문구 */}
-        <p className="mt-100 text-center text-[20px] font-bold leading-8 text-[#9197A0]">
+        <p className="relative z-20 mt-100 text-center text-[20px] font-bold leading-8 text-[#9197A0]">
           커스텀 받고싶은 위치에
           <br />
           흰색 프레임을 올려놓아주세요
@@ -94,7 +116,21 @@ export default function LocationSelect() {
         <button
           type="button"
           onClick={handleLocationSelect}
-          className="absolute bottom-8 left-6 right-6 h-16 rounded-xl bg-[#192C44] text-[20px] font-bold text-white shadow-md"
+          disabled={!selectedLocation}
+          className={`
+            absolute
+            bottom-8
+            left-6
+            right-6
+            z-20
+            h-16
+            rounded-xl
+            text-[20px]
+            font-bold
+            text-white
+            shadow-md
+            ${selectedLocation ? "bg-[#192C44]" : "cursor-not-allowed bg-[#D9D9D9]"}
+          `}
         >
           위치 선택하기
         </button>

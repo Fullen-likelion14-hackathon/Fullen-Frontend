@@ -1,12 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { getArtist } from "@/api/artist";
+import { getArtists } from "@/api/artist";
 
-export const useArtist = (artistId?: number) => {
+export const useArtists = (enabled = true) => {
   return useQuery({
-    queryKey: ["artist", artistId],
-    queryFn: () => getArtist(artistId!),
+    queryKey: ["artists"],
+    queryFn: getArtists,
     select: (response) => response.data,
-    enabled: artistId !== undefined,
+    enabled,
   });
 };

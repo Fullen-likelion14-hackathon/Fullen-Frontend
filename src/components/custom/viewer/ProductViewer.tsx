@@ -5,9 +5,17 @@ import { Environment, OrbitControls } from "@react-three/drei";
 import { Product } from "./Product";
 import { FloatingShadow } from "./FloatingShadow";
 
+import type { ProductMode } from "./Product";
+import type { PatchLocation } from "@/types/patchLocation";
+
 const DEFAULT_DISTANCE = 7; //카메라 기본 거리
 
-export function ProductViewer() {
+type ProductViewerProps = {
+  mode?: ProductMode;
+  onLocationChange?: (location: PatchLocation) => void;
+};
+
+export function ProductViewer({ mode = "view", onLocationChange }: ProductViewerProps) {
   return (
     <div className="absolute inset-0">
       {/*카메라 설정*/}
@@ -23,7 +31,7 @@ export function ProductViewer() {
         <directionalLight position={[4, 6, 5]} intensity={1.5} />
 
         {/* 3D 가방 배치 */}
-        <Product />
+        <Product mode={mode} onLocationChange={onLocationChange} />
 
         {/* 가방 아래 부드러운 가짜 그림자 */}
         <FloatingShadow />

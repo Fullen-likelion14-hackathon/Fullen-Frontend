@@ -5,7 +5,7 @@ import OrderDetailContent from "@/components/oneToOneOrder/OrderDetailContent";
 
 import { recommendedArtists, otherArtists } from "@/mocks/ArtistData";
 
-import type { PatchLocation } from "@/components/custom/common/selection/LocationSelectBox";
+import type { PatchLocation } from "@/types/patchLocation";
 
 type OrderDetailLocationState = {
   selectedImage?: string;

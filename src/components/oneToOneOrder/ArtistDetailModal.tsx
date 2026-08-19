@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { X } from "lucide-react";
 
-import type { Artist } from "@/mocks/ArtistData";
+import type { ArtistDetail } from "@/types/Artist";
 
 type ArtistDetailModalProps = {
-  artist: Artist | null;
+  artist: ArtistDetail | null;
   isOpen: boolean;
   onClose: () => void;
 };
@@ -18,16 +18,19 @@ export default function ArtistDetailModal({ artist, isOpen, onClose }: ArtistDet
   // 스와이프 시작 위치
   const dragStartX = useRef<number | null>(null);
 
+  // 다른 작가 상세를 열면 첫 번째 이미지부터 보여줌
+  useEffect(() => {
+    setCurrentImageIndex(0);
+  }, [artist?.artistId]);
+
   // 모달이 열렸을 때 뒤 페이지 스크롤 방지
   useEffect(() => {
     if (!isOpen) return;
 
-    // 기존 body overflow 값 저장
     const previousOverflow = document.body.style.overflow;
 
     document.body.style.overflow = "hidden";
 
-    // 모달이 닫히면 기존 값으로 복원
     return () => {
       document.body.style.overflow = previousOverflow;
     };
@@ -37,12 +40,16 @@ export default function ArtistDetailModal({ artist, isOpen, onClose }: ArtistDet
 
   // 이전 작품 이미지
   const handlePreviousImage = () => {
-    setCurrentImageIndex((prev) => (prev === 0 ? artist.detailImages.length - 1 : prev - 1));
+    if (artist.imgUrls.length === 0) return;
+
+    setCurrentImageIndex((prev) => (prev === 0 ? artist.imgUrls.length - 1 : prev - 1));
   };
 
   // 다음 작품 이미지
   const handleNextImage = () => {
-    setCurrentImageIndex((prev) => (prev === artist.detailImages.length - 1 ? 0 : prev + 1));
+    if (artist.imgUrls.length === 0) return;
+
+    setCurrentImageIndex((prev) => (prev === artist.imgUrls.length - 1 ? 0 : prev + 1));
   };
 
   // 스와이프 시작
@@ -82,7 +89,7 @@ export default function ArtistDetailModal({ artist, isOpen, onClose }: ArtistDet
       onClick={onClose}
       role="dialog"
       aria-modal="true"
-      aria-label={`${artist.name} 상세 정보`}
+      aria-label={`${artist.artistName} 상세 정보`}
     >
       {/* 모달 */}
       <div
@@ -92,11 +99,11 @@ export default function ArtistDetailModal({ artist, isOpen, onClose }: ArtistDet
         {/* 상단 헤더 */}
         <div className="sticky z-20 flex h-15 items-center justify-between bg-white px-5">
           {/* 작가 국가 */}
-          <img src={artist.flagImage} className="h-6 w-10 object-cover border-2" />
+          <img src={artist.nationImgUrl} alt="" className="h-6 w-10 border-2 object-cover" />
 
           {/* 작가 이름 */}
           <p className="absolute left-1/2 -translate-x-1/2 whitespace-nowrap pt-1 text-[18px] font-bold text-[#192A40]">
-            {artist.name}
+            {artist.artistName}
           </p>
 
           {/* 모달 닫기 */}
@@ -106,47 +113,47 @@ export default function ArtistDetailModal({ artist, isOpen, onClose }: ArtistDet
         </div>
 
         {/* 작품 이미지 슬라이더 */}
-        <div
-          className="relative h-75 w-full select-none overflow-hidden touch-pan-y"
-          onPointerDown={handlePointerDown}
-          onPointerUp={handlePointerUp}
-          onPointerCancel={handlePointerCancel}
-        >
-          <img
-            src={artist.detailImages[currentImageIndex]}
-            alt={`${artist.name} 작품 ${currentImageIndex + 1}`}
-            className="h-full w-full object-cover"
-            draggable={false}
-          />
+        {artist.imgUrls.length > 0 && (
+          <div
+            className="relative h-75 w-full select-none overflow-hidden touch-pan-y"
+            onPointerDown={handlePointerDown}
+            onPointerUp={handlePointerUp}
+            onPointerCancel={handlePointerCancel}
+          >
+            <img
+              src={artist.imgUrls[currentImageIndex]}
+              alt={`${artist.artistName} 작품 ${currentImageIndex + 1}`}
+              className="h-full w-full object-cover"
+              draggable={false}
+            />
 
-          {/* 현재 이미지 위치 */}
-          <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5">
-            {artist.detailImages.map((_, index) => (
-              <span
-                key={index}
-                className={`h-2 w-2 rounded-full ${
-                  currentImageIndex === index ? "bg-white" : "bg-white/50"
-                }`}
-              />
-            ))}
+            {/* 현재 이미지 위치 */}
+            {artist.imgUrls.length > 1 && (
+              <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5">
+                {artist.imgUrls.map((_, index) => (
+                  <span
+                    key={index}
+                    className={`h-2 w-2 rounded-full ${
+                      currentImageIndex === index ? "bg-white" : "bg-white/50"
+                    }`}
+                  />
+                ))}
+              </div>
+            )}
           </div>
-        </div>
+        )}
 
         {/* 상세 정보 */}
         <div className="px-8 py-4">
           {/* 짧은 화풍 설명 */}
           <p className="text-[12px] font-semibold leading-4 text-[#192A40]">
-            {artist.detailSummary}
+            {artist.introSummary}
           </p>
 
           {/* 상세 설명 */}
-          <div className="mt-4 flex flex-col gap-3">
-            {artist.detailDescription.map((paragraph, index) => (
-              <p key={index} className="text-[12px] leading-4.5 text-[#192A40]">
-                {paragraph}
-              </p>
-            ))}
-          </div>
+          <p className="mt-4 whitespace-pre-line text-[12px] leading-4.5 text-[#192A40]">
+            {artist.description}
+          </p>
         </div>
       </div>
     </div>
