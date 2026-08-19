@@ -5,12 +5,12 @@ import { useGLTF } from "@react-three/drei";
 import BGDetail from "@/assets/images/BG_detail.png";
 import bagUrl from "@/assets/models/OttomarBag.glb";
 
-import loading1 from "@/assets/icons/loading/loading1.png";
-import loading2 from "@/assets/icons/loading/loading2.png";
-import loading3 from "@/assets/icons/loading/loading3.png";
-import loading4 from "@/assets/icons/loading/loading4.png";
-import loading5 from "@/assets/icons/loading/loading5.png";
-import loading6 from "@/assets/icons/loading/loading6.png";
+import loading1 from "@/assets/icons/Loading/loading1.png";
+import loading2 from "@/assets/icons/Loading/loading2.png";
+import loading3 from "@/assets/icons/Loading/loading3.png";
+import loading4 from "@/assets/icons/Loading/loading4.png";
+import loading5 from "@/assets/icons/Loading/loading5.png";
+import loading6 from "@/assets/icons/Loading/loading6.png";
 
 const MODEL_URL = bagUrl;
 
