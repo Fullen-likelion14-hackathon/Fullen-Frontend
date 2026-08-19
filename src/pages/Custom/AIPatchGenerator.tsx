@@ -1,128 +1,88 @@
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
-import { useAIAnalysis } from "@/hooks/queries/ai/useAIAnalysis";
-
+import { aiPatchAnalysisMock } from "@/mocks/aiPatchAnalysis.mock";
 import analysisIcon from "@/assets/icons/analysisIcon.png";
+import PageHeader from "@/components/common/PageHeader";
 
 const AIPatchGenerator = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
-  // AI 여행 분석 조회 Query
-  const { data: analysis, isLoading, isError, refetch, isFetching } = useAIAnalysis();
+  const analysis = aiPatchAnalysisMock;
 
-  // 이전 페이지 이동 처리
-  const handleBack = () => {
-    navigate(-1);
-  };
+  // TODO: 로그인 사용자 정보 연결되면 실제 닉네임으로 변경할 예정임
+  const nickname = "멋쟁이사자처럼";
 
-  // AI 패치 옵션 선택 페이지 이동 처리
+  // 패치 생성 시작 시 사진 선택부터 진행하는 옵션 선택 페이지로 이동함
   const handleStartGenerate = () => {
     navigate("/custom/ai-patch/options");
   };
 
-  // AI 여행 분석 재조회 처리
-  const handleReanalyze = () => {
-    refetch();
+  // 여행 스타일 분석 수정 페이지로 이동
+  const handleEditAnalysis = () => {
+    // 기존 분석 내용을 수정 페이지 textarea 초기값으로 전달
+    const analysisText = [analysis.description, ...analysis.analysis].join("\n");
+
+    navigate("/custom/analysis/edit", {
+      state: {
+        analysisText,
+
+        // 수정 완료 후 현재 AI 사용자 분석 페이지로 돌아오기 위함
+        returnTo: location.pathname,
+      },
+    });
   };
-
-  // AI 여행 분석 조회 로딩 화면
-  if (isLoading) {
-    return (
-      <main className="relative mx-auto flex h-dvh w-full max-w-97.5 items-center justify-center bg-[#EDE6DF] text-[#19273C]">
-        <p className="text-base font-semibold text-[#8C8C8C]">여행 스타일을 분석하고 있습니다</p>
-      </main>
-    );
-  }
-
-  // AI 여행 분석 조회 실패 화면
-  if (isError || !analysis) {
-    return (
-      <main className="relative mx-auto flex h-dvh w-full max-w-97.5 flex-col items-center justify-center gap-5 bg-[#EDE6DF] px-8 text-[#19273C]">
-        <p className="text-center text-base font-semibold text-[#8C8C8C]">
-          여행 스타일 분석 결과를 불러오지 못했습니다
-        </p>
-
-        <button
-          type="button"
-          onClick={() => refetch()}
-          className="h-12 w-full rounded-xl bg-[#19273C] text-base font-bold text-white"
-        >
-          다시 불러오기
-        </button>
-      </main>
-    );
-  }
 
   return (
     <main className="relative mx-auto h-dvh w-full max-w-97.5 overflow-hidden bg-[#EDE6DF] text-[#19273C]">
       {/* 상단 헤더 영역 */}
-      <header className="relative z-20 flex h-31.5 shrink-0 items-end justify-center border-b-[7px] border-[#A3642B] bg-[#19273C] px-8 pb-6">
-        <button
-          type="button"
-          onClick={handleBack}
-          aria-label="뒤로가기"
-          className="absolute bottom-7 left-8 flex h-10 w-10 items-center justify-center"
-        >
-          <span className="block h-5 w-5 rotate-45 border-b-[3px] border-l-[3px] border-white" />
-        </button>
-
-        <h1 className="text-2xl font-bold text-white">AI 사용자 분석</h1>
-      </header>
+      <PageHeader title="AI 사용자 분석" backTo="/custom/customizing" />
 
       {/* 큰 반원 배경 */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute left-1/2 top-140 z-0 h-160 w-240 -translate-x-1/2 rounded-[90%] bg-[#F9F4F0]"
+        className="pointer-events-none absolute left-1/2 top-120 z-0 h-160 w-240 -translate-x-1/2 rounded-[90%] bg-[#F9F4F0]"
       />
 
-      {/* AI 여행 분석 본문 영역 */}
+      {/* 화면 높이가 작은 경우 본문 영역만 스크롤 */}
       <section className="relative z-10 h-[calc(100dvh-126px)] overflow-y-auto">
-        <div className="mx-auto flex w-full flex-col items-center px-8 pb-14 pt-10">
+        <div className="mx-auto flex w-full flex-col items-center px-8 pb-10 pt-5">
           {/* 여행 스타일 분석 아이콘 */}
           <img
             src={analysisIcon}
             alt=""
             aria-hidden="true"
-            className="mb-7 h-16 w-16 object-contain"
+            className="mb-2 h-16 w-16 object-contain"
           />
 
-          {/* 사용자 이름 및 분석 안내 영역 */}
+          {/* 사용자명 + 분석 안내 문구 */}
           <p className="mb-5 text-center text-xl font-bold leading-relaxed">
-            <span className="text-[#A3642B]">{analysis.username}</span>
-
+            <span className="text-[#A3642B]">{nickname}</span>
             <span>님의 여행 스타일은</span>
           </p>
 
-          {/* AI 여행 스타일 이름 */}
-          <h2 className="mb-3 text-center text-4xl font-semibold leading-tight">
+          {/* AI가 분석한 여행 스타일 이름 */}
+          <h2 className="mb-3 text-center text-3xl font-extrabold leading-tight">
             {analysis.travelStyle}
           </h2>
 
-          {/* AI 여행 스타일 상세 설명 */}
-          <p className="mb-5 max-w-82.5 whitespace-pre-line text-center text-lg font-semibold leading-relaxed text-[#4C5561]">
-            {analysis.detail}
+          {/* 상세 분석 결과 */}
+          <p className="mb-5 max-w-82.5 text-center text-lg font-semibold leading-relaxed text-[#4C5561]">
+            {analysis.description}
           </p>
 
-          {/* 사용자 여행 스타일 수정 버튼 영역 */}
-          <button
-            type="button"
-            disabled
-            className="mb-10 flex cursor-not-allowed items-center gap-2 text-base font-semibold text-[#D0D0D0]"
-          >
-            직접 수정하기
-            <span aria-hidden="true">✎</span>
-          </button>
+          {/* 여행 스타일 한 줄 설명 */}
+          <div className="mb-5 space-y-1 text-center">
+            {analysis.analysis.map((text) => (
+              <p key={text} className="text-sm font-medium leading-relaxed text-[#8C8C8C]">
+                {text}
+              </p>
+            ))}
+          </div>
 
-          {/* AI 패치 추천 안내 영역 */}
-          <p className="mb-7 max-w-85 text-center text-lg font-semibold leading-relaxed text-[#B2967E]">
-            분석을 바탕으로 <strong className="text-[#A3642B]">3인의 아티스트 추천</strong> 및
-            <br />
-            <strong className="text-[#A3642B]">맞춤형 트래블 패치</strong>를 제작해드리겠습니다
-          </p>
-
-          {/* AI 여행 분석 해시태그 영역 */}
-          <div className="mb-8 flex flex-wrap justify-center gap-2">
-            {analysis.hashtagList.map((keyword) => (
+          {/* AI 분석 결과 키워드 태그 */}
+          <div className="mb-15 mx-10 flex flex-wrap justify-center gap-2">
+            {analysis.keywords.map((keyword) => (
               <span
                 key={keyword}
                 className="rounded-md border-2 border-[#D3C0AE] px-2 py-1.5 text-sm font-semibold text-[#B2967E]"
@@ -132,23 +92,29 @@ const AIPatchGenerator = () => {
             ))}
           </div>
 
-          {/* AI 패치 생성 시작 버튼 */}
+          {/* 분석 기반 패치 추천 안내 */}
+          <p className="mb-5 max-w-85 text-center text-sm leading-relaxed text-[#B2967E]">
+            분석을 바탕으로 <strong className="text-[#A3642B]">3인의 아티스트 추천</strong> 및
+            <br />
+            <strong className="text-[#A3642B]">맞춤형 트래블 패치</strong>를 제작해드리겠습니다
+          </p>
+
+          {/* AI 패치 제작 페이지로 이동 */}
           <button
             type="button"
             onClick={handleStartGenerate}
-            className="mb-3 h-14.5 w-full rounded-xl bg-[#19273C] text-base font-bold text-white shadow-md transition-opacity hover:opacity-90"
+            className="mb-3 h-14.5 w-full cursor-pointer rounded-xl bg-[#19273C] text-base font-bold text-white shadow-md transition-opacity hover:opacity-90"
           >
             패치 생성 시작하기
           </button>
 
-          {/* AI 여행 분석 재조회 버튼 */}
+          {/* 여행 스타일 분석 수정 페이지로 이동 */}
           <button
             type="button"
-            onClick={handleReanalyze}
-            disabled={isFetching}
-            className="h-14.5 w-full rounded-xl border-2 border-[#B2967E] bg-white text-base font-bold text-[#B2967E] shadow-sm transition-colors hover:bg-[#F8F2ED] disabled:cursor-not-allowed disabled:opacity-50"
+            onClick={handleEditAnalysis}
+            className="h-14.5 w-full cursor-pointer rounded-xl border-2 border-[#B2967E] bg-white text-base font-bold text-[#B2967E] shadow-sm transition-colors hover:bg-[#F8F2ED]"
           >
-            {isFetching ? "분석 결과 불러오는 중" : "다시 분석하기"}
+            분석 수정하기
           </button>
         </div>
       </section>
