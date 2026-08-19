@@ -6,9 +6,12 @@
 
 import { useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
 import PageHeader from "@/components/common/PageHeader";
-import MCMWarningDialog, { type MCMWarningType } from "@/components/common/MCMWarningDialog";
+import MCMWarningDialog from "@/components/common/MCMWarningDialog";
 import LeaveConfirmDialog from "@/components/common/LeaveConfirmDialog";
+import { uploadImage } from "@/api/image";
+import { useCreatePost } from "@/hooks/queries/useCreatePost";
 import uploadIcon from "@/assets/icons/Upload.png";
 import eyeOpenIcon from "@/assets/icons/public.png";
 import eyeClosedIcon from "@/assets/icons/private.png";
@@ -16,19 +19,22 @@ import deletePhotoIcon from "@/assets/icons/deletephoto.png";
 
 const MAX_IMAGES = 5;
 
-type McmCheckResult = "valid" | MCMWarningType;
+interface ImageItem {
+  file: File;
+  previewUrl: string;
+}
 
 const FeedNew = () => {
   const navigate = useNavigate();
   const { categoryId } = useParams();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { mutateAsync: createPost } = useCreatePost(Number(categoryId));
 
-  const [images, setImages] = useState<string[]>([]);
+  const [images, setImages] = useState<ImageItem[]>([]);
   const [comment, setComment] = useState("");
   const [isPublic, setIsPublic] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [isWarningOpen, setIsWarningOpen] = useState(false);
-  const [warningType, setWarningType] = useState<MCMWarningType>("no-mcm-photo");
   const [isLeaveDialogOpen, setIsLeaveDialogOpen] = useState(false);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -37,9 +43,12 @@ const FeedNew = () => {
 
     const remainingSlots = MAX_IMAGES - images.length;
     const nextFiles = Array.from(files).slice(0, remainingSlots);
-    const nextUrls = nextFiles.map((file) => URL.createObjectURL(file));
+    const nextItems = nextFiles.map((file) => ({
+      file,
+      previewUrl: URL.createObjectURL(file),
+    }));
 
-    setImages((prev) => [...prev, ...nextUrls]);
+    setImages((prev) => [...prev, ...nextItems]);
     e.target.value = "";
   };
 
@@ -50,26 +59,31 @@ const FeedNew = () => {
   const isFormValid = images.length > 0 && comment.trim() !== "";
   const hasAnyInput = images.length > 0 || comment.trim() !== "";
 
-  const checkIsMcmProduct = async (_imageUrls: string[]): Promise<McmCheckResult> => {
-    return "no-mcm-photo";
-  };
-
   const handleCreate = async () => {
-    if (!isFormValid || isCreating) return;
+    if (!isFormValid || isCreating || !categoryId) return;
 
     setIsCreating(true);
-    const result = await checkIsMcmProduct(images);
 
-    if (result !== "valid") {
+    try {
+      const imgUrlList = await Promise.all(images.map((item) => uploadImage(item.file, "FEED")));
+
+      await createPost({
+        comment,
+        isPublic,
+        imgUrlList,
+      });
+
+      navigate(`/passport/${categoryId}`, { replace: true });
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.data?.code === "S4003") {
+        setIsWarningOpen(true);
+        return;
+      }
+      console.error(error);
+      // TODO: MCM 판별 실패가 아닌 그 외 에러(네트워크/인증 등) 사용자 안내 추가 필요
+    } finally {
       setIsCreating(false);
-      setWarningType(result);
-      setIsWarningOpen(true);
-      return;
     }
-
-    setTimeout(() => {
-      navigate(`/passport/${categoryId}`);
-    }, 1500);
   };
 
   const handleCloseWarning = () => {
@@ -126,13 +140,13 @@ const FeedNew = () => {
             </label>
           ) : (
             <div className="flex h-72 w-full gap-2 overflow-x-auto rounded-[10px]">
-              {images.map((url, index) => (
+              {images.map((item, index) => (
                 <div
-                  key={url}
+                  key={item.previewUrl}
                   className="relative h-72 w-64 shrink-0 snap-start overflow-hidden rounded-[10px] border-2 border-stone-300"
                 >
                   <img
-                    src={url}
+                    src={item.previewUrl}
                     alt={`업로드 사진 ${index + 1}`}
                     className="h-full w-full object-cover"
                   />
@@ -219,7 +233,7 @@ const FeedNew = () => {
         </button>
       </main>
 
-      {isWarningOpen && <MCMWarningDialog type={warningType} onClose={handleCloseWarning} />}
+      {isWarningOpen && <MCMWarningDialog onClose={handleCloseWarning} />}
 
       {isLeaveDialogOpen && (
         <LeaveConfirmDialog

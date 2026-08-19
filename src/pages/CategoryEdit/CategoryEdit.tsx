@@ -124,7 +124,7 @@ const CategoryEdit = () => {
         },
       });
 
-      navigate(`/passport/${categoryId}`);
+      navigate(`/passport/${categoryId}`, { replace: true });
     } catch (error) {
       console.error(error);
       setIsSaving(false);

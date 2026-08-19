@@ -1,18 +1,16 @@
 // ============================================================
 // FeedEdit.tsx — 게시물 수정 페이지
 // FeedNew.tsx 기반, 기존 값으로 초기화 + 수정 로직 + 헤더만 변경
-//
-// 진입 경로 가정: FeedDetail 등에서 "수정하기" 클릭 시
-//   navigate(`/passport/${categoryId}/${feedId}/edit`, { state: feed })
-// 로 기존 피드 데이터를 넘겨준다고 가정했습니다.
-// 실제 데이터 조회 방식(API 훅 등)이 따로 있다면 아래 initialFeed 부분만 교체하면 됩니다.
 // ============================================================
 
 import { useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
 import PageHeader from "@/components/common/PageHeader";
-import MCMWarningDialog, { type MCMWarningType } from "@/components/common/MCMWarningDialog";
+import MCMWarningDialog from "@/components/common/MCMWarningDialog";
 import LeaveConfirmDialog from "@/components/common/LeaveConfirmDialog";
+import { uploadImage } from "@/api/image";
+import { useUpdatePost } from "@/hooks/queries/useUpdatePost";
 import uploadIcon from "@/assets/icons/Upload.png";
 import eyeOpenIcon from "@/assets/icons/public.png";
 import eyeClosedIcon from "@/assets/icons/private.png";
@@ -20,40 +18,42 @@ import deletePhotoIcon from "@/assets/icons/deletephoto.png";
 
 const MAX_IMAGES = 5;
 
-type McmCheckResult = "valid" | MCMWarningType;
-
 type FeedEditState = {
   images?: string[];
   comment?: string;
   isPublic?: boolean;
 };
 
+// 기존 업로드된 이미지(url만 있음)와 새로 추가한 이미지(file 있음, 저장 시 업로드 필요)를 구분
+interface ImageItem {
+  previewUrl: string;
+  file?: File;
+}
+
 const FeedEdit = () => {
   const navigate = useNavigate();
   const { categoryId, feedId } = useParams();
   const location = useLocation();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { mutateAsync: updatePost } = useUpdatePost(Number(feedId));
 
-  // TODO: 실제 조회 API/훅이 있다면 이 부분을 useFeedDetail(feedId) 같은 훅으로 교체
   const initialFeed = (location.state as FeedEditState | null) ?? null;
 
   const initialValues = useMemo(
     () => ({
-      images: initialFeed?.images ?? [],
+      images: (initialFeed?.images ?? []).map((url): ImageItem => ({ previewUrl: url })),
       comment: initialFeed?.comment ?? "",
       isPublic: initialFeed?.isPublic ?? false,
     }),
     [initialFeed],
   );
-  // useRef.current를 렌더 중에 읽으면 React Compiler가 금지하는 패턴이라 useState로 스냅샷 고정
   const [initialSnapshot] = useState(initialValues);
 
-  const [images, setImages] = useState<string[]>(initialValues.images);
+  const [images, setImages] = useState<ImageItem[]>(initialValues.images);
   const [comment, setComment] = useState(initialValues.comment);
   const [isPublic, setIsPublic] = useState(initialValues.isPublic);
   const [isSaving, setIsSaving] = useState(false);
   const [isWarningOpen, setIsWarningOpen] = useState(false);
-  const [warningType, setWarningType] = useState<MCMWarningType>("no-mcm-photo");
   const [isLeaveDialogOpen, setIsLeaveDialogOpen] = useState(false);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -62,9 +62,12 @@ const FeedEdit = () => {
 
     const remainingSlots = MAX_IMAGES - images.length;
     const nextFiles = Array.from(files).slice(0, remainingSlots);
-    const nextUrls = nextFiles.map((file) => URL.createObjectURL(file));
+    const nextItems = nextFiles.map((file): ImageItem => ({
+      file,
+      previewUrl: URL.createObjectURL(file),
+    }));
 
-    setImages((prev) => [...prev, ...nextUrls]);
+    setImages((prev) => [...prev, ...nextItems]);
     e.target.value = "";
   };
 
@@ -77,31 +80,38 @@ const FeedEdit = () => {
   // 최초 로드 값 대비 하나라도 바뀌었는지 (뒤로가기 시 경고모달 노출 조건)
   const hasChanges =
     images.length !== initialSnapshot.images.length ||
-    images.some((url, i) => url !== initialSnapshot.images[i]) ||
+    images.some((item, i) => item.previewUrl !== initialSnapshot.images[i]?.previewUrl) ||
     comment !== initialSnapshot.comment ||
     isPublic !== initialSnapshot.isPublic;
 
-  const checkIsMcmProduct = async (_imageUrls: string[]): Promise<McmCheckResult> => {
-    return "no-mcm-photo";
-  };
-
   const handleSave = async () => {
-    if (!isFormValid || isSaving) return;
+    if (!isFormValid || isSaving || !feedId) return;
 
     setIsSaving(true);
-    const result = await checkIsMcmProduct(images);
 
-    if (result !== "valid") {
+    try {
+      // 기존 이미지는 url 그대로, 새로 추가한 이미지만 업로드해서 url 획득 (순서 유지)
+      const imgUrlList = await Promise.all(
+        images.map((item) => (item.file ? uploadImage(item.file, "FEED") : item.previewUrl)),
+      );
+
+      await updatePost({
+        comment,
+        isPublic,
+        imgUrlList,
+      });
+
+      navigate(`/passport/${categoryId}/${feedId}`, { replace: true });
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.data?.code === "S4003") {
+        setIsWarningOpen(true);
+        return;
+      }
+      console.error(error);
+      // TODO: MCM 판별 실패가 아닌 그 외 에러(네트워크/인증 등) 사용자 안내 추가 필요
+    } finally {
       setIsSaving(false);
-      setWarningType(result);
-      setIsWarningOpen(true);
-      return;
     }
-
-    // TODO: 실제 수정 API 연동 시 아래 setTimeout을 API 호출로 교체
-    setTimeout(() => {
-      navigate(`/passport/${categoryId}/${feedId}`);
-    }, 1500);
   };
 
   const handleCloseWarning = () => {
@@ -158,13 +168,13 @@ const FeedEdit = () => {
             </label>
           ) : (
             <div className="flex h-72 w-full gap-2 overflow-x-auto rounded-[10px]">
-              {images.map((url, index) => (
+              {images.map((item, index) => (
                 <div
-                  key={url}
+                  key={item.previewUrl}
                   className="relative h-72 w-64 shrink-0 snap-start overflow-hidden rounded-[10px] border-2 border-stone-300"
                 >
                   <img
-                    src={url}
+                    src={item.previewUrl}
                     alt={`업로드 사진 ${index + 1}`}
                     className="h-full w-full object-cover"
                   />
@@ -236,7 +246,6 @@ const FeedEdit = () => {
           </div>
         </div>
 
-        {/* 저장하기 버튼: 생성하기와 동일 스타일, 라벨/핸들러만 변경 */}
         <button
           type="button"
           disabled={!isFormValid || isSaving}
@@ -252,7 +261,7 @@ const FeedEdit = () => {
         </button>
       </main>
 
-      {isWarningOpen && <MCMWarningDialog type={warningType} onClose={handleCloseWarning} />}
+      {isWarningOpen && <MCMWarningDialog onClose={handleCloseWarning} />}
 
       {isLeaveDialogOpen && (
         <LeaveConfirmDialog
