@@ -1,6 +1,6 @@
 import { ChevronRight } from "lucide-react";
 
-import type { Artist } from "@/types/Artist";
+import type { Artist } from "@/types/artist";
 
 type ArtistCardProps = {
   artist: Artist;

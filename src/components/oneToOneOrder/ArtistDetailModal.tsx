@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { X } from "lucide-react";
 
-import type { ArtistDetail } from "@/types/Artist";
+import type { ArtistDetail } from "@/types/artist";
 
 type ArtistDetailModalProps = {
   artist: ArtistDetail | null;
