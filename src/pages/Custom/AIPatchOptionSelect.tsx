@@ -460,7 +460,7 @@ const AIPatchOptionSelect = () => {
       "
     >
       {/* 상단 헤더 영역 */}
-      <PageHeader title="AI 패치 생성" backTo="/custom/customizing" />
+      <PageHeader title="AI 패치 생성" />
 
       {/* 본문 영역 */}
       <section

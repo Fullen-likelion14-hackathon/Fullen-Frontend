@@ -1,16 +1,27 @@
-import { useNavigate, useParams } from "react-router-dom";
 import { ChevronLeft } from "lucide-react";
+import { useNavigate, useParams } from "react-router-dom";
 
-import { mcomFeedMockData } from "@/mocks/mcomFeedData";
+import { useMCoMPreviewQuery } from "@/hooks/queries/mcom/useMCoMPreviewQuery";
 
 export default function MCoMDetail() {
   const navigate = useNavigate();
   const { feedId } = useParams();
 
-  const feed = mcomFeedMockData.find((item) => item.feedId === Number(feedId));
+  const postId = Number(feedId);
+  const isValidPostId = Number.isInteger(postId) && postId > 0;
 
-  if (!feed) {
-    return <div>피드 데이터 없음</div>;
+  const { data: feed, isPending, isError } = useMCoMPreviewQuery(isValidPostId ? postId : 0);
+
+  if (!isValidPostId) {
+    return <div>잘못된 게시물입니다.</div>;
+  }
+
+  if (isPending) {
+    return <div>게시물을 불러오는 중입니다.</div>;
+  }
+
+  if (isError || !feed) {
+    return <div>피드 데이터를 불러올 수 없습니다.</div>;
   }
 
   return (
@@ -26,27 +37,28 @@ export default function MCoMDetail() {
             >
               <ChevronLeft size={36} strokeWidth={2.5} />
             </button>
-            <div className="text-center text-black">
-              <h1 className="mt-1 text-[25px] font-bold">{feed.countryName}</h1>
 
-              <p className="mt-1 text-[15px] font-bold">{feed.title}</p>
+            <div className="text-center text-black">
+              <h1 className="mt-1 text-[25px] font-bold">{feed.nationKRName}</h1>
+
+              <p className="mt-1 text-[15px] font-bold">{feed.journeyType}</p>
             </div>
 
-            {/* 국기 */}
             <img
-              src={feed.flagImage}
-              alt={`${feed.countryName} 국기`}
+              src={feed.nationFlagURL}
+              alt={`${feed.nationKRName} 국기`}
               className="absolute right-5 w-10"
             />
           </div>
         </header>
-        <p className=" text-[15px] text-center font-semibold pb-3 text-[#A0A0A0]">{feed.date}</p>
+
+        <p className="pb-3 text-center text-[15px] font-semibold text-[#A0A0A0]">{feed.date}</p>
+
         <img
-          src={feed.thumbnail}
-          alt={feed.title}
-          className="mx-auto my-2 w-97 h-106 object-cover"
+          src={feed.thumbnailURL}
+          alt={feed.nationKRName}
+          className="mx-auto my-2 h-106 w-97 object-cover"
         />
-        <p className="mx-6 my-10 text-[13px]">{feed.content}</p>
       </div>
     </div>
   );

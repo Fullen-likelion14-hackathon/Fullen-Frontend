@@ -16,5 +16,6 @@ export const useBag = (bagId?: number) => {
     queryKey: ["bag", bagId],
     queryFn: () => getBagDetail(bagId!),
     enabled: bagId !== undefined,
+    // 가방 리스트 아직 안왔는데 /api/bags/undefined 호출 막아줌
   });
 };

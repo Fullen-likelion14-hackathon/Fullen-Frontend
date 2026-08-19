@@ -211,7 +211,7 @@ const CustomRequest = () => {
   return (
     <main className="relative mx-auto h-dvh w-full max-w-97.5 overflow-hidden bg-[#F9F4F0] text-[#192C44]">
       {/* 헤더 */}
-      <PageHeader title="1:1 커스텀 주문" backTo="/onetooneorder" />
+      <PageHeader title="1:1 커스텀 주문" />
 
       {/* 본문 */}
       <section className="flex h-[calc(100dvh-126px)] flex-col overflow-y-auto px-8 pb-12 pt-10">

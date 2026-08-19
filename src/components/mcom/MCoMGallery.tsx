@@ -16,8 +16,16 @@ export default function MCoMGallery({ MCoMTab }: MCoMGalleryProps) {
   // MCoM 아카이브 API 조회
   const { data: feeds = [], isPending, isError } = useMCoMArchiveQuery(MCoMTab);
 
+  // 현재 위치 국가
+  // 추후 현재 국가 API가 연결되면 해당 데이터로 변경
+  const currentCountry = "GERMANY";
+
   const handleFeedClick = (postId: number) => {
-    navigate(`/mcom/view/${postId}`);
+    navigate(`/mcom/view/${postId}`, {
+      state: {
+        tab: MCoMTab,
+      },
+    });
   };
 
   // 받아온 게시물을 왼쪽 / 오른쪽 열로 나누기
@@ -45,13 +53,23 @@ export default function MCoMGallery({ MCoMTab }: MCoMGalleryProps) {
       <div className="flex gap-3">
         {/* 왼쪽 사진 열 */}
         <div className="flex w-1/2 flex-col gap-3">
-          {/* 현재 위치한 나라 탭일 때 왼쪽 맨 위에 표시 */}
+          {/* 현재 위치한 나라 탭 */}
           {MCoMTab === "country" && (
-            <img
-              src={countryImage}
-              alt="현재 국가 아카이브"
-              className="block aspect-3/2 w-full rounded-2xl object-cover"
-            />
+            <div className="relative aspect-3/2 w-full overflow-hidden rounded-2xl">
+              <img
+                src={countryImage}
+                alt="현재 국가 아카이브"
+                className="h-full w-full object-cover brightness-80"
+              />
+
+              <div className="absolute inset-0 flex items-center justify-center">
+                <p className="text-center text-[16px] font-semibold leading-tight text-white">
+                  MCM in...
+                  <br />
+                  {currentCountry}!
+                </p>
+              </div>
+            </div>
           )}
 
           {leftFeeds.map((feed) => (
@@ -72,13 +90,19 @@ export default function MCoMGallery({ MCoMTab }: MCoMGalleryProps) {
 
         {/* 오른쪽 사진 열 */}
         <div className="flex w-1/2 flex-col gap-3">
-          {/* 글로벌 탭일 때 오른쪽 맨 위에 표시 */}
+          {/* 글로벌 탭 */}
           {MCoMTab === "global" && (
-            <img
-              src={globalImage}
-              alt="글로벌 아카이브"
-              className="block aspect-3/2 w-full rounded-2xl object-cover"
-            />
+            <div className="relative aspect-3/2 w-full overflow-hidden rounded-2xl">
+              <img
+                src={globalImage}
+                alt="글로벌 아카이브"
+                className="h-full w-full object-cover brightness-80"
+              />
+
+              <div className="absolute inset-0 flex items-center justify-center">
+                <p className="text-center text-[16px] font-semibold text-white">MCM in GLOBAL</p>
+              </div>
+            </div>
           )}
 
           {rightFeeds.map((feed) => (
@@ -91,7 +115,7 @@ export default function MCoMGallery({ MCoMTab }: MCoMGalleryProps) {
               <img
                 src={feed.thumbnailURL}
                 alt={`MCoM 게시물 ${feed.postId}`}
-                className="block h-auto w-full rounded-2xl"
+                className="block h-auto w-full rounded-2xl "
               />
             </button>
           ))}

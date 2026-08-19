@@ -3,19 +3,20 @@ import { useNavigate } from "react-router-dom";
 
 import MCoMFeedCard from "@/components/mcom/MCoMFeedCard";
 
-import type { PostPreviewResponse } from "@/types/mcom";
+import type { MCoMTab, PostPreviewResponse } from "@/types/mcom";
 
 type MCoMFeedSliderProps = {
   feed: PostPreviewResponse;
   previousFeed: PostPreviewResponse | null;
   nextFeed: PostPreviewResponse | null;
+  tab: MCoMTab;
 };
 
 const CARD_STEP = 310;
 const SWIPE_THRESHOLD = 60;
 const ANIMATION_DURATION = 300;
 
-export default function MCoMFeedSlider({ feed, previousFeed, nextFeed }: MCoMFeedSliderProps) {
+export default function MCoMFeedSlider({ feed, previousFeed, nextFeed, tab }: MCoMFeedSliderProps) {
   const navigate = useNavigate();
 
   const dragStartX = useRef<number | null>(null);
@@ -64,7 +65,12 @@ export default function MCoMFeedSlider({ feed, previousFeed, nextFeed }: MCoMFee
       setDragOffset(-CARD_STEP);
 
       setTimeout(() => {
-        navigate(`/mcom/view/${nextFeed.postId}`);
+        navigate(`/mcom/view/${nextFeed.postId}`, {
+          state: {
+            tab,
+          },
+        });
+
         setDragOffset(0);
         setIsAnimating(false);
       }, ANIMATION_DURATION);
@@ -77,7 +83,12 @@ export default function MCoMFeedSlider({ feed, previousFeed, nextFeed }: MCoMFee
       setDragOffset(CARD_STEP);
 
       setTimeout(() => {
-        navigate(`/mcom/view/${previousFeed.postId}`);
+        navigate(`/mcom/view/${previousFeed.postId}`, {
+          state: {
+            tab,
+          },
+        });
+
         setDragOffset(0);
         setIsAnimating(false);
       }, ANIMATION_DURATION);
