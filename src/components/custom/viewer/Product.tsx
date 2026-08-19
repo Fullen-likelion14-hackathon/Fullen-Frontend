@@ -1,4 +1,4 @@
-// 제품 3D 렌더링 컴포넌트임
+// 제품 3D 렌더링 컴포넌트
 import * as THREE from "three";
 
 import { useEffect, useState } from "react";
@@ -16,101 +16,101 @@ import { useBagCustomStore } from "@/stores/bagCustomStore";
 
 import type { PatchLocation } from "@/types/patchLocation";
 
-// Product에서 사용할 전체 모드 타입임
+// Product 전체 모드 타입
 export type ProductMode = "view" | "location-select" | "draft" | "applied";
 
-// 가방 꾸미기 종류 타입임
+// 가방 꾸미기 종류 타입
 export type ProductCustomMode = "patch" | "initial";
 
 interface ProductProps {
-  // 현재 Product 동작 모드임
+  // 현재 Product 동작 모드
   mode?: ProductMode;
 
-  // 현재 편집 중인 커스텀 종류임
+  // 현재 편집 커스텀 종류
   customMode?: ProductCustomMode;
 
-  // 위치 선택 모드에서 선택한 위치 전달 함수임
+  // 위치 선택 결과 전달 함수
   onLocationChange?: (location: PatchLocation) => void;
 }
 
-// FRONT 몸통 X 최소 범위임
+// FRONT 몸통 X 최소 범위
 const FRONT_MIN_X = -0.677;
 
-// FRONT 몸통 X 최대 범위임
+// FRONT 몸통 X 최대 범위
 const FRONT_MAX_X = 0.657;
 
-// FRONT 몸통 Y 최소 범위임
+// FRONT 몸통 Y 최소 범위
 const FRONT_MIN_Y = -0.667;
 
-// FRONT 몸통 Y 최대 범위임
+// FRONT 몸통 Y 최대 범위
 const FRONT_MAX_Y = 0.129;
 
-// BACK 몸통 X 최소 범위임
+// BACK 몸통 X 최소 범위
 const BACK_MIN_X = -0.639;
 
-// BACK 몸통 X 최대 범위임
+// BACK 몸통 X 최대 범위
 const BACK_MAX_X = 0.683;
 
-// BACK 몸통 Y 최소 범위임
+// BACK 몸통 Y 최소 범위
 const BACK_MIN_Y = -0.574;
 
-// BACK 몸통 Y 최대 범위임
+// BACK 몸통 Y 최대 범위
 const BACK_MAX_Y = 0.121;
 
 export function Product({ mode = "view", customMode = "patch", onLocationChange }: ProductProps) {
-  // GLB 전체 scene임
+  // GLB 전체 Scene
   const { scene } = useGLTF(bagUrl);
 
-  // 패치와 이니셜을 실제로 붙일 가방 Mesh임
+  // 패치 및 이니셜 적용 가방 Mesh
   const [bagMesh, setBagMesh] = useState<THREE.Mesh | null>(null);
 
-  // 위치 선택 모드 흰색 프레임 위치임
+  // 위치 선택 프레임 위치
   const [markerPosition, setMarkerPosition] = useState<[number, number, number] | null>(null);
 
-  // 현재 위치 이동 중인 패치 id임
+  // 이동 중 패치 id
   const [draggingPatchId, setDraggingPatchId] = useState<string | null>(null);
 
-  // 현재 위치 이동 중인 이니셜 id임
+  // 이동 중 이니셜 id
   const [draggingInitialId, setDraggingInitialId] = useState<string | null>(null);
 
-  // 현재 편집 중인 패치 목록임
+  // 현재 편집 패치 목록
   const draftPatches = useBagCustomStore((state) => state.draftPatches);
 
-  // 적용 완료된 패치 목록임
+  // 적용 완료 패치 목록
   const appliedPatches = useBagCustomStore((state) => state.appliedPatches);
 
-  // 현재 편집 중인 이니셜 목록임
+  // 현재 편집 이니셜 목록
   const draftInitials = useBagCustomStore((state) => state.draftInitials);
 
-  // 적용 완료된 이니셜 목록임
+  // 적용 완료 이니셜 목록
   const appliedInitials = useBagCustomStore((state) => state.appliedInitials);
 
-  // 패치 위치 변경 함수임
+  // 패치 위치 변경 함수
   const moveDraftPatch = useBagCustomStore((state) => state.moveDraftPatch);
 
-  // 이니셜 위치 변경 함수임
+  // 이니셜 위치 변경 함수
   const moveDraftInitial = useBagCustomStore((state) => state.moveDraftInitial);
 
-  // 패치 선택 함수임
+  // 패치 선택 함수
   const selectPlacedPatch = useBagCustomStore((state) => state.selectPlacedPatch);
 
-  // 이니셜 선택 함수임
+  // 이니셜 선택 함수
   const selectPlacedInitial = useBagCustomStore((state) => state.selectPlacedInitial);
 
-  // 패치 편집 상태 변경 함수임
+  // 패치 편집 상태 변경 함수
   const setIsEditingPatch = useBagCustomStore((state) => state.setIsEditingPatch);
 
-  // 이니셜 편집 상태 변경 함수임
+  // 이니셜 편집 상태 변경 함수
   const setIsEditingInitial = useBagCustomStore((state) => state.setIsEditingInitial);
 
-  // Product 모드에 따라 표시할 패치 목록임
+  // 현재 표시 패치 목록
   const visiblePatches = mode === "draft" ? draftPatches : mode === "applied" ? appliedPatches : [];
 
-  // Product 모드에 따라 표시할 이니셜 목록임
+  // 현재 표시 이니셜 목록
   const visibleInitials =
     mode === "draft" ? draftInitials : mode === "applied" ? appliedInitials : [];
 
-  // 실제 가방 Mesh 찾음
+  // 실제 가방 Mesh 탐색
   useEffect(() => {
     const targetMesh = scene.getObjectByName("mesh_0");
 
@@ -123,7 +123,7 @@ export function Product({ mode = "view", customMode = "patch", onLocationChange 
     setBagMesh(targetMesh);
   }, [scene]);
 
-  // GLB 전체 재질 설정함
+  // GLB 전체 재질 설정
   useEffect(() => {
     scene.traverse((object: THREE.Object3D) => {
       if (!(object instanceof THREE.Mesh)) {
@@ -147,7 +147,7 @@ export function Product({ mode = "view", customMode = "patch", onLocationChange 
     });
   }, [scene]);
 
-  // 신규 패치 최초 위치 설정함
+  // 신규 패치 최초 위치 설정
   useEffect(() => {
     if (mode !== "draft" || customMode !== "patch") {
       return;
@@ -182,11 +182,11 @@ export function Product({ mode = "view", customMode = "patch", onLocationChange 
         return;
       }
 
-      moveDraftPatch(patch.id, initialPosition, initialNormal);
+      moveDraftPatch(patch.id, initialPosition, initialNormal, "FRONT", 0.5, 0.5);
     });
   }, [bagMesh, customMode, draftPatches, mode, moveDraftPatch]);
 
-  // 신규 이니셜 최초 위치 설정함
+  // 신규 이니셜 최초 위치 설정
   useEffect(() => {
     if (mode !== "draft" || customMode !== "initial") {
       return;
@@ -225,7 +225,7 @@ export function Product({ mode = "view", customMode = "patch", onLocationChange 
     });
   }, [bagMesh, customMode, draftInitials, mode, moveDraftInitial]);
 
-  // 패치 이동 시작함
+  // 패치 이동 시작
   const handlePatchDragStart = (patchId: string) => {
     if (mode !== "draft" || customMode !== "patch") {
       return;
@@ -240,7 +240,7 @@ export function Product({ mode = "view", customMode = "patch", onLocationChange 
     selectPlacedPatch(patchId);
   };
 
-  // 이니셜 이동 시작함
+  // 이니셜 이동 시작
   const handleInitialDragStart = (initialId: string) => {
     if (mode !== "draft" || customMode !== "initial") {
       return;
@@ -255,32 +255,28 @@ export function Product({ mode = "view", customMode = "patch", onLocationChange 
     selectPlacedInitial(initialId);
   };
 
-  // 가방 빈 영역 클릭 처리함
+  // 가방 빈 영역 클릭
   const handleBagPointerDown = (event: ThreeEvent<PointerEvent>) => {
-    // 상대방 위치 선택 기능 우선 처리함
     if (mode === "location-select") {
       handleLocationSelect(event);
 
       return;
     }
 
-    // 편집 모드가 아니면 처리하지 않음
     if (mode !== "draft") {
       return;
     }
 
-    // 이니셜 모드에서 가방 영역 클릭 시 이니셜 선택 해제함
     if (customMode === "initial") {
       selectPlacedInitial(null);
 
       return;
     }
 
-    // 패치 모드에서 가방 영역 클릭 시 패치 선택 해제함
     selectPlacedPatch(null);
   };
 
-  // 포인터 이동에 따라 커스텀 위치 변경함
+  // 포인터 이동 기반 커스텀 위치 변경
   const handlePointerMove = (event: ThreeEvent<PointerEvent>) => {
     if (mode !== "draft") {
       return;
@@ -311,7 +307,14 @@ export function Product({ mode = "view", customMode = "patch", onLocationChange 
     const normal: [number, number, number] = [localNormal.x, localNormal.y, localNormal.z];
 
     if (draggingPatchId && customMode === "patch") {
-      moveDraftPatch(draggingPatchId, position, normal);
+      if (!intersection.uv) {
+        return;
+      }
+
+      // 서버 패치 적용 면
+      const side: "FRONT" | "BACK" = localPoint.z >= 0 ? "FRONT" : "BACK";
+
+      moveDraftPatch(draggingPatchId, position, normal, side, intersection.uv.x, intersection.uv.y);
 
       return;
     }
@@ -321,7 +324,7 @@ export function Product({ mode = "view", customMode = "patch", onLocationChange 
     }
   };
 
-  // 위치 이동 종료함
+  // 위치 이동 종료
   const handlePointerUp = () => {
     if (draggingPatchId) {
       setDraggingPatchId(null);
@@ -336,7 +339,7 @@ export function Product({ mode = "view", customMode = "patch", onLocationChange 
     }
   };
 
-  // 상대방 위치 선택 기능임
+  // 상대방 위치 선택
   const handleLocationSelect = (event: ThreeEvent<PointerEvent>) => {
     if (mode !== "location-select") {
       return;
@@ -372,10 +375,15 @@ export function Product({ mode = "view", customMode = "patch", onLocationChange 
 
     onLocationChange?.({
       side,
+
       posX: event.uv.x,
+
       posY: event.uv.y,
+
       rotation: 0,
+
       previewX: normalizedPreviewX,
+
       previewY: normalizedPreviewY,
     });
 
@@ -383,35 +391,30 @@ export function Product({ mode = "view", customMode = "patch", onLocationChange 
 
     console.log("선택 위치:", {
       side,
+
       x: localPoint.x,
+
       y: localPoint.y,
+
       z: localPoint.z,
+
       previewX: normalizedPreviewX,
+
       previewY: normalizedPreviewY,
     });
   };
 
   return (
     <>
-      {/* 실제 GLB 가방임 */}
+      {/* 실제 GLB 가방 */}
       <primitive
         object={scene}
         position={[0, 1.9, 0]}
         scale={1.1}
-
-        // 가방 빈 영역 클릭 시 현재 편집 대상 선택 해제함
         onPointerDown={handleBagPointerDown}
-
-        // 편집 모드에서 커스텀 위치 이동 처리함
         onPointerMove={mode === "draft" ? handlePointerMove : undefined}
-
-        // 편집 모드에서 커스텀 이동 종료함
         onPointerUp={mode === "draft" ? handlePointerUp : undefined}
-
-        // 가방 영역을 벗어나도 커스텀 이동 종료함
         onPointerLeave={mode === "draft" ? handlePointerUp : undefined}
-
-        // Canvas 빈 영역 클릭 시 현재 선택 상태 해제함
         onPointerMissed={() => {
           if (mode !== "draft") {
             return;
@@ -431,12 +434,12 @@ export function Product({ mode = "view", customMode = "patch", onLocationChange 
         }}
       />
 
-      {/* 패치와 이니셜을 실제 가방 Mesh 위에 렌더링함 */}
+      {/* 가방 위 커스텀 렌더링 */}
       {bagMesh &&
         (mode === "draft" || mode === "applied") &&
         createPortal(
           <>
-            {/* 가방 위 패치 목록임 */}
+            {/* 가방 위 패치 목록 */}
             {visiblePatches.map((patch) => (
               <BagPatchDecal
                 key={patch.id}
@@ -446,7 +449,7 @@ export function Product({ mode = "view", customMode = "patch", onLocationChange 
               />
             ))}
 
-            {/* 가방 위 이니셜 목록임 */}
+            {/* 가방 위 이니셜 목록 */}
             {visibleInitials.map((initial) => (
               <BagInitialDecal
                 key={initial.id}
@@ -459,7 +462,7 @@ export function Product({ mode = "view", customMode = "patch", onLocationChange 
           bagMesh,
         )}
 
-      {/* 상대방 위치 선택 기능의 흰색 선택 프레임임 */}
+      {/* 위치 선택 프레임 */}
       {mode === "location-select" && markerPosition && (
         <Html
           position={markerPosition}
@@ -484,5 +487,5 @@ export function Product({ mode = "view", customMode = "patch", onLocationChange 
   );
 }
 
-// GLB 사전 로딩함
+// GLB 사전 로딩
 useGLTF.preload(bagUrl);
