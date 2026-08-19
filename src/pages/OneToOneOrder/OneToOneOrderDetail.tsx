@@ -1,47 +1,27 @@
-import { useLocation } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 import PageHeader from "@/components/common/PageHeader";
 import OrderDetailContent from "@/components/oneToOneOrder/OrderDetailContent";
 
-import { useArtist } from "@/hooks/queries/artist/useArtist";
-
-import type { PatchLocation } from "@/types/patchLocation";
-
-type OrderDetailLocationState = {
-  selectedImage?: string;
-  selectedArtistId?: number;
-  selectedLocation?: PatchLocation;
-  requestText?: string;
-};
+import { usePremiumOrderDetail } from "@/hooks/queries/usePremiumOrderDetail";
 
 export default function OneToOneOrderDetail() {
-  const location = useLocation();
+  const { premiumId } = useParams();
 
-  const locationState = location.state as OrderDetailLocationState | null;
-
-  const selectedImage = locationState?.selectedImage;
-
-  const selectedArtistId = locationState?.selectedArtistId;
-
-  const selectedLocation = locationState?.selectedLocation;
-
-  const requestText = locationState?.requestText ?? "";
-
-  // 선택한 작가 상세 정보 조회
   const {
-    data: selectedArtist,
-    isPending: isArtistPending,
-    isError: isArtistError,
-  } = useArtist(selectedArtistId);
+    data: orderDetail,
+    isPending,
+    isError,
+  } = usePremiumOrderDetail(premiumId ? Number(premiumId) : undefined);
 
-  // 작가 정보 로딩
-  if (selectedArtistId !== undefined && isArtistPending) {
-    return <div>작가 정보를 불러오는 중입니다.</div>;
+  // 주문 상세 정보 로딩
+  if (isPending) {
+    return <div>주문 정보를 불러오는 중입니다.</div>;
   }
 
-  // 작가 정보 조회 실패
-  if (selectedArtistId !== undefined && isArtistError) {
-    return <div>작가 정보를 불러오지 못했습니다.</div>;
+  // 주문 상세 정보 조회 실패
+  if (isError || !orderDetail) {
+    return <div>주문 정보를 불러오지 못했습니다.</div>;
   }
 
   return (
@@ -50,10 +30,11 @@ export default function OneToOneOrderDetail() {
 
       <section className="px-7 pb-12 pt-8">
         <OrderDetailContent
-          selectedImage={selectedImage}
-          selectedArtist={selectedArtist ?? null}
-          selectedLocation={selectedLocation}
-          requestText={requestText}
+          selectedImage={orderDetail.photoImgUrl}
+          artistName={orderDetail.artistName}
+          artistImage={orderDetail.artistImgUrl}
+          artistIntro={orderDetail.introSummary}
+          requestText={orderDetail.requestDetail}
         />
       </section>
     </main>

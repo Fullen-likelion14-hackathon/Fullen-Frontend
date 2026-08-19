@@ -34,3 +34,13 @@ export interface PremiumOrderResponse {
   message: string;
   data: PremiumOrder;
 }
+
+//1:1 상세 주문내역
+export interface PremiumOrderDetail {
+  premiumOrderId: number;
+  photoImgUrl: string;
+  artistName: string;
+  artistImgUrl: string;
+  introSummary: string;
+  requestDetail: string;
+}

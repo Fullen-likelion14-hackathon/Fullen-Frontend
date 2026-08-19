@@ -1,5 +1,4 @@
-import { useRef, useState } from "react";
-import type { ChangeEvent } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import PageHeader from "@/components/common/PageHeader";
@@ -25,13 +24,14 @@ type AIPatchOptionLocationState = {
 
   // 수정할 단계임
   editStep?: 1 | 2 | 3;
+
+  selectedPhotoId?: number;
+  selectedImage?: string;
 };
 
 const AIPatchOptionSelect = () => {
   const navigate = useNavigate();
   const location = useLocation();
-
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // 이전 페이지에서 전달받은 수정 모드 관련 state임
   const locationState = location.state as AIPatchOptionLocationState | null;
@@ -72,38 +72,32 @@ const AIPatchOptionSelect = () => {
   // 선택한 작가 정보를 찾음
   const selectedArtist = allArtists.find((artist) => artist.id === selectedArtistId) ?? null;
 
-  // 숨겨둔 파일 input 실행함
-  const handleOpenPhotoPicker = () => {
-    fileInputRef.current?.click();
-  };
-
-  // 사진 선택 처리함
-  const handlePhotoChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-
-    if (!file) return;
-
-    // 기존 Object URL이 있으면 정리함
-    if (selectedImage) {
-      URL.revokeObjectURL(selectedImage);
+  useEffect(() => {
+    if (locationState?.selectedImage) {
+      setSelectedImage(locationState.selectedImage);
     }
+  }, [locationState?.selectedImage, setSelectedImage]);
 
-    const imageUrl = URL.createObjectURL(file);
+  const handleOpenPhotoPicker = () => {
+    navigate("/onetooneorder/photo", {
+      state: {
+        source: "ai-patch",
+        returnTo: "/custom/ai-patch/options",
 
-    setSelectedImage(imageUrl);
+        selectedImage,
+
+        currentStep,
+
+        mode: isEditMode ? "edit" : undefined,
+
+        editStep: isEditMode ? editStep : undefined,
+      },
+    });
   };
 
   // 선택한 사진 삭제함
   const handleRemovePhoto = () => {
-    if (selectedImage) {
-      URL.revokeObjectURL(selectedImage);
-    }
-
     setSelectedImage(undefined);
-
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
   };
 
   // 사진 선택 완료 후 작가 선택 단계로 이동함
@@ -204,15 +198,6 @@ const AIPatchOptionSelect = () => {
             </button>
           </div>
         )}
-
-        {/* 실제 사진 선택 input임 */}
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          onChange={handlePhotoChange}
-          className="hidden"
-        />
 
         <div className="flex-1">
           {/* 수정 모드임 */}

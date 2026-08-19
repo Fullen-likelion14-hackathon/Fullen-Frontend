@@ -8,8 +8,13 @@ import type { PatchLocation } from "@/types/patchLocation";
 interface OrderDetailContentProps {
   selectedImage?: string;
 
-  // 실제 작가 상세 API 데이터
-  selectedArtist: ArtistDetail | null;
+  // 주문 확인 페이지에서 사용하는 작가 상세 데이터
+  selectedArtist?: ArtistDetail | null;
+
+  // 주문 상세 조회 API에서 사용하는 작가 데이터
+  artistName?: string;
+  artistImage?: string;
+  artistIntro?: string;
 
   selectedLocation?: PatchLocation;
 
@@ -22,10 +27,19 @@ interface OrderDetailContentProps {
 export default function OrderDetailContent({
   selectedImage,
   selectedArtist,
+  artistName,
+  artistImage,
+  artistIntro,
   selectedLocation,
   requestText,
   onEdit,
 }: OrderDetailContentProps) {
+  // 주문 확인 페이지 / 주문 상세 페이지 모두 대응
+  const displayArtistName = selectedArtist?.artistName ?? artistName;
+  const displayArtistImage = selectedArtist?.imgUrls?.[0] ?? artistImage;
+  const displayArtistIntro = selectedArtist?.introSummary ?? artistIntro;
+  const displayNationImage = selectedArtist?.nationImgUrl;
+
   return (
     <>
       {/* 1. 사진 선택 */}
@@ -41,24 +55,22 @@ export default function OrderDetailContent({
 
       {/* 2. 작가 선택 */}
       <ConfirmStep step={2} title="작가 선택" onEdit={onEdit ? () => onEdit(2) : undefined}>
-        {selectedArtist && (
+        {displayArtistName && (
           <div className="flex h-24 overflow-hidden rounded-xl border-2 border-[#192C44] bg-white">
-            {selectedArtist.imgUrls[0] && (
-              <img
-                src={selectedArtist.imgUrls[0]}
-                alt={selectedArtist.artistName}
-                className="w-24 object-cover"
-              />
+            {displayArtistImage && (
+              <img src={displayArtistImage} alt={displayArtistName} className="w-24 object-cover" />
             )}
 
             <div className="flex flex-1 flex-col justify-center px-3">
-              <img src={selectedArtist.nationImgUrl} alt="" className="mb-1 h-4 w-6 object-cover" />
+              {displayNationImage && (
+                <img src={displayNationImage} alt="" className="mb-1 h-4 w-6 object-cover" />
+              )}
 
-              <p className="font-bold">{selectedArtist.artistName}</p>
+              <p className="font-bold">{displayArtistName}</p>
 
-              <p className="mt-1 line-clamp-2 text-xs text-[#515C6C]">
-                {selectedArtist.introSummary}
-              </p>
+              {displayArtistIntro && (
+                <p className="mt-1 line-clamp-2 text-xs text-[#515C6C]">{displayArtistIntro}</p>
+              )}
             </div>
           </div>
         )}
