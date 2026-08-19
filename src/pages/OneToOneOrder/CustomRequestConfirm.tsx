@@ -3,9 +3,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import PageHeader from "@/components/common/PageHeader";
 import OrderDetailContent from "@/components/oneToOneOrder/OrderDetailContent";
 
-import { recommendedArtists, otherArtists } from "@/mocks/ArtistData";
-
 import { useBags } from "@/hooks/queries/useBags";
+import { useArtist } from "@/hooks/queries/artist/useArtist";
 import { useCreatePremiumOrder } from "@/hooks/mutations/useCreatePremiumOrder";
 
 import type { PatchLocation } from "@/types/patchLocation";
@@ -34,9 +33,13 @@ export default function CustomRequestConfirm() {
   const locationState = location.state as ConfirmLocationState | null;
 
   const selectedPhotoId = locationState?.selectedPhotoId;
+
   const selectedImage = locationState?.selectedImage;
+
   const selectedArtistId = locationState?.selectedArtistId;
+
   const selectedLocation = locationState?.selectedLocation;
+
   const requestText = locationState?.requestText ?? "";
 
   // 사용자 소유 가방 조회
@@ -45,14 +48,15 @@ export default function CustomRequestConfirm() {
   // 현재 사용하는 가방 id
   const userBagId = bags[0]?.userBagId;
 
+  // 선택한 작가 상세 정보 조회
+  const {
+    data: selectedArtist,
+    isPending: isArtistPending,
+    isError: isArtistError,
+  } = useArtist(selectedArtistId);
+
   // 1:1 커스텀 주문 생성 mutation
   const { mutate: createPremiumOrder, isPending: isOrderPending } = useCreatePremiumOrder();
-
-  // 추천 작가 + 다른 작가
-  const allArtists = [...recommendedArtists, ...otherArtists];
-
-  // 선택한 작가 정보
-  const selectedArtist = allArtists.find((artist) => artist.id === selectedArtistId) ?? null;
 
   // 수정할 단계로 돌아가기
   const handleEdit = (step: number) => {
@@ -110,12 +114,24 @@ export default function CustomRequestConfirm() {
     );
   };
 
+  // 가방 정보 로딩
   if (isBagsPending) {
     return <div>가방 정보를 불러오는 중입니다.</div>;
   }
 
+  // 가방 정보 에러
   if (isBagsError || userBagId === undefined) {
     return <div>가방 정보를 불러오지 못했습니다.</div>;
+  }
+
+  // 선택한 작가 정보 로딩
+  if (selectedArtistId !== undefined && isArtistPending) {
+    return <div>작가 정보를 불러오는 중입니다.</div>;
+  }
+
+  // 선택한 작가 정보 에러
+  if (selectedArtistId !== undefined && isArtistError) {
+    return <div>작가 정보를 불러오지 못했습니다.</div>;
   }
 
   return (
@@ -135,7 +151,7 @@ export default function CustomRequestConfirm() {
         {/* 주문 내용 */}
         <OrderDetailContent
           selectedImage={selectedImage}
-          selectedArtist={selectedArtist}
+          selectedArtist={selectedArtist ?? null}
           selectedLocation={selectedLocation ?? undefined}
           requestText={requestText}
           onEdit={handleEdit}
