@@ -33,13 +33,9 @@ export default function CustomRequestConfirm() {
   const locationState = location.state as ConfirmLocationState | null;
 
   const selectedPhotoId = locationState?.selectedPhotoId;
-
   const selectedImage = locationState?.selectedImage;
-
   const selectedArtistId = locationState?.selectedArtistId;
-
   const selectedLocation = locationState?.selectedLocation;
-
   const requestText = locationState?.requestText ?? "";
 
   // 사용자 소유 가방 조회
@@ -98,10 +94,14 @@ export default function CustomRequestConfirm() {
       },
       {
         // 주문 생성 성공
-        onSuccess: () => {
+        onSuccess: (response) => {
+          console.log("주문 생성 응답:", response);
+          console.log("premiumOrderId:", response.data?.premiumOrderId);
+
           navigate("/custom/order/complete", {
             state: {
               orderType: "onetoone",
+              premiumOrderId: response.data?.premiumOrderId,
             },
           });
         },
