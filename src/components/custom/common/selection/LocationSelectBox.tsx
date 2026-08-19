@@ -1,9 +1,7 @@
-import bagImage from "@/assets/images/testBag.png";
+import bagFrontImage from "@/assets/images/testBag.png";
+import bagBackImage from "@/assets/images/testBag.png";
 
-export type PatchLocation = {
-  x: number;
-  y: number;
-};
+import type { PatchLocation } from "@/types/patchLocation";
 
 interface LocationSelectBoxProps {
   selectedLocation: PatchLocation | null;
@@ -28,19 +26,29 @@ export default function LocationSelectBox({
     );
   }
 
+  // 선택한 앞/뒷면에 맞는 이미지 표시
+  const bagImage = selectedLocation.side === "FRONT" ? bagFrontImage : bagBackImage;
+
   return (
     <div className="relative flex h-47 w-full items-center justify-center overflow-hidden rounded-xl border-2 border-[#192C44] bg-white">
-      <img src={bagImage} alt="커스텀 가방" className="w-[85%] object-contain" />
+      {/* 선택한 면의 가방 이미지 */}
+      <img
+        src={bagImage}
+        alt={selectedLocation.side === "FRONT" ? "커스텀 가방 앞면" : "커스텀 가방 뒷면"}
+        className="w-[85%] object-contain"
+      />
 
+      {/* 선택 위치 */}
       <div
-        className="absolute h-14 w-14 border-2 border-[#192C44] bg-white"
+        className="absolute h-14 w-14 border-2 border-[#192C44] bg-transparent"
         style={{
-          left: `${selectedLocation.x}%`,
-          top: `${selectedLocation.y}%`,
-          transform: "translate(-50%, -50%)",
+          left: `${selectedLocation.posX * 100}%`,
+          top: `${selectedLocation.posY * 100}%`,
+          transform: `translate(-50%, -50%) rotate(${selectedLocation.rotation}deg)`,
         }}
       />
 
+      {/* 삭제 */}
       <button
         type="button"
         onClick={onRemove}

@@ -1,5 +1,4 @@
-import { useRef, useState } from "react";
-import type { ChangeEvent } from "react";
+import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import PageHeader from "@/components/common/PageHeader";
@@ -12,16 +11,19 @@ import RequestTextBox from "@/components/custom/common/selection/RequestTextBox"
 import CustomStep from "@/components/custom/common/step/CustomStep";
 import CustomStepButton from "@/components/custom/common/step/CustomStepButton";
 
-import type { PatchLocation } from "@/components/custom/common/selection/LocationSelectBox";
+import type { PatchLocation } from "@/types/patchLocation";
 
 import { recommendedArtists, otherArtists } from "@/mocks/ArtistData";
 
 type CustomRequestLocationState = {
+  // 사진 선택 페이지에서 전달받은 사진 id
+  selectedPhotoId?: number;
+
+  // 선택한 사진 URL
+  selectedImage?: string;
+
   // 작가 선택 페이지에서 전달받은 작가 id
   selectedArtistId?: number;
-
-  // 이전 단계에서 선택한 사진
-  selectedImage?: string;
 
   // 현재 진행 단계
   currentStep?: number;
@@ -37,8 +39,6 @@ const CustomRequest = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
   const locationState = location.state as CustomRequestLocationState | null;
 
   // 1:1 커스텀 주문은 총 4단계
@@ -47,7 +47,12 @@ const CustomRequest = () => {
   // 현재 단계
   const [currentStep, setCurrentStep] = useState(locationState?.currentStep ?? 1);
 
-  // 선택한 사진
+  // 선택한 사진 id
+  const [selectedPhotoId, setSelectedPhotoId] = useState<number | null>(
+    locationState?.selectedPhotoId ?? null,
+  );
+
+  // 선택한 사진 URL
   const [selectedImage, setSelectedImage] = useState<string | undefined>(
     locationState?.selectedImage,
   );
@@ -71,42 +76,33 @@ const CustomRequest = () => {
   // 선택된 작가 정보
   const selectedArtist = allArtists.find((artist) => artist.id === selectedArtistId) ?? null;
 
-  // 사진 선택창 열기
-  const handleOpenPhotoPicker = () => {
-    fileInputRef.current?.click();
+  // 사진 선택 페이지 이동
+  const handlePhotoSelect = () => {
+    navigate("/onetooneorder/photo", {
+      state: {
+        returnTo: "/onetooneorder/request",
+
+        // 기존 선택값 유지
+        selectedPhotoId,
+        selectedImage,
+        selectedArtistId,
+        selectedLocation,
+        requestText,
+      },
+    });
   };
 
-  // 사진 선택
-  const handlePhotoChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-
-    if (!file) return;
-
-    if (selectedImage) {
-      URL.revokeObjectURL(selectedImage);
-    }
-
-    const imageUrl = URL.createObjectURL(file);
-
-    setSelectedImage(imageUrl);
-  };
-
-  // 사진 삭제
+  // 사진 선택 해제
   const handleRemovePhoto = () => {
-    if (selectedImage) {
-      URL.revokeObjectURL(selectedImage);
-    }
-
+    setSelectedPhotoId(null);
     setSelectedImage(undefined);
-
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
   };
 
   // 1단계 → 2단계
   const handlePhotoNext = () => {
-    if (!selectedImage) return;
+    if (selectedPhotoId === null || !selectedImage) {
+      return;
+    }
 
     setCurrentStep(2);
   };
@@ -118,7 +114,10 @@ const CustomRequest = () => {
         source: "onetoone",
         returnTo: "/onetooneorder/request",
 
+        // 사진 정보 유지
+        selectedPhotoId,
         selectedImage,
+
         selectedArtistId,
         currentStep: 2,
         selectedLocation,
@@ -145,7 +144,10 @@ const CustomRequest = () => {
       state: {
         returnTo: "/onetooneorder/request",
 
+        // 사진 정보 유지
+        selectedPhotoId,
         selectedImage,
+
         selectedArtistId,
         currentStep: 3,
         selectedLocation,
@@ -176,31 +178,26 @@ const CustomRequest = () => {
   // 최종 입력 완료
   const handleSubmit = () => {
     if (!requestText.trim()) return;
+    if (selectedPhotoId === null) return;
+    if (selectedArtistId === null) return;
+    if (!selectedLocation) return;
 
     navigate("/onetooneorder/confirm", {
       state: {
+        // 최종 주문 API에 필요한 값들
+        selectedPhotoId,
         selectedImage,
         selectedArtistId,
         selectedLocation,
         requestText,
       },
     });
-    //  API 연결 후 완료 페이지로 이동
   };
 
   return (
     <main className="relative mx-auto h-dvh w-full max-w-97.5 overflow-hidden bg-[#F9F4F0] text-[#192C44]">
       {/* 헤더 */}
       <PageHeader title="1:1 커스텀 주문" backTo="/onetooneorder" />
-
-      {/* 사진 input */}
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept="image/*"
-        onChange={handlePhotoChange}
-        className="hidden"
-      />
 
       {/* 본문 */}
       <section className="flex h-[calc(100dvh-126px)] flex-col overflow-y-auto px-8 pb-12 pt-10">
@@ -216,7 +213,7 @@ const CustomRequest = () => {
             >
               <PhotoSelectBox
                 imageUrl={selectedImage}
-                onSelect={handleOpenPhotoPicker}
+                onSelect={handlePhotoSelect}
                 onRemove={handleRemovePhoto}
               />
             </CustomStep>
@@ -291,7 +288,10 @@ const CustomRequest = () => {
         {/* 1단계 버튼 */}
         {currentStep === 1 && (
           <div className="mt-8">
-            <CustomStepButton onNext={handlePhotoNext} disabled={!selectedImage} />
+            <CustomStepButton
+              onNext={handlePhotoNext}
+              disabled={selectedPhotoId === null || !selectedImage}
+            />
           </div>
         )}
 

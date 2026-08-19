@@ -7,93 +7,164 @@ import ArtistSlider from "@/components/oneToOneOrder/ArtistSlider";
 import ArtistCard from "@/components/oneToOneOrder/ArtistCard";
 import ArtistDetailModal from "@/components/oneToOneOrder/ArtistDetailModal";
 
-import { recommendedArtists, otherArtists } from "@/mocks/ArtistData";
+// AI 추천 작가는 패치 API 연결 전까지 더미 데이터 사용
+import { recommendedArtists } from "@/mocks/ArtistData";
+import type { Artist as MockArtist } from "@/mocks/ArtistData";
 
-import type { Artist } from "@/mocks/ArtistData";
+import { useArtists } from "@/hooks/queries/artist/useArtists";
+import { useArtist } from "@/hooks/queries/artist/useArtist";
+
+import type { PatchLocation } from "@/types/patchLocation";
 
 import { useAIPatchStore } from "@/stores/aiPatchStore";
 
-// 작가 선택 페이지로 들어올 때 전달받는 state 타입임
+// 작가 선택 페이지로 들어올 때 전달받는 state 타입
 interface ArtistSelectLocationState {
-  // 작가 선택 완료 후 돌아갈 경로임
+  // 작가 선택 완료 후 돌아갈 경로
   returnTo?: string;
 
-  // 어떤 플로우에서 작가 선택 페이지로 들어왔는지 구분함
+  // 어떤 플로우에서 작가 선택 페이지로 들어왔는지 구분
   source?: "ai-patch" | "onetoone";
 
-  // AI 패치 수정 모드 여부임
+  // AI 패치 수정 모드 여부
   mode?: "edit";
 
-  // AI 패치에서 수정 중인 단계임
+  // AI 패치에서 수정 중인 단계
   editStep?: 1 | 2 | 3;
 
-  // 1:1 커스텀에서 기존에 선택한 사진임
+  // 추후 AI 패치 생성 결과에서 전달받을 추천 작가 id
+  recommendedArtistIds?: number[];
+
+  // 1:1 커스텀에서 선택한 사진 id
+  selectedPhotoId?: number;
+
+  // 1:1 커스텀에서 선택한 사진 URL
   selectedImage?: string;
+
+  // 기존에 선택한 작가 id
+  selectedArtistId?: number;
+
+  // 기존에 선택한 위치
+  selectedLocation?: PatchLocation;
+
+  // 작성 중인 요청사항
+  requestText?: string;
 }
 
 export default function CustomArtistSelect() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // 이전 페이지에서 전달받은 state임
+  // 이전 페이지에서 전달받은 state
   const locationState = location.state as ArtistSelectLocationState | null;
 
-  // AI 패치에서 선택한 작가 id를 저장하는 Zustand 함수임
+  // 진입 플로우 구분
+  const isOneToOne = locationState?.source === "onetoone";
+
+  const isAIPatch = locationState?.source === "ai-patch";
+
+  // 전체 작가 목록 조회
+  // 1:1 커스텀에서는 앞 3명 + 나머지 작가를 나누어 사용
+  // AI 커스텀에서는 다른 작가 목록에 사용
+  const { data: artists = [], isPending: isArtistsPending, isError: isArtistsError } = useArtists();
+
+  // AI 패치에서 선택한 작가 id를 저장하는 Zustand 함수
   const setAIPatchSelectedArtistId = useAIPatchStore((state) => state.setSelectedArtistId);
 
-  // 현재 화면에서 선택한 작가 id임
-  // 아직 선택하지 않은 경우 null임
-  const [selectedArtistId, setSelectedArtistId] = useState<number | null>(null);
+  // 현재 선택한 작가 id
+  const [selectedArtistId, setSelectedArtistId] = useState<number | null>(
+    locationState?.selectedArtistId ?? null,
+  );
 
-  // 다른 작가 더보기 패널이 열려있는지 저장함
+  // 상세보기할 작가 id
+  const [detailArtistId, setDetailArtistId] = useState<number | undefined>(undefined);
+
+  // 선택한 작가 상세 조회
+  const { data: detailArtist } = useArtist(detailArtistId);
+
+  // 다른 작가 더보기 패널 상태
   const [isMoreOpen, setIsMoreOpen] = useState(false);
 
-  // 상세 모달에서 보여줄 작가 정보를 저장함
-  const [detailArtist, setDetailArtist] = useState<Artist | null>(null);
+  // ======================================
+  // 1:1 커스텀 작가 데이터
+  // ======================================
 
-  // 작가 선택 또는 선택 취소 처리함
+  // 전체 작가 중 앞 3명
+  const oneToOneTopArtists = artists.slice(0, 3);
+
+  // ArtistSlider가 아직 MockArtist 타입을 사용하고 있으므로
+  // API 데이터를 Slider에서 사용하는 형태로 변환
+  const oneToOneSliderArtists: MockArtist[] = oneToOneTopArtists.map((artist) => ({
+    id: artist.artistId,
+    name: artist.artistName,
+    image: artist.imgUrl,
+    flagImage: artist.nationImgUrl,
+    description: artist.introSummary,
+
+    // 상세 정보는 상세 API에서 따로 조회
+    detailImages: [],
+    detailSummary: artist.introSummary,
+    detailDescription: [],
+  }));
+
+  // 1:1 커스텀에서는 앞 3명을 제외한 작가
+  const oneToOneOtherArtists = artists.slice(3);
+
+  // ======================================
+  // 화면에 사용할 데이터 결정
+  // ======================================
+
+  // 슬라이더
+  // 1:1 → 전체 작가 API 앞 3명
+  // AI → 현재는 더미 추천 작가 3명
+  const sliderArtists = isOneToOne ? oneToOneSliderArtists : recommendedArtists;
+
+  // 다른 작가 목록
+  // 1:1 → 앞 3명을 제외한 나머지
+  // AI → 전체 작가 목록
+  const otherArtistList = isOneToOne ? oneToOneOtherArtists : artists;
+
+  // 작가 선택 / 선택 취소
   const handleArtistToggle = (artistId: number | null) => {
-    // null이 들어오면 현재 선택을 해제함
     if (artistId === null) {
       setSelectedArtistId(null);
       return;
     }
 
-    // 이미 선택된 작가를 다시 누르면 선택 해제함
-    // 다른 작가를 누르면 해당 작가로 변경함
     setSelectedArtistId((prev) => (prev === artistId ? null : artistId));
   };
 
-  // 작가 상세보기 모달을 열어줌
-  const handleArtistDetail = (artist: Artist) => {
-    setDetailArtist(artist);
+  // 다른 작가 카드 상세보기
+  const handleArtistDetail = (artistId: number) => {
+    setDetailArtistId(artistId);
   };
 
-  // 작가 상세보기 모달을 닫아줌
+  // 슬라이더 작가 상세보기
+  // 1:1의 경우 API artistId가 들어있음
+  // AI는 추후 추천 artistId API 연결 예정
+  const handleSliderArtistDetail = (artist: MockArtist) => {
+    setDetailArtistId(artist.id);
+  };
+
+  // 작가 상세보기 모달 닫기
   const handleDetailClose = () => {
-    setDetailArtist(null);
+    setDetailArtistId(undefined);
   };
 
-  // 선택한 작가를 현재 진입한 플로우에 맞게 저장하고 이동함
+  // 선택한 작가 저장 및 이동
   const handleSelectButtonClick = () => {
-    // 작가를 선택하지 않은 경우 아무 동작하지 않음
     if (selectedArtistId === null) return;
 
-    // AI 패치 생성 또는 수정 플로우에서 들어온 경우임
-    if (locationState?.source === "ai-patch" && locationState.returnTo) {
-      // 선택한 작가 id를 AI 패치 Zustand store에 저장함
-      // 사진과 프레임은 이미 store에 있으므로 다시 전달하지 않음
+    // ======================================
+    // AI 패치 플로우
+    // ======================================
+    if (isAIPatch && locationState?.returnTo) {
       setAIPatchSelectedArtistId(selectedArtistId);
 
-      // AI 패치 옵션 선택 페이지로 돌아감
       navigate(locationState.returnTo, {
         state: {
-          // 수정 모드에서 들어온 경우 수정 상태 유지함
           mode: locationState.mode,
           editStep: locationState.editStep,
-
-          // 일반 AI 패치 작가 선택에서 들어온 경우
-          // 작가 선택 단계인 2단계로 돌아감
           currentStep: 2,
         },
       });
@@ -101,17 +172,28 @@ export default function CustomArtistSelect() {
       return;
     }
 
-    // 1:1 커스텀 주문 플로우에서 들어온 경우임
-    if (locationState?.source === "onetoone") {
-      navigate("/onetooneorder/request", {
+    // ======================================
+    // 1:1 커스텀 주문 플로우
+    // ======================================
+    if (isOneToOne) {
+      navigate(locationState?.returnTo ?? "/onetooneorder/request", {
         state: {
-          // 선택한 작가 id 전달함
+          // 사진 id 유지
+          selectedPhotoId: locationState?.selectedPhotoId,
+
+          // 사진 URL 유지
+          selectedImage: locationState?.selectedImage,
+
+          // 선택한 실제 작가 id
           selectedArtistId,
 
-          // 1:1 커스텀에서 기존에 선택한 사진 유지함
-          selectedImage: locationState.selectedImage,
+          // 기존 위치 유지
+          selectedLocation: locationState?.selectedLocation,
 
-          // 작가 선택 완료 후 위치 선택 단계로 이동함
+          // 기존 요청사항 유지
+          requestText: locationState?.requestText,
+
+          // 작가 선택 완료 후 위치 선택 단계
           currentStep: 3,
         },
       });
@@ -120,27 +202,43 @@ export default function CustomArtistSelect() {
     }
   };
 
-  // 다른 작가 목록 열기 또는 닫기 처리함
+  // 다른 작가 목록 열기 / 닫기
   const handleMoreArtistClick = () => {
     setIsMoreOpen((prev) => !prev);
   };
 
   return (
     <div className="relative mx-auto min-h-screen max-w-97 bg-[#F9F4F0]">
-      {/* 상단 헤더 영역임 */}
+      {/* 상단 헤더 */}
       <PageHeader title="작가 선택" />
 
-      {/* AI 추천 작가 슬라이더 영역임 */}
-      <ArtistSlider
-        artists={recommendedArtists}
-        selectedArtistId={selectedArtistId}
-        onSelectArtist={handleArtistToggle}
-        onDetailArtist={handleArtistDetail}
-      />
+      {/* 작가 목록 로딩 */}
+      {isArtistsPending && isOneToOne && (
+        <p className="py-20 text-center text-[#727272]">작가 목록을 불러오는 중입니다.</p>
+      )}
 
-      {/* 기본 화면 하단 영역임 */}
+      {/* 작가 목록 에러 */}
+      {isArtistsError && isOneToOne && (
+        <p className="py-20 text-center text-[#727272]">작가 목록을 불러오지 못했습니다.</p>
+      )}
+
+      {/* ======================================
+          작가 슬라이더
+          1:1 → API 앞 3명
+          AI → 현재 더미 추천 3명
+      ====================================== */}
+      {(!isOneToOne || (!isArtistsPending && !isArtistsError)) && (
+        <ArtistSlider
+          artists={sliderArtists}
+          selectedArtistId={selectedArtistId}
+          onSelectArtist={handleArtistToggle}
+          onDetailArtist={handleSliderArtistDetail}
+        />
+      )}
+
+      {/* 기본 화면 하단 영역 */}
       <div className="px-6 pb-10 pt-6">
-        {/* 다른 작가 목록 열기 버튼임 */}
+        {/* 다른 작가 목록 열기 버튼 */}
         <button
           type="button"
           onClick={handleMoreArtistClick}
@@ -151,7 +249,7 @@ export default function CustomArtistSelect() {
           <ChevronDown size={30} color="#192A40" />
         </button>
 
-        {/* 현재 선택한 작가 확정 버튼임 */}
+        {/* 작가 선택 버튼 */}
         <button
           type="button"
           disabled={selectedArtistId === null}
@@ -175,12 +273,15 @@ export default function CustomArtistSelect() {
           해당 작가 선택하기
         </button>
       </div>
-      {/* 다른 작가 목록 패널 */}
+
+      {/* ======================================
+          다른 작가 목록 패널
+      ====================================== */}
       {isMoreOpen && (
         <div className="max-w-97 mx-auto fixed inset-x-0 bottom-0 top-25.5 z-30 bg-[#F9F4F0]">
           {/* 스크롤 영역 */}
           <div className="h-full overflow-y-auto px-6 pb-32">
-            {/* 다른 작가 목록 닫기 버튼임 */}
+            {/* 다른 작가 목록 닫기 버튼 */}
             <button
               type="button"
               onClick={handleMoreArtistClick}
@@ -191,18 +292,30 @@ export default function CustomArtistSelect() {
               <ChevronDown className="rotate-180" size={30} color="#192A40" />
             </button>
 
-            {/* 다른 작가 카드 목록임 */}
-            <div className="flex flex-col gap-3">
-              {otherArtists.map((artist) => (
-                <ArtistCard
-                  key={artist.id}
-                  artist={artist}
-                  isSelected={selectedArtistId === artist.id}
-                  onSelect={handleArtistToggle}
-                  onDetail={handleArtistDetail}
-                />
-              ))}
-            </div>
+            {/* 로딩 */}
+            {isArtistsPending && (
+              <p className="py-10 text-center text-[#727272]">작가 목록을 불러오는 중입니다.</p>
+            )}
+
+            {/* 에러 */}
+            {isArtistsError && (
+              <p className="py-10 text-center text-[#727272]">작가 목록을 불러오지 못했습니다.</p>
+            )}
+
+            {/* 다른 작가 카드 목록 */}
+            {!isArtistsPending && !isArtistsError && (
+              <div className="flex flex-col gap-3">
+                {otherArtistList.map((artist) => (
+                  <ArtistCard
+                    key={artist.artistId}
+                    artist={artist}
+                    isSelected={selectedArtistId === artist.artistId}
+                    onSelect={handleArtistToggle}
+                    onDetail={handleArtistDetail}
+                  />
+                ))}
+              </div>
+            )}
           </div>
 
           {/* 하단 고정 작가 선택 버튼 */}
@@ -232,11 +345,11 @@ export default function CustomArtistSelect() {
         </div>
       )}
 
-      {/* 작가 상세보기 모달임 */}
+      {/* 작가 상세보기 모달 */}
       <ArtistDetailModal
-        key={detailArtist?.id ?? "closed"}
-        artist={detailArtist}
-        isOpen={detailArtist !== null}
+        key={detailArtist?.artistId ?? "closed"}
+        artist={detailArtist ?? null}
+        isOpen={detailArtistId !== undefined}
         onClose={handleDetailClose}
       />
     </div>

@@ -35,6 +35,7 @@ import CustomArtistSelect from "@/pages/OneToOneOrder/CustomArtistSelect";
 import LocationSelect from "@/pages/OneToOneOrder/LocationSelect";
 import CustomRequestConfirm from "@/pages/OneToOneOrder/CustomRequestConfirm";
 import OneToOneOrderDetail from "@/pages/OneToOneOrder/OneToOneOrderDetail";
+import PhotoSelect from "@/pages/OneToOneOrder/PhotoSelect";
 
 import MyPage from "@/pages/MyPage/MyPage";
 import MyOrderList from "@/pages/MyPage/MyOrderList";
@@ -101,6 +102,8 @@ function App() {
           <Route path="/onetooneorder/confirm" element={<CustomRequestConfirm />} />
           {/* 1:1 커스텀 주문 상세보기 */}
           <Route path="/onetooneorder/detail" element={<OneToOneOrderDetail />} />
+          {/* 사진선택 */}
+          <Route path="/onetooneorder/photo" element={<PhotoSelect />} />
 
           {/* MyPage- 마이페이지 */}
           <Route path="/mypage" element={<MyPage />} />
