@@ -11,9 +11,10 @@ export const useBags = () => {
 };
 
 // 소유한 가방 상세 조회
-export const useBag = (bagId: number) => {
+export const useBag = (bagId?: number) => {
   return useQuery({
     queryKey: ["bag", bagId],
-    queryFn: () => getBagDetail(bagId),
+    queryFn: () => getBagDetail(bagId!),
+    enabled: bagId !== undefined,
   });
 };

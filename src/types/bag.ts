@@ -12,4 +12,6 @@ export interface BagDetail {
   bagSize: string;
   bagFrontImgUrl: string;
   bagBackImgUrl: string;
+  serialNumber: string;
+  useStartDate: string;
 }
