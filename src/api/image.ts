@@ -1,7 +1,7 @@
 // src/api/image.ts
 import api from "@/api/axios";
 
-export type ImageDirName = "NATION";
+export type ImageDirName = "NATION" | "FEED";
 
 export const uploadImage = async (file: File, dirName: ImageDirName) => {
   const formData = new FormData();

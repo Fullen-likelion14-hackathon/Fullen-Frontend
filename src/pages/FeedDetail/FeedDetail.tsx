@@ -1,26 +1,25 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useDeletePost } from "@/hooks/queries/useDeletePost";
 
 import DeleteConfirmDialog from "@/components/common/DeleteConfirmDialog";
 import editIcon from "@/assets/icons/edit2.png";
 import deleteIcon from "@/assets/icons/delete2.png";
 import publicIcon from "@/assets/icons/public2.png";
 import privateIcon from "@/assets/icons/private.png";
-import { feedDetailMockData } from "./feedDetail.mock";
-import { categoryFeedMockData } from "@/pages/CategoryFeed/categoryFeed.mock";
+import { usePost } from "@/hooks/queries/usePost";
 
 export default function FeedDetail() {
   const navigate = useNavigate();
   const { categoryId, feedId } = useParams();
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
+  const { mutateAsync: deletePost, isPending: isDeleting } = useDeletePost();
 
-  const feed = feedDetailMockData.find(
-    (item) => item.categoryId === Number(categoryId) && item.feedId === Number(feedId),
-  );
+  const { data: feed, isLoading } = usePost(Number(feedId));
 
-  if (!feed) {
-    return <div>피드 데이터 없음</div>;
+  if (isLoading || !feed) {
+    return <div>불러오는 중...</div>;
   }
 
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
@@ -29,26 +28,17 @@ export default function FeedDetail() {
     setActiveIndex(index);
   };
 
-  const handleDeleteFeed = () => {
-    // TODO: 피드 삭제 API 연동 (지금은 목업 배열에서 직접 제거)
-    const feedIndex = feedDetailMockData.findIndex(
-      (item) => item.categoryId === Number(categoryId) && item.feedId === Number(feedId),
-    );
-    if (feedIndex !== -1) {
-      feedDetailMockData.splice(feedIndex, 1);
-    }
+  const handleDeleteFeed = async () => {
+    if (!feedId || isDeleting) return;
 
-    // 목록 페이지 그리드에서도 사라지도록 썸네일도 함께 제거
-    const category = categoryFeedMockData.find((item) => item.categoryId === Number(categoryId));
-    if (category) {
-      const thumbIndex = category.feeds.findIndex((f) => f.feedId === Number(feedId));
-      if (thumbIndex !== -1) {
-        category.feeds.splice(thumbIndex, 1);
-      }
+    try {
+      await deletePost(Number(feedId));
+      setIsDeleteOpen(false);
+      navigate(`/passport/${categoryId}`, { replace: true });
+    } catch (error) {
+      console.error(error);
+      // TODO: 실패 시 사용자 안내(토스트 등) 추가 필요
     }
-
-    setIsDeleteOpen(false);
-    navigate(`/passport/${categoryId}`);
   };
 
   return (
@@ -58,11 +48,6 @@ export default function FeedDetail() {
         <header className="relative h-31.25 w-97.5 bg-[#F9F4F0] pb-6 pt-9">
           <div className="mt-[21px]">
             <div className="flex items-center justify-between px-5 pt-1">
-              {/* 뒤로가기 버튼: CategoryFeed와 동일한 CSS 화살표 디자인
-                  이전엔 navigate(`/passport/${categoryId}`)로 고정 경로 이동했는데,
-                  이게 실제로는 히스토리에 새 엔트리를 push하는 동작이라 다른 페이지의
-                  navigate(-1)과 꼬여서 뒤로가기 체인이 깨지는 버그가 있었음.
-                  다른 페이지들과 동일하게 navigate(-1)로 통일 */}
               <button
                 type="button"
                 aria-label="뒤로 가기"
@@ -72,7 +57,6 @@ export default function FeedDetail() {
                 <span className="block h-4.5 w-4.5 rotate-45 border-b-[3px] border-l-[3px] border-[#CFCDCE]" />
               </button>
 
-              {/* 공개/비공개 아이콘 + 날짜 */}
               <div className="flex items-center gap-[20px]">
                 <div className="flex size-8 items-center justify-center overflow-hidden rounded-full bg-white">
                   <img
@@ -90,17 +74,15 @@ export default function FeedDetail() {
                 </p>
               </div>
 
-              {/* 수정 / 삭제 버튼 */}
               <div className="flex items-center gap-1.5">
                 <button
                   type="button"
                   aria-label="게시물 수정"
                   onClick={() =>
-                    // FeedEdit이 location.state로 기존 값을 초기화하므로 함께 전달
                     navigate(`/passport/${categoryId}/${feedId}/edit`, {
                       state: {
-                        images: feed.images,
-                        comment: feed.content,
+                        images: feed.photoList.map((photo) => photo.imgURL),
+                        comment: feed.comment,
                         isPublic: feed.isPublic,
                       },
                     })
@@ -123,25 +105,25 @@ export default function FeedDetail() {
           <div className="absolute inset-x-0 bottom-0 h-[8px] bg-[#A3642B]" />
         </header>
 
-        {/* 사진 슬라이드: 고정 크기 390x430px */}
+        {/* 사진 슬라이드 */}
         <div className="relative h-[435px] w-97.5 bg-stone-300">
           <div
             onScroll={handleScroll}
             className="flex h-full w-full snap-x snap-mandatory overflow-x-auto scroll-smooth [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           >
-            {feed.images.map((image, index) => (
+            {feed.photoList.map((photo) => (
               <img
-                key={index}
-                src={image}
+                key={photo.photoId}
+                src={photo.imgURL}
                 alt=""
                 className="h-full w-full flex-shrink-0 snap-center object-cover"
               />
             ))}
           </div>
 
-          {feed.images.length > 1 && (
+          {feed.photoList.length > 1 && (
             <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-2.5">
-              {feed.images.map((_, index) => (
+              {feed.photoList.map((_, index) => (
                 <span
                   key={index}
                   className={`size-2.5 rounded-full border-[1.67px] border-white/80 ${
@@ -158,7 +140,7 @@ export default function FeedDetail() {
           className="whitespace-pre-line px-5 py-8 text-sm leading-4 tracking-tight text-zinc-900"
           style={{ fontFamily: "Paperlogy" }}
         >
-          {feed.content}
+          {feed.comment}
         </p>
 
         <DeleteConfirmDialog

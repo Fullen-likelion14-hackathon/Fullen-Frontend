@@ -4,9 +4,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import DeleteConfirmDialog from "@/components/common/DeleteConfirmDialog";
 import editIcon from "@/assets/icons/edit2.png";
 import deleteIcon from "@/assets/icons/delete2.png";
-import { categoryFeedMockData } from "./categoryFeed.mock";
 import { useJourney } from "@/hooks/queries/useJourney";
 import { useDeleteJourney } from "@/hooks/queries/useDeleteJourney";
+import { usePosts } from "@/hooks/queries/usePosts";
 
 export default function CategoryFeed() {
   const navigate = useNavigate();
@@ -14,15 +14,8 @@ export default function CategoryFeed() {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const { mutateAsync: deleteJourney, isPending: isDeleting } = useDeleteJourney();
 
-  // 실제 생성 시 업로드한 표지사진(coverImgUrl)을 가져오기 위한 단일 조회.
-  // TODO: 피드 목록 자체는 아직 categoryFeedMockData 사용 중이라 헤더 정보는 목업, coverImgUrl만 실데이터로 보강
-  const { data: journeyDetail } = useJourney(Number(categoryId));
-
-  const category = categoryFeedMockData.find((item) => item.categoryId === Number(categoryId));
-
-  if (!category) {
-    return <div>카테고리 데이터 없음</div>;
-  }
+  const { data: journeyDetail, isLoading: isJourneyLoading } = useJourney(Number(categoryId));
+  const { data: posts, isLoading: isPostsLoading } = usePosts(Number(categoryId));
 
   const handleDeleteCategory = async () => {
     if (!categoryId || isDeleting) return;
@@ -30,12 +23,16 @@ export default function CategoryFeed() {
     try {
       await deleteJourney(Number(categoryId));
       setIsDeleteOpen(false);
-      navigate("/passport");
+      navigate("/passport", { replace: true });
     } catch (error) {
       console.error(error);
       // TODO: 실패 시 사용자 안내(토스트 등) 추가 필요
     }
   };
+
+  if (isJourneyLoading || !journeyDetail) {
+    return <div>불러오는 중...</div>;
+  }
 
   return (
     <div className="min-h-screen bg-gray-200">
@@ -46,8 +43,8 @@ export default function CategoryFeed() {
             <div className="flex flex-col items-center gap-2.5">
               <div className="h-7 w-11 overflow-hidden outline outline-[0.75px] outline-stone-100">
                 <img
-                  src={category.flagImage}
-                  alt={`${category.countryName} 국기`}
+                  src={journeyDetail.flagImgUrl}
+                  alt={`${journeyDetail.nationKRName} 국기`}
                   className="h-full w-full object-cover"
                 />
               </div>
@@ -57,27 +54,25 @@ export default function CategoryFeed() {
                   className="text-3xl font-bold tracking-wide text-slate-800"
                   style={{ fontFamily: "Paperlogy" }}
                 >
-                  {category.countryName}
+                  {journeyDetail.nationKRName}
                 </h1>
                 <p
                   className="mt-1 text-lg font-semibold tracking-tight text-slate-800"
                   style={{ fontFamily: "Paperlogy" }}
                 >
-                  {category.title}
+                  {journeyDetail.type}
                 </p>
                 <div
                   className="flex items-center justify-center gap-0.5 text-base font-semibold text-slate-800/50"
                   style={{ fontFamily: "Paperlogy" }}
                 >
-                  <span>{category.startDate}</span>
+                  <span>{journeyDetail.startDate}</span>
                   <span className="text-lg">~</span>
-                  <span>{category.endDate}</span>
+                  <span>{journeyDetail.endDate}</span>
                 </div>
               </div>
             </div>
 
-            {/* 뒤로가기 버튼: 아이콘 이미지가 저해상도(14x24)라 작게 쓰면 뭉개져 보여서
-                같은 색상(#CFCDCE)의 CSS 화살표로 대체 */}
             <button
               type="button"
               aria-label="뒤로 가기"
@@ -87,21 +82,18 @@ export default function CategoryFeed() {
               <span className="block h-4.5 w-4.5 rotate-45 border-b-[3px] border-l-[3px] border-[#CFCDCE]" />
             </button>
 
-            {/* 수정 / 삭제 버튼 */}
             <div className="mt-[23px] absolute right-5 top-9 flex items-center gap-1.5">
               <button
                 type="button"
                 aria-label="카테고리 수정"
                 onClick={() =>
-                  // CategoryEdit이 location.state로 기존 값을 초기화하므로 함께 전달
-                  // journeyDetail(실제 API 응답)을 우선 사용, 아직 로딩 전이면 목업으로 임시 fallback
                   navigate(`/passport/${categoryId}/edit`, {
                     state: {
-                      coverImageUrl: journeyDetail?.coverImgUrl ?? category.feeds[0]?.thumbnail,
-                      country: journeyDetail?.nationKRName ?? category.countryName,
-                      travelType: journeyDetail?.type ?? category.title,
-                      startDate: journeyDetail?.startDate ?? category.startDate,
-                      endDate: journeyDetail?.endDate ?? category.endDate,
+                      coverImageUrl: journeyDetail.coverImgUrl,
+                      country: journeyDetail.nationKRName,
+                      travelType: journeyDetail.type,
+                      startDate: journeyDetail.startDate,
+                      endDate: journeyDetail.endDate,
                     },
                   })
                 }
@@ -123,18 +115,26 @@ export default function CategoryFeed() {
         </header>
 
         {/* 피드 그리드 */}
-        <div className="grid grid-cols-3 gap-0.75 pb-32">
-          {category.feeds.map((feed) => (
-            <button
-              key={feed.feedId}
-              type="button"
-              onClick={() => navigate(`/passport/${categoryId}/${feed.feedId}`)}
-              className="aspect-[131/144] w-full overflow-hidden bg-stone-300"
-            >
-              <img src={feed.thumbnail} alt="" className="h-full w-full object-cover" />
-            </button>
-          ))}
-        </div>
+        {isPostsLoading ? (
+          <div className="py-10 text-center text-sm text-stone-400">불러오는 중...</div>
+        ) : !posts || posts.length === 0 ? (
+          <div className="py-10 text-center text-sm text-stone-400">
+            아직 등록된 게시물이 없어요
+          </div>
+        ) : (
+          <div className="grid grid-cols-3 gap-0.75 pb-32">
+            {posts.map((post) => (
+              <button
+                key={post.postId}
+                type="button"
+                onClick={() => navigate(`/passport/${categoryId}/${post.postId}`)}
+                className="aspect-[131/144] w-full overflow-hidden bg-stone-300"
+              >
+                <img src={post.thumbnailURL} alt="" className="h-full w-full object-cover" />
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* 새 게시물 추가 */}
         <div className="fixed inset-x-0 bottom-0 mx-auto w-full max-w-97.5">
