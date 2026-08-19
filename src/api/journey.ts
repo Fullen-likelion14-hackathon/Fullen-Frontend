@@ -97,3 +97,57 @@ export const updateJourney = async (journeyId: number, payload: UpdateJourneyReq
 
   return response.data.data;
 };
+
+// ↓↓↓ 기존 updateJourney 함수 아래에 추가 ↓↓↓
+
+export interface JourneySummary {
+  journeyId: number;
+  nationKRName: string;
+  type: string;
+  thumbnailUrl: string;
+  startDate: string;
+  endDate: string;
+  postCount: number;
+  latitude: number;
+  longitude: number;
+  flagImgUrl: string;
+}
+
+export interface NearbyJourneys {
+  leftJourney: JourneySummary | null;
+  centerJourney: JourneySummary;
+  rightJourney: JourneySummary | null;
+}
+
+export const getMapPins = async () => {
+  const response = await api.get<{
+    success: boolean;
+    code: number;
+    message: string;
+    data: { journeyId: number; latitude: number; longitude: number }[];
+  }>("/api/journeys/pins");
+
+  return response.data.data;
+};
+
+export const getNearbyJourneys = async (journeyId: number) => {
+  const response = await api.get<{
+    success: boolean;
+    code: number;
+    message: string;
+    data: NearbyJourneys;
+  }>(`/api/journeys/${journeyId}/nearby`);
+
+  return response.data.data;
+};
+
+export const getRecentJourneyId = async () => {
+  const response = await api.get<{
+    success: boolean;
+    code: number;
+    message: string;
+    data: number; 
+  }>("/api/journeys/recent");
+
+  return response.data.data;
+};

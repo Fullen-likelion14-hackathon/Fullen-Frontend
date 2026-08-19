@@ -1,30 +1,15 @@
 // src/components/common/PinCardCarousel.tsx
-//
-// 설치 필요:
-//   npm install embla-carousel-react
-//
-// 피그마 디자인 반영: 가운데(활성) 카드는 크고 선명하게, 양옆(비활성) 카드는
-// 작고 어둡게(bg-black/50) 처리 - 지도 핀 색상(선택=빨강/비선택=회색)과
-// 같은 맥락의 강조 규칙입니다.
-//
-// 카드 클릭 시: 활성 카드 클릭 -> 상세(피드 목록) 페이지로 이동
-//              비활성 카드 클릭 -> 그 카드를 가운데로 스크롤(선택)만 함
-
 import { useEffect, useCallback } from "react";
 import useEmblaCarousel from "embla-carousel-react";
-import type { MapPin } from "../../types/mapPin";
+import type { JourneySummary, NearbyJourneys } from "@/api/journey";
 import fileIcon from "@/assets/icons/file.png";
 
 interface PinCardCarouselProps {
-  pins: MapPin[];
-  activeIndex: number;
-  onSlideChange: (index: number) => void;
-  onDetailClick?: (pin: MapPin) => void;
+  nearby: NearbyJourneys;
+  onSelectJourney: (journeyId: number) => void; // 좌/우 카드가 새 center가 될 때
+  onDetailClick: (journeyId: number) => void; // 활성(center) 카드 클릭 시
 }
 
-// 피그마 3-layer 그림자(외곽 소프트 섀도우 + 좌상단 흰색 하이라이트 + 우하단 검정 그림자)를
-// 하나의 box-shadow에 콤마로 이어붙임. 여러 shadow-[...] 클래스를 따로 쓰면
-// 마지막 클래스만 적용돼서 레이어가 합쳐지지 않는 문제가 있어 이렇게 처리함.
 const ACTIVE_CARD_SHADOW =
   "shadow-[0_0_9.69px_1.94px_rgba(0,0,0,0.25),inset_1.45px_1.45px_0_0_rgba(255,255,255,0.5),inset_-1.45px_-1.45px_0_0_rgba(0,0,0,0.15)]";
 const INACTIVE_CARD_SHADOW =
@@ -32,85 +17,98 @@ const INACTIVE_CARD_SHADOW =
 const BADGE_SHADOW =
   "shadow-[0_0_6.63px_0_rgba(94,140,136,0.25),inset_0_-0.99px_0.99px_0_rgba(159,159,159,0.25),inset_0_1.99px_1.99px_0_rgba(255,255,255,0.25)]";
 
-export function PinCardCarousel({
-  pins,
-  activeIndex,
-  onSlideChange,
-  onDetailClick,
-}: PinCardCarouselProps) {
+// 좌/중/우를 고정 3슬롯 배열로 (없는 쪽은 null)
+// left와 right가 같은 여행(journeyId 중복, 여행이 2개뿐일 때 발생)이면
+// key 중복/카드 중복 표시를 막기 위해 right를 빈 슬롯 처리
+function toSlots(nearby: NearbyJourneys): (JourneySummary | null)[] {
+  const { leftJourney, centerJourney, rightJourney } = nearby;
+  const isDuplicate =
+    leftJourney && rightJourney && leftJourney.journeyId === rightJourney.journeyId;
+
+  return [leftJourney, centerJourney, isDuplicate ? null : rightJourney];
+}
+
+function formatPeriod(start: string, end: string) {
+  return `${start} ~ ${end}`;
+}
+
+export function PinCardCarousel({ nearby, onSelectJourney, onDetailClick }: PinCardCarouselProps) {
+  const slots = toSlots(nearby);
+
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: "center",
-    startIndex: activeIndex,
-    // 카드 크기가 활성/비활성마다 달라서(w-72 vs w-52), 기본값(trimSnaps)이
-    // 맨 앞/맨 뒤 스냅 위치를 억지로 잘라내며 중앙 정렬이 어긋나는 버그가 생김.
-    // false로 두면 경계에서도 다른 카드들과 동일하게 정확히 중앙 정렬됨.
+    startIndex: 1, // center 카드가 항상 가운데
     containScroll: false,
   });
 
-  // 사용자가 캐러셀을 직접 스와이프했을 때 -> 지도에 알림
+  // nearby 데이터가 바뀔 때마다(=새 center로 이동) 캐러셀도 가운데(index 1)로 부드럽게 이동
   useEffect(() => {
     if (!emblaApi) return;
-    const handleSelect = () => onSlideChange(emblaApi.selectedScrollSnap());
-    emblaApi.on("select", handleSelect);
-    return () => {
-      emblaApi.off("select", handleSelect);
+    emblaApi.reInit();
+    emblaApi.scrollTo(1); // 애니메이션 있는 이동
+  }, [nearby.centerJourney.journeyId, emblaApi]);
+
+  // 사용자가 직접 스와이프해서 좌/우 카드에 안착하면 -> 그 카드를 새 center로 선택
+  useEffect(() => {
+    if (!emblaApi) return;
+    const handleSettle = () => {
+      const index = emblaApi.selectedScrollSnap();
+      if (index === 1) return; // 이미 center
+      const target = slots[index];
+      if (target) onSelectJourney(target.journeyId);
     };
-  }, [emblaApi, onSlideChange]);
-
-  // 외부(예: '가장 최근 여행 보기' 클릭)에서 activeIndex가 바뀌면 캐러셀도 따라가게
-  useEffect(() => {
-    if (!emblaApi) return;
-    if (emblaApi.selectedScrollSnap() !== activeIndex) {
-      emblaApi.scrollTo(activeIndex);
-    }
-  }, [activeIndex, emblaApi]);
-
-  // 활성 카드는 다른 카드보다 크기 때문에(w-72 vs w-52), 카드 크기가 바뀔 때마다
-  // 캐러셀이 스냅 위치를 다시 계산하도록 reInit 해줘야 함
-  useEffect(() => {
-    emblaApi?.reInit();
-  }, [activeIndex, emblaApi]);
+    emblaApi.on("settle", handleSettle);
+    return () => {
+      emblaApi.off("settle", handleSettle);
+    };
+    // slots는 nearby가 바뀔 때마다 새로 계산되므로 nearby를 dep으로 사용
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [emblaApi, nearby, onSelectJourney]);
 
   const handleCardClick = useCallback(
-    (pin: MapPin, index: number) => {
-      if (index === activeIndex) {
-        onDetailClick?.(pin);
+    (journey: JourneySummary | null, index: number) => {
+      if (!journey) return;
+      if (index === 1) {
+        onDetailClick(journey.journeyId);
       } else {
-        emblaApi?.scrollTo(index);
+        onSelectJourney(journey.journeyId);
       }
     },
-    [activeIndex, emblaApi, onDetailClick],
+    [onDetailClick, onSelectJourney],
   );
 
   return (
     <div className="overflow-hidden" ref={emblaRef}>
       <div className="flex items-center gap-3 px-6">
-        {pins.map((pin, index) => {
-          const isActive = index === activeIndex;
+        {slots.map((journey, index) => {
+          if (!journey) {
+            // 좌/우 이웃이 없는 경우(맨 끝, 또는 left/right 중복 제거된 경우) -> 빈 슬롯으로 자리만 유지
+            return <div key={`empty-${index}`} className="h-[293px] w-[215px] shrink-0" />;
+          }
+
+          const isActive = index === 1;
 
           return (
             <button
-              key={pin.id}
+              key={`${index}-${journey.journeyId}`}
               type="button"
-              onClick={() => handleCardClick(pin, index)}
+              onClick={() => handleCardClick(journey, index)}
               className={[
                 "relative shrink-0 overflow-hidden text-left transition-all duration-300",
-                // 활성 카드 폭 w-64 -> w-72로 확대 (피그마 반영, 정확한 px는 인스펙터로 재확인 필요)
                 isActive ? "h-[370px] w-[271px] rounded-xl" : "h-[293px] w-[215px] rounded-lg",
                 isActive ? ACTIVE_CARD_SHADOW : INACTIVE_CARD_SHADOW,
               ].join(" ")}
             >
               <img
-                src={pin.thumbnailUrl}
-                alt={pin.countryName}
+                src={journey.thumbnailUrl}
+                alt={journey.nationKRName}
                 className={[
                   "absolute inset-0 size-full object-cover",
                   isActive ? "rounded-xl" : "rounded-lg",
                 ].join(" ")}
               />
 
-              {/* 국기 원형 배지 */}
-              {pin.flagUrl && (
+              {journey.flagImgUrl && (
                 <div
                   className={[
                     "absolute right-3 top-3 flex items-center justify-center overflow-hidden rounded-full bg-stone-100",
@@ -119,17 +117,16 @@ export function PinCardCarousel({
                   ].join(" ")}
                 >
                   <img
-                    src={pin.flagUrl}
-                    alt={`${pin.countryName} 국기`}
+                    src={journey.flagImgUrl}
+                    alt={`${journey.nationKRName} 국기`}
                     className={isActive ? "h-5 w-7 object-cover" : "h-4 w-6 object-cover"}
                   />
                 </div>
               )}
 
-              {/* 하단 텍스트 그라데이션 오버레이 */}
               <div
                 className={[
-                  "absolute inset-x-0 bottom-0  flex flex-col justify-end overflow-hidden bg-linear-to-t from-black/70 via-black/40 via-40% to-transparent",
+                  "absolute inset-x-0 bottom-0 flex flex-col justify-end overflow-hidden bg-linear-to-t from-black/70 via-black/40 via-40% to-transparent",
                   isActive
                     ? "h-36 rounded-b-xl px-4 pt-4 pb-10"
                     : "h-28 rounded-b-lg px-3 pt-3 pb-10",
@@ -144,7 +141,7 @@ export function PinCardCarousel({
                         : "font-['Paperlogy'] text-lg tracking-tight",
                     ].join(" ")}
                   >
-                    {pin.countryName}
+                    {journey.nationKRName}
                   </p>
                   <p
                     className={[
@@ -152,7 +149,7 @@ export function PinCardCarousel({
                       isActive ? "text-sm" : "text-xs",
                     ].join(" ")}
                   >
-                    {pin.travelTitle}
+                    {journey.type}
                   </p>
                   <p
                     className={[
@@ -160,11 +157,10 @@ export function PinCardCarousel({
                       isActive ? "text-xs" : "text-[9.94px]",
                     ].join(" ")}
                   >
-                    {pin.period}
+                    {formatPeriod(journey.startDate, journey.endDate)}
                   </p>
                 </div>
 
-                {/* 기록 개수 배지: file.png(접힌 모서리 문서 아이콘) 위에 숫자를 겹쳐서 표시 */}
                 <div
                   className={[
                     "absolute",
@@ -174,19 +170,17 @@ export function PinCardCarousel({
                   ].join(" ")}
                 >
                   <img src={fileIcon} alt="" className="size-full object-contain" />
-                  {/* 색상 text-neutral-400 -> text-slate-800/50 (피그마 반영) */}
                   <span
                     className={[
                       "absolute inset-0 flex items-center justify-center pt-1 font-['Paperlogy'] font-semibold text-slate-800/50",
                       isActive ? "text-sm" : "text-xs",
                     ].join(" ")}
                   >
-                    {pin.recordCount}
+                    {journey.postCount}
                   </span>
                 </div>
               </div>
 
-              {/* 비활성 카드 딤 처리: 국기배지/파일아이콘까지 전부 덮도록 맨 위 레이어(마지막 렌더)로 배치 */}
               {!isActive && <div className="absolute inset-0 rounded-lg bg-black/50" />}
             </button>
           );
