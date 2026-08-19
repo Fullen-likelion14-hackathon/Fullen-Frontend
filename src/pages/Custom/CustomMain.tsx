@@ -6,11 +6,13 @@ import { CustomizeButton, OrderButton, DPPButton } from "@/components/custom/Cus
 import { ProductViewer } from "@/components/custom/viewer/ProductViewer";
 
 import OrderCompleteModal from "@/components/custom/OrderCompleteModal";
+import CustomLoading from "@/pages/Loading/CustomLoading";
 
 import floorBg from "@/assets/images/Floor.png";
 
 export default function CustomMain() {
   const location = useLocation();
+  const [isThreeReady, setIsThreeReady] = useState(false);
 
   // 주문 완료 모달 상태임
   const [isOrderCompleteModalOpen, setIsOrderCompleteModalOpen] = useState(
@@ -39,7 +41,7 @@ export default function CustomMain() {
 
       {/* 마지막으로 적용 완료된 가방 상태만 보여주는 3D 영역임 */}
       <div className="absolute inset-0">
-        <ProductViewer mode="applied" />
+        <ProductViewer onReady={() => setIsThreeReady(true)} />
       </div>
 
       {/* 화면 UI 영역임 */}
@@ -64,6 +66,12 @@ export default function CustomMain() {
           <OrderButton />
         </div>
       </div>
+      {/* Three.js 렌더링이 완료될 때까지 로딩 화면 덮기 */}
+      {!isThreeReady && (
+        <div className="absolute inset-0 z-40">
+          <CustomLoading overlayOnly />
+        </div>
+      )}
 
       {/* 주문 완료 모달임 */}
       {isOrderCompleteModalOpen && (
