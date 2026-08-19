@@ -130,7 +130,7 @@ const AIPatchFinalCheck = () => {
   return (
     <main className="relative mx-auto h-dvh w-full max-w-97.5 overflow-hidden bg-[#F9F4F0] text-[#192C44]">
       {/* 상단 헤더 영역 */}
-      <PageHeader title="AI 패치 생성" backTo="/custom/customizing" />
+      <PageHeader title="AI 패치 생성" />
 
       {/* 최종 확인 스크롤 영역 */}
       <section className="h-[calc(100dvh-126px)] overflow-y-auto pb-40">
