@@ -72,7 +72,7 @@ const CategoryNew = () => {
         endDate: formatDate(endDate),
       });
 
-      navigate("/");
+      navigate("/", { replace: true });
     } catch (error) {
       console.error(error);
       setIsCreating(false);
