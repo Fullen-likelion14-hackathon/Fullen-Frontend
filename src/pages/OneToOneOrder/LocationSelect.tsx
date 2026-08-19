@@ -2,8 +2,12 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import PageHeader from "@/components/common/PageHeader";
-import floorBg from "@/assets/images/Floor.png";
+
 import { ProductViewer } from "@/components/custom/viewer/ProductViewer";
+
+import { ThreeLoadingOverlay } from "@/pages/Loading/CustomLoading";
+
+import floorBg from "@/assets/images/Floor.png";
 
 import type { PatchLocation } from "@/types/patchLocation";
 
@@ -37,6 +41,12 @@ export default function LocationSelect() {
   const [selectedLocation, setSelectedLocation] = useState<PatchLocation | null>(
     locationState?.selectedLocation ?? null,
   );
+
+  // Three.js 첫 렌더링 완료 여부
+  const [isThreeReady, setIsThreeReady] = useState(false);
+
+  // 로딩 완료 후 가방 표시 여부
+  const [isThreeVisible, setIsThreeVisible] = useState(false);
 
   // 위치 선택 완료
   const handleLocationSelect = () => {
@@ -100,9 +110,27 @@ export default function LocationSelect() {
           <p className="text-[18px] font-bold text-[#9197A0]">50.5 cm (19.9 in)</p>
         </div>
 
-        {/* 3D 가방 */}
+        {/* 3D 가방 영역 */}
         <div className="absolute inset-0">
-          <ProductViewer mode="location-select" onLocationChange={setSelectedLocation} />
+          {/* Three.js는 뒤에서 미리 렌더링하고 화면에서는 숨김 */}
+          <div
+            className={`
+              absolute inset-0 z-0
+              transition-opacity duration-300
+              ${
+                isThreeVisible ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
+              }
+            `}
+          >
+            <ProductViewer
+              mode="location-select"
+              onLocationChange={setSelectedLocation}
+              onReady={() => setIsThreeReady(true)}
+            />
+          </div>
+
+          {/* Three.js 준비 중 로딩 애니메이션 */}
+          <ThreeLoadingOverlay isReady={isThreeReady} onComplete={() => setIsThreeVisible(true)} />
         </div>
 
         {/* 안내 문구 */}
