@@ -11,9 +11,10 @@ import RequestTextBox from "@/components/custom/common/selection/RequestTextBox"
 import CustomStep from "@/components/custom/common/step/CustomStep";
 import CustomStepButton from "@/components/custom/common/step/CustomStepButton";
 
-import type { PatchLocation } from "@/types/patchLocation";
+import { useArtist } from "@/hooks/queries/artist/useArtist";
 
-import { recommendedArtists, otherArtists } from "@/mocks/ArtistData";
+import type { Artist } from "@/types/artist";
+import type { PatchLocation } from "@/types/patchLocation";
 
 type CustomRequestLocationState = {
   // 사진 선택 페이지에서 전달받은 사진 id
@@ -70,11 +71,23 @@ const CustomRequest = () => {
   // 요청사항
   const [requestText, setRequestText] = useState(locationState?.requestText ?? "");
 
-  // 추천 작가 + 다른 작가
-  const allArtists = [...recommendedArtists, ...otherArtists];
+  // 선택한 작가 상세 정보 조회
+  const {
+    data: selectedArtistDetail,
+    isPending: isArtistPending,
+    isError: isArtistError,
+  } = useArtist(selectedArtistId ?? undefined);
 
-  // 선택된 작가 정보
-  const selectedArtist = allArtists.find((artist) => artist.id === selectedArtistId) ?? null;
+  // ArtistDetail → Artist 형태로 변환
+  const selectedArtist: Artist | null = selectedArtistDetail
+    ? {
+        artistId: selectedArtistDetail.artistId,
+        artistName: selectedArtistDetail.artistName,
+        imgUrl: selectedArtistDetail.imgUrls?.[0] ?? "",
+        nationImgUrl: selectedArtistDetail.nationImgUrl,
+        introSummary: selectedArtistDetail.introSummary,
+      }
+    : null;
 
   // 사진 선택 페이지 이동
   const handlePhotoSelect = () => {
@@ -133,7 +146,8 @@ const CustomRequest = () => {
 
   // 2단계 → 3단계
   const handleArtistNext = () => {
-    if (!selectedArtist) return;
+    if (selectedArtistId === null) return;
+    if (isArtistPending || isArtistError) return;
 
     setCurrentStep(3);
   };
@@ -301,7 +315,9 @@ const CustomRequest = () => {
             <CustomStepButton
               onNext={handleArtistNext}
               onPrevious={handlePrevious}
-              disabled={!selectedArtist}
+              disabled={
+                selectedArtistId === null || isArtistPending || isArtistError || !selectedArtist
+              }
               showPrevious
             />
           </div>

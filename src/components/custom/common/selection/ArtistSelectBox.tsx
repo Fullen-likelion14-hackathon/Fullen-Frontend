@@ -1,4 +1,4 @@
-import type { Artist } from "@/mocks/ArtistData";
+import type { Artist } from "@/types/artist";
 
 interface ArtistSelectBoxProps {
   selectedArtist: Artist | null;
@@ -13,7 +13,7 @@ const ArtistSelectBox = ({
   onRemove,
   readOnly = false,
 }: ArtistSelectBoxProps) => {
-  // 아직 작가를 선택하지 않은 상태임
+  // 아직 작가를 선택하지 않은 상태
   if (!selectedArtist) {
     return (
       <button
@@ -27,32 +27,38 @@ const ArtistSelectBox = ({
     );
   }
 
+  // 작가를 선택한 상태
   return (
     <div className="relative flex h-29 w-full overflow-hidden rounded-xl border-2 border-[#192C44] bg-white">
       {/* 작가 이미지 */}
       <img
-        src={selectedArtist.image}
-        alt={selectedArtist.name}
+        src={selectedArtist.imgUrl}
+        alt={selectedArtist.artistName}
         className="h-full w-24 shrink-0 object-cover"
       />
 
       {/* 작가 정보 */}
       <div className="flex min-w-0 flex-1 flex-col justify-center px-3 py-2">
-        <img
-          src={selectedArtist.flagImage}
-          alt=""
-          aria-hidden="true"
-          className="mb-1 h-4 w-6 object-cover"
-        />
+        {/* 국가 이미지 */}
+        {selectedArtist.nationImgUrl && (
+          <img
+            src={selectedArtist.nationImgUrl}
+            alt=""
+            aria-hidden="true"
+            className="mb-1 h-4 w-6 object-cover"
+          />
+        )}
 
-        <p className="text-base font-bold text-[#192A40]">{selectedArtist.name}</p>
+        {/* 작가 이름 */}
+        <p className="text-base font-bold text-[#192A40]">{selectedArtist.artistName}</p>
 
+        {/* 작가 소개 */}
         <p className="mt-1 line-clamp-2 pr-5 text-xs leading-4 text-[#515C6C]">
-          {selectedArtist.description}
+          {selectedArtist.introSummary}
         </p>
       </div>
 
-      {/* 선택 화면에서만 작가 해제 버튼 표시함 */}
+      {/* 수정 가능한 화면에서만 작가 선택 해제 버튼 */}
       {!readOnly && (
         <button
           type="button"

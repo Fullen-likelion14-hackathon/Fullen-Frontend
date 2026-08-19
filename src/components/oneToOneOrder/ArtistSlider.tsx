@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 
 import ArtistFrame from "@/components/oneToOneOrder/ArtistFrame";
-import type { Artist } from "@/mocks/ArtistData";
+
+import type { Artist } from "@/types/artist";
 
 type ArtistSliderProps = {
   artists: Artist[];
@@ -66,13 +67,9 @@ export default function ArtistSlider({
   const nextNextIndex = (safeCurrentIndex + 2) % artists.length;
 
   const previousPreviousArtist = artists[previousPreviousIndex];
-
   const previousArtist = artists[previousIndex];
-
   const currentArtist = artists[safeCurrentIndex];
-
   const nextArtist = artists[nextIndex];
-
   const nextNextArtist = artists[nextNextIndex];
 
   // 기존 애니메이션 타이머 제거
@@ -202,7 +199,7 @@ export default function ArtistSlider({
     // 스와이프한 경우 클릭으로 처리하지 않음
     if (hasDragged.current) return;
 
-    onSelectArtist(currentArtist.id);
+    onSelectArtist(currentArtist.artistId);
   };
 
   const transitionClass =
@@ -226,7 +223,10 @@ export default function ArtistSlider({
             transform: `translateX(calc(-50% - ${CARD_STEP * 2}px + ${dragOffset}px))`,
           }}
         >
-          <ArtistFrame image={previousPreviousArtist.image} name={previousPreviousArtist.name} />
+          <ArtistFrame
+            image={previousPreviousArtist.imgUrl}
+            name={previousPreviousArtist.artistName}
+          />
         </div>
 
         {/* 이전 작가 */}
@@ -236,7 +236,7 @@ export default function ArtistSlider({
             transform: `translateX(calc(-50% - ${CARD_STEP}px + ${dragOffset}px))`,
           }}
         >
-          <ArtistFrame image={previousArtist.image} name={previousArtist.name} />
+          <ArtistFrame image={previousArtist.imgUrl} name={previousArtist.artistName} />
         </div>
 
         {/* 현재 작가 */}
@@ -248,9 +248,9 @@ export default function ArtistSlider({
           }}
         >
           <ArtistFrame
-            image={currentArtist.image}
-            name={currentArtist.name}
-            isSelected={selectedArtistId === currentArtist.id}
+            image={currentArtist.imgUrl}
+            name={currentArtist.artistName}
+            isSelected={selectedArtistId === currentArtist.artistId}
             onDetail={() => onDetailArtist(currentArtist)}
           />
         </div>
@@ -262,7 +262,7 @@ export default function ArtistSlider({
             transform: `translateX(calc(-50% + ${CARD_STEP}px + ${dragOffset}px))`,
           }}
         >
-          <ArtistFrame image={nextArtist.image} name={nextArtist.name} />
+          <ArtistFrame image={nextArtist.imgUrl} name={nextArtist.artistName} />
         </div>
 
         {/* 다음 다음 작가 */}
@@ -272,7 +272,7 @@ export default function ArtistSlider({
             transform: `translateX(calc(-50% + ${CARD_STEP * 2}px + ${dragOffset}px))`,
           }}
         >
-          <ArtistFrame image={nextNextArtist.image} name={nextNextArtist.name} />
+          <ArtistFrame image={nextNextArtist.imgUrl} name={nextNextArtist.artistName} />
         </div>
       </div>
 
@@ -280,7 +280,7 @@ export default function ArtistSlider({
       <div className="mt-2 flex items-center justify-center gap-2">
         {artists.map((artist, index) => (
           <span
-            key={artist.id}
+            key={artist.artistId}
             className={`h-2.5 w-2.5 rounded-full ${
               index === safeCurrentIndex ? "bg-[#A86A34]" : "bg-[#D0D0D0]"
             }`}
@@ -290,7 +290,7 @@ export default function ArtistSlider({
 
       {/* 현재 작가 이름 */}
       <p className="mt-4 text-center text-[24px] font-extrabold text-[#192A40]">
-        {currentArtist.name}
+        {currentArtist.artistName}
       </p>
 
       {/* AI 추천 고정 설명 */}

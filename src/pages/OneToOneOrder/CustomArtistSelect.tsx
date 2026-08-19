@@ -7,13 +7,10 @@ import ArtistSlider from "@/components/oneToOneOrder/ArtistSlider";
 import ArtistCard from "@/components/oneToOneOrder/ArtistCard";
 import ArtistDetailModal from "@/components/oneToOneOrder/ArtistDetailModal";
 
-// AI 추천 작가는 패치 API 연결 전까지 더미 데이터 사용
-import { recommendedArtists } from "@/mocks/ArtistData";
-import type { Artist as MockArtist } from "@/mocks/ArtistData";
-
 import { useArtists } from "@/hooks/queries/artist/useArtists";
 import { useArtist } from "@/hooks/queries/artist/useArtist";
 
+import type { Artist } from "@/types/artist";
 import type { PatchLocation } from "@/types/patchLocation";
 
 import { useAIPatchStore } from "@/stores/aiPatchStore";
@@ -32,7 +29,7 @@ interface ArtistSelectLocationState {
   // AI 패치에서 수정 중인 단계
   editStep?: 1 | 2 | 3;
 
-  // 추후 AI 패치 생성 결과에서 전달받을 추천 작가 id
+  // AI 패치 생성 결과에서 전달받은 추천 작가 id
   recommendedArtistIds?: number[];
 
   // 1:1 커스텀에서 선택한 사진 id
@@ -60,12 +57,9 @@ export default function CustomArtistSelect() {
 
   // 진입 플로우 구분
   const isOneToOne = locationState?.source === "onetoone";
-
   const isAIPatch = locationState?.source === "ai-patch";
 
   // 전체 작가 목록 조회
-  // 1:1 커스텀에서는 앞 3명 + 나머지 작가를 나누어 사용
-  // AI 커스텀에서는 다른 작가 목록에 사용
   const { data: artists = [], isPending: isArtistsPending, isError: isArtistsError } = useArtists();
 
   // AI 패치에서 선택한 작가 id를 저장하는 Zustand 함수
@@ -85,43 +79,27 @@ export default function CustomArtistSelect() {
   // 다른 작가 더보기 패널 상태
   const [isMoreOpen, setIsMoreOpen] = useState(false);
 
-  // ======================================
-  // 1:1 커스텀 작가 데이터
-  // ======================================
-
-  // 전체 작가 중 앞 3명
+  // 1:1 커스텀에서는 전체 작가 중 앞 3명 사용
   const oneToOneTopArtists = artists.slice(0, 3);
 
-  // ArtistSlider가 아직 MockArtist 타입을 사용하고 있으므로
-  // API 데이터를 Slider에서 사용하는 형태로 변환
-  const oneToOneSliderArtists: MockArtist[] = oneToOneTopArtists.map((artist) => ({
-    id: artist.artistId,
-    name: artist.artistName,
-    image: artist.imgUrl,
-    flagImage: artist.nationImgUrl,
-    description: artist.introSummary,
-
-    // 상세 정보는 상세 API에서 따로 조회
-    detailImages: [],
-    detailSummary: artist.introSummary,
-    detailDescription: [],
-  }));
-
-  // 1:1 커스텀에서는 앞 3명을 제외한 작가
+  // 1:1 커스텀에서는 앞 3명을 제외한 나머지 작가
   const oneToOneOtherArtists = artists.slice(3);
 
-  // ======================================
-  // 화면에 사용할 데이터 결정
-  // ======================================
+  // AI 추천 작가 데이터
+  const recommendedArtistIds = locationState?.recommendedArtistIds ?? [];
 
-  // 슬라이더
-  // 1:1 → 전체 작가 API 앞 3명
-  // AI → 현재는 더미 추천 작가 3명
-  const sliderArtists = isOneToOne ? oneToOneSliderArtists : recommendedArtists;
+  // 추천 작가 id가 있으면 해당 id 순서대로 실제 작가 데이터 조회
+  const aiRecommendedArtists: Artist[] =
+    recommendedArtistIds.length > 0
+      ? recommendedArtistIds
+          .map((artistId) => artists.find((artist) => artist.artistId === artistId))
+          .filter((artist): artist is Artist => artist !== undefined)
+      : artists.slice(0, 3);
 
-  // 다른 작가 목록
-  // 1:1 → 앞 3명을 제외한 나머지
-  // AI → 전체 작가 목록
+  // 슬라이더 1:1 → 전체 작가 API 앞 3명  AI → 추천 artistId에 해당하는 실제 작가
+  const sliderArtists = isOneToOne ? oneToOneTopArtists : aiRecommendedArtists;
+
+  // 다른 작가 목록 1:1 → 앞 3명을 제외한 나머지 AI → 전체 작가 목록
   const otherArtistList = isOneToOne ? oneToOneOtherArtists : artists;
 
   // 작가 선택 / 선택 취소
@@ -140,10 +118,8 @@ export default function CustomArtistSelect() {
   };
 
   // 슬라이더 작가 상세보기
-  // 1:1의 경우 API artistId가 들어있음
-  // AI는 추후 추천 artistId API 연결 예정
-  const handleSliderArtistDetail = (artist: MockArtist) => {
-    setDetailArtistId(artist.id);
+  const handleSliderArtistDetail = (artist: Artist) => {
+    setDetailArtistId(artist.artistId);
   };
 
   // 작가 상세보기 모달 닫기
@@ -155,9 +131,7 @@ export default function CustomArtistSelect() {
   const handleSelectButtonClick = () => {
     if (selectedArtistId === null) return;
 
-    // ======================================
     // AI 패치 플로우
-    // ======================================
     if (isAIPatch && locationState?.returnTo) {
       setAIPatchSelectedArtistId(selectedArtistId);
 
@@ -172,9 +146,7 @@ export default function CustomArtistSelect() {
       return;
     }
 
-    // ======================================
     // 1:1 커스텀 주문 플로우
-    // ======================================
     if (isOneToOne) {
       navigate(locationState?.returnTo ?? "/onetooneorder/request", {
         state: {
@@ -213,21 +185,17 @@ export default function CustomArtistSelect() {
       <PageHeader title="작가 선택" />
 
       {/* 작가 목록 로딩 */}
-      {isArtistsPending && isOneToOne && (
+      {isArtistsPending && (
         <p className="py-20 text-center text-[#727272]">작가 목록을 불러오는 중입니다.</p>
       )}
 
       {/* 작가 목록 에러 */}
-      {isArtistsError && isOneToOne && (
+      {isArtistsError && (
         <p className="py-20 text-center text-[#727272]">작가 목록을 불러오지 못했습니다.</p>
       )}
 
-      {/* ======================================
-          작가 슬라이더
-          1:1 → API 앞 3명
-          AI → 현재 더미 추천 3명
-      ====================================== */}
-      {(!isOneToOne || (!isArtistsPending && !isArtistsError)) && (
+      {/* 작가 슬라이더 1:1 → API 앞 3명  AI → 추천 작가 id 기반*/}
+      {!isArtistsPending && !isArtistsError && (
         <ArtistSlider
           artists={sliderArtists}
           selectedArtistId={selectedArtistId}
@@ -274,11 +242,9 @@ export default function CustomArtistSelect() {
         </button>
       </div>
 
-      {/* ======================================
-          다른 작가 목록 패널
-      ====================================== */}
+      {/* 다른 작가 목록 패널*/}
       {isMoreOpen && (
-        <div className="max-w-97 mx-auto fixed inset-x-0 bottom-0 top-25.5 z-30 bg-[#F9F4F0]">
+        <div className="fixed inset-x-0 bottom-0 top-25.5 z-30 mx-auto max-w-97 bg-[#F9F4F0]">
           {/* 스크롤 영역 */}
           <div className="h-full overflow-y-auto px-6 pb-32">
             {/* 다른 작가 목록 닫기 버튼 */}
@@ -319,7 +285,7 @@ export default function CustomArtistSelect() {
           </div>
 
           {/* 하단 고정 작가 선택 버튼 */}
-          <div className="max-w-97 mx-auto fixed inset-x-0 bottom-0 z-40 bg-[#F9F4F0] px-6 pb-6 pt-3">
+          <div className="fixed inset-x-0 bottom-0 z-40 mx-auto max-w-97 bg-[#F9F4F0] px-6 pb-6 pt-3">
             <button
               type="button"
               disabled={selectedArtistId === null}
