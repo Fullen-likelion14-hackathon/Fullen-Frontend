@@ -7,13 +7,9 @@ import NoticeToast from "@/components/common/NoticeToast";
 import AIPatchResultSlider from "@/components/custom/ai/AIPatchResultSlider";
 import CustomStepButton from "@/components/custom/common/step/CustomStepButton";
 
-import { useGenerateAIPatch } from "@/hooks/mutations/ai/useGenerateAIPatch";
-import { useSavePatch } from "@/hooks/mutations/patch/useSavePatch";
-import { useAIAnalysis } from "@/hooks/queries/ai/useAIAnalysis";
+import { aiPatchResultMock, type AIPatchResultItem } from "@/mocks/aiPatchResult.mock";
 
 import { useAIPatchStore } from "@/stores/aiPatchStore";
-
-import type { AIPatchApiType } from "@/types/ai";
 
 type ToastState = {
   type: "created" | "applied";
@@ -23,63 +19,33 @@ type ToastState = {
 const AIPatchResult = () => {
   const navigate = useNavigate();
 
-  // 현재 중앙 패치 index
+  // 현재 AI 패치 mock 결과임
+  const [patches, setPatches] = useState<AIPatchResultItem[]>(aiPatchResultMock);
+
+  // 현재 중앙 패치 index임
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // 저장 결과 Toast 상태
+  // 저장 결과 Toast 상태임
   const [toast, setToast] = useState<ToastState>(null);
 
-  // 현재 생성 결과 패치 저장 여부
+  // 현재 생성 결과에서 패치 저장 여부임
   const [hasSavedPatch, setHasSavedPatch] = useState(false);
 
-  // AI 여행 분석 조회 Query
-  const { data: analysis } = useAIAnalysis();
-
-  // AI 패치 재생성 Mutation
-  const { mutateAsync: generateAIPatch, isPending: isRegenerating } = useGenerateAIPatch();
-
-  // AI 패치 저장 Mutation
-  const { mutateAsync: savePatch, isPending: isSaving } = useSavePatch();
-
-  // 선택 피드 사진 id
-  const selectedPhotoId = useAIPatchStore((state) => state.selectedPhotoId);
-
-  // 선택 작가 id
-  const selectedArtistId = useAIPatchStore((state) => state.selectedArtistId);
-
-  // 선택 프레임
+  // AI 생성 시 선택했던 프레임임
   const selectedFrame = useAIPatchStore((state) => state.selectedFrame);
 
-  // AI 생성 패치 결과 목록
-  const generatedPatches = useAIPatchStore((state) => state.generatedPatches);
-
-  // AI 생성 패치 결과 변경 함수
-  const setGeneratedPatches = useAIPatchStore((state) => state.setGeneratedPatches);
-
-  // 저장 패치 추가 함수
+  // 저장 패치 추가 함수임
   const addSavedPatch = useAIPatchStore((state) => state.addSavedPatch);
 
-  // 동일 AI 생성 결과 저장 여부 확인 함수
+  // 이미 저장한 패치인지 확인함
   const isPatchSaved = useAIPatchStore((state) => state.isPatchSaved);
 
-  // 현재 중앙 패치
-  const currentPatch = generatedPatches[currentIndex];
+  // 현재 중앙 패치임
+  const currentPatch = patches[currentIndex];
 
-  // 서버 전송용 프레임 타입
-  const apiFrameType: AIPatchApiType | null =
-    selectedFrame === "ticket"
-      ? "TICKET"
-      : selectedFrame === "stamp"
-        ? "STAMP"
-        : selectedFrame === "label"
-          ? "LABEL"
-          : null;
-
-  // Toast 자동 종료 처리
+  // Toast 3초 후 종료함
   useEffect(() => {
-    if (!toast) {
-      return;
-    }
+    if (!toast) return;
 
     const timer = window.setTimeout(() => {
       setToast(null);
@@ -90,29 +56,18 @@ const AIPatchResult = () => {
     };
   }, [toast]);
 
-  // 생성 결과 존재 여부 확인 처리
-  useEffect(() => {
-    if (generatedPatches.length > 0) {
-      return;
-    }
-
-    navigate("/custom/ai-patch/final-check", {
-      replace: true,
-    });
-  }, [generatedPatches.length, navigate]);
-
-  // 현재 패치 index 변경 처리
+  // 현재 패치 index 변경함
   const handlePatchChange = (index: number) => {
     setCurrentIndex(index);
   };
 
-  // 현재 선택 AI 패치 저장 처리
-  const handleSave = async () => {
-    if (!currentPatch || !selectedFrame || !apiFrameType || isSaving) {
+  // 현재 선택한 AI 패치 저장함
+  const handleSave = () => {
+    if (!currentPatch || !selectedFrame) {
       return;
     }
 
-    // 동일 생성 결과 저장 여부 확인
+    // 이미 저장된 결과인지 확인함
     if (isPatchSaved(currentPatch.id, selectedFrame)) {
       setToast({
         type: "created",
@@ -122,104 +77,54 @@ const AIPatchResult = () => {
       return;
     }
 
-    try {
-      // AI 패치 서버 저장 요청
-      const response = await savePatch({
-        type: apiFrameType,
-        imgUrl: currentPatch.image,
-      });
+    // 실제 API 연결 전 Zustand에 저장함
+    addSavedPatch({
+      // 저장 패치 고유 id임
+      id: crypto.randomUUID(),
 
-      // Zustand 저장 패치 추가 처리
-      addSavedPatch({
-        // 프론트 저장 패치 고유 id
-        id: String(response.data.patchId),
+      // AI 생성 결과 원본 id임
+      resultId: currentPatch.id,
 
-        // 서버 발급 실제 패치 id
-        patchId: response.data.patchId,
+      // 패치 이미지임
+      image: currentPatch.image,
 
-        // AI 생성 결과 원본 id
-        resultId: currentPatch.id,
+      // 생성 시 선택했던 프레임임
+      frameType: selectedFrame,
+    });
 
-        // 서버 저장 패치 이미지 URL
-        image: response.data.imgUrl,
+    // 현재 결과에서 패치 저장 완료 상태임
+    setHasSavedPatch(true);
 
-        // 생성 시 선택 프레임 타입
-        frameType: selectedFrame,
-      });
-
-      // 현재 생성 결과 저장 완료 상태
-      setHasSavedPatch(true);
-
-      // 저장 완료 Toast 상태
-      setToast({
-        type: "created",
-        message: `패치 ${currentIndex + 1}안을 저장했습니다`,
-      });
-    } catch (error) {
-      console.error("AI 패치 저장 실패", error);
-
-      setToast({
-        type: "created",
-        message: "패치 저장에 실패했습니다",
-      });
-    }
+    // 저장 완료 Toast임
+    setToast({
+      type: "created",
+      message: `패치 ${currentIndex + 1}안을 저장했습니다`,
+    });
   };
 
-  // 현재 선택 옵션 기반 AI 패치 재생성 처리
-  const handleRegenerate = async () => {
-    if (
-      selectedPhotoId === null ||
-      selectedArtistId === null ||
-      !apiFrameType ||
-      !analysis?.travelStyle ||
-      isRegenerating
-    ) {
-      return;
-    }
+  // 선택 옵션 기준 AI 패치 재생성 요청함
+  const handleRegenerate = () => {
+    // TODO: 실제 AI 패치 재생성 API 연결 예정임
+    console.log("AI 패치 디자인 다시 생성 요청");
 
-    try {
-      // AI 패치 재생성 요청
-      const response = await generateAIPatch({
-        photoId: selectedPhotoId,
-        message: `여행 스타일은 ${analysis.travelStyle}`,
-        type: apiFrameType,
-        artistId: selectedArtistId,
-      });
+    // 현재 mock 데이터 재사용함
+    setPatches([...aiPatchResultMock]);
 
-      // 서버 AI 생성 이미지 URL 목록
-      const generatedImages = response.data.answer;
+    // 새로운 결과 첫 패치부터 보여줌
+    setCurrentIndex(0);
 
-      // Zustand AI 생성 결과 갱신 처리
-      setGeneratedPatches(
-        generatedImages.map((image, index) => ({
-          id: index + 1,
-          image,
-        })),
-      );
+    // 현재 재생성 결과 저장 여부 초기화함
+    setHasSavedPatch(false);
 
-      // 중앙 패치 index 초기화 처리
-      setCurrentIndex(0);
-
-      // 생성 결과 저장 여부 초기화 처리
-      setHasSavedPatch(false);
-
-      // 기존 Toast 초기화 처리
-      setToast(null);
-    } catch (error) {
-      console.error("AI 패치 재생성 실패", error);
-
-      setToast({
-        type: "created",
-        message: "패치 재생성에 실패했습니다",
-      });
-    }
+    // 기존 Toast 초기화함
+    setToast(null);
   };
 
-  // 커스텀 화면 이동 처리
+  // 커스텀 화면으로 이동함
   const handleMoveCustom = () => {
     navigate("/custom/customizing", {
       state: {
-        // 실제 저장 패치 존재 여부
+        // 실제 저장한 패치가 있을 때만 생성 Toast 표시함
         showPatchCreatedToast: hasSavedPatch,
       },
     });
@@ -227,17 +132,17 @@ const AIPatchResult = () => {
 
   return (
     <main className="relative mx-auto h-dvh w-full max-w-97.5 overflow-hidden bg-[#F9F4F0] text-[#192C44]">
-      {/* 저장 결과 Toast 영역 */}
+      {/* 저장 결과 Toast임 */}
       {toast && (
         <NoticeToast type={toast.type} message={toast.message} positionClassName="top-66" />
       )}
 
-      {/* 상단 헤더 영역 */}
-      <PageHeader title="AI 패치 저장" />
+      {/* 상단 헤더 영역임 */}
+      <PageHeader title="AI 패치 저장"></PageHeader>
 
-      {/* AI 패치 생성 결과 본문 영역 */}
+      {/* AI 패치 생성 결과 본문임 */}
       <section className="flex h-[calc(100dvh-126px)] flex-col overflow-y-auto pb-8">
-        {/* 생성 완료 안내 영역 */}
+        {/* 생성 완료 안내 영역임 */}
         <div className="px-8 pt-12 text-center">
           <h2 className="text-2xl font-bold text-[#192C44]">패치 생성을 완료했습니다</h2>
 
@@ -245,37 +150,31 @@ const AIPatchResult = () => {
             마음에 드는 디자인을 저장해주세요
           </p>
 
-          {/* 디자인 재생성 버튼 */}
+          {/* 디자인 다시 생성하기 버튼임 */}
           <button
             type="button"
             onClick={handleRegenerate}
-            disabled={isRegenerating}
-            className="mx-auto mt-5 flex h-10.5 items-center justify-center gap-2 rounded-full border-2 border-[#D8CCC1] px-6 text-base font-semibold text-[#B89B84] shadow-sm disabled:cursor-not-allowed disabled:opacity-50"
+            className="mx-auto mt-5 flex h-10.5 items-center justify-center gap-2 rounded-full border-2 border-[#D8CCC1] px-6 text-base font-semibold text-[#B89B84] shadow-sm"
           >
             <span aria-hidden="true" className="text-2xl leading-none">
               ↻
             </span>
-
-            {isRegenerating ? "디자인 생성 중" : "디자인 다시 생성하기"}
+            디자인 다시 생성하기
           </button>
         </div>
 
-        {/* AI 생성 패치 슬라이더 영역 */}
+        {/* AI 생성 패치 슬라이더임 */}
         <div className="mt-10">
           <AIPatchResultSlider
-            patches={generatedPatches}
+            patches={patches}
             currentIndex={currentIndex}
             onIndexChange={handlePatchChange}
           />
         </div>
 
-        {/* 하단 버튼 영역 */}
+        {/* 하단 버튼 영역임 */}
         <div className="mt-auto px-8 pt-10">
-          <CustomStepButton
-            onNext={handleSave}
-            nextLabel={isSaving ? "저장 중" : "저장하기"}
-            disabled={!currentPatch || !selectedFrame || isSaving}
-          />
+          <CustomStepButton onNext={handleSave} nextLabel="저장하기" />
 
           <button
             type="button"
