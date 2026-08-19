@@ -176,7 +176,7 @@ export default function Customizing() {
             pointer-events-auto
             absolute
             inset-x-0
-            top-10
+            top-3
             flex
             justify-center
           "

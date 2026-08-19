@@ -216,7 +216,7 @@ export default function InitialPanel() {
 
       {/* 이니셜 생성 버튼임 */}
       {/* 처음에는 기본 스타일이고 생성 시작하면 active 상태 유지함 */}
-      <div className="pointer-events-auto absolute left-11 top-30">
+      <div className="pointer-events-auto absolute left-11 top-20">
         <CustomGenerateButton
           text="Aa 이니셜 생성"
           active={isGenerateActive}
@@ -232,7 +232,7 @@ export default function InitialPanel() {
       </div>
 
       {/* 안내 버튼임 */}
-      <div className="pointer-events-auto absolute right-11 top-30">
+      <div className="pointer-events-auto absolute right-11 top-20">
         <InfoButton content="이니셜을 생성한 후 선택해서 색상과 굵기를 변경할 수 있음" />
       </div>
 
@@ -360,7 +360,7 @@ export default function InitialPanel() {
           pointer-events-auto
           absolute
           inset-x-0
-          bottom-25
+          bottom-35
           flex
           justify-center
         "
