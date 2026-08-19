@@ -4,23 +4,22 @@ import { useState } from "react";
 import { CustomizeButton, OrderButton, DPPButton } from "@/components/custom/CustomActionButton";
 
 import { ProductViewer } from "@/components/custom/viewer/ProductViewer";
-import floorBg from "@/assets/images/Floor.png";
+
 import OrderCompleteModal from "@/components/custom/OrderCompleteModal";
+
+import floorBg from "@/assets/images/Floor.png";
 
 export default function CustomMain() {
   const location = useLocation();
 
+  // 주문 완료 모달 상태임
   const [isOrderCompleteModalOpen, setIsOrderCompleteModalOpen] = useState(
     location.state?.showOrderCompleteModal ?? false,
   );
+
   return (
     <main className="relative mx-auto h-dvh w-full max-w-97.5 overflow-hidden bg-[#F9F4F0]">
-      {/*배경색 피그마 고정 배경 - F9F4F0, mx-auto:좌우 마진 중앙 위치, 삐져나온건 숨기기, 화면 높이 꽉채우고, 가로는 최대 390px*/}
-      {/*Todo - 코드 리팩토리시 반응형으로 구현 예정*/}
-
-      {/* 2D 고정 배경 */}
-      {/*피그마 고정 로고 이미지, pointer-events-none: 상품 드래그시 이미지가 드래그 되지 않게 막아놈, main기준으로 이미지 생성*/}
-      {/*Todo - 아직 로고 이미지가 흐릿하게 보이고 피그마와 맞지 않아 추후에 고칠 예정*/}
+      {/* 고정 배경 이미지임 */}
       <img
         src={floorBg}
         alt=""
@@ -38,33 +37,35 @@ export default function CustomMain() {
         "
       />
 
-      {/* 가방 3D */}
-      {/* productviewer-three.js화면을 꽉채워서 먼저 배치*/}
-      {/* todo- nfc랑 연동되서 해당 가방의 3d를 가져와야함- 백 연동*/}
+      {/* 마지막으로 적용 완료된 가방 상태만 보여주는 3D 영역임 */}
       <div className="absolute inset-0">
-        <ProductViewer />
+        <ProductViewer mode="applied" />
       </div>
 
-      {/* UI */}
+      {/* 화면 UI 영역임 */}
       <div className="pointer-events-none relative z-10 h-full">
+        {/* DPP 버튼 영역임 */}
         <div className="pointer-events-auto flex justify-center pt-30">
           <DPPButton />
         </div>
 
+        {/* 가방 정보 영역임 */}
         <div className="mt-7 text-center">
           <h1 className="text-[20px] font-bold text-[#333]">Ottomar 비세토스 위켄더</h1>
 
-          {/* todo- nfc랑 연동되서 해당 시리얼 넘버의 이름을 가져와야함 - 백 연동 */}
+          {/* TODO: NFC 기반 실제 가방 정보 연동 예정임 */}
           <p className="mt-1 text-[14px] text-[#777]">50.5 cm (19.9 in)</p>
         </div>
 
-        {/* 하단 버튼 영역 */}
-        <div className="pointer-events-auto absolute bottom-45 left-0 right-0  flex flex-col items-center gap-4">
+        {/* 하단 액션 버튼 영역임 */}
+        <div className="pointer-events-auto absolute bottom-45 left-0 right-0 flex flex-col items-center gap-4">
           <CustomizeButton />
+
           <OrderButton />
         </div>
       </div>
-      {/* 주문 완료 모달 */}
+
+      {/* 주문 완료 모달임 */}
       {isOrderCompleteModalOpen && (
         <OrderCompleteModal orderType="custom" onClose={() => setIsOrderCompleteModalOpen(false)} />
       )}
