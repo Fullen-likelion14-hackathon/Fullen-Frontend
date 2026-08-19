@@ -1,17 +1,17 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { savePatch } from "@/api/patch";
+import { savePatchPosition } from "@/api/patch";
 
-// AI 생성 패치 저장 Mutation
-export const useSavePatch = () => {
+// 가방 패치 적용 Mutation
+export const useSavePatchPosition = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: savePatch,
+    mutationFn: savePatchPosition,
 
     onSuccess: (response) => {
       queryClient.invalidateQueries({
-        queryKey: ["patches", response.data.type],
+        queryKey: ["patchPositions", response.data.userBagId],
       });
     },
   });

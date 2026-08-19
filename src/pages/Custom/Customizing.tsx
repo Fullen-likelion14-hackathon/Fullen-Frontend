@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 import NoticeToast from "@/components/common/NoticeToast";
 import WarningModal from "@/components/common/modal/WarningModal";
+import PageHeader from "@/components/common/PageHeader";
 
 import { ProductViewer } from "@/components/custom/viewer/ProductViewer";
 import { CustomModeToggle } from "@/components/custom/common/CustomModeToggle";
@@ -11,10 +12,11 @@ import { CustomModeToggle } from "@/components/custom/common/CustomModeToggle";
 import PatchPanel from "@/components/custom/patch/PatchPanel";
 import InitialPanel from "@/components/custom/initials/InitialsPanel";
 
+import { useBags } from "@/hooks/queries/useBags";
+
 import { useBagCustomStore } from "@/stores/bagCustomStore";
 
 import floorBg from "@/assets/images/Floor.png";
-import PageHeader from "@/components/common/PageHeader";
 
 type CustomMode = "initial" | "patch";
 
@@ -25,7 +27,7 @@ type ToastState = {
 } | null;
 
 interface CustomizingLocationState {
-  // AI 패치 저장 후 이동 여부임
+  // AI 패치 저장 후 이동 여부
   showPatchCreatedToast?: boolean;
 }
 
@@ -34,31 +36,37 @@ export default function Customizing() {
 
   const navigate = useNavigate();
 
-  // 이전 페이지 전달 state임
+  // 이전 페이지 전달 State
   const locationState = location.state as CustomizingLocationState | null;
 
-  // 현재 커스텀 모드임
+  // 현재 커스텀 모드
   const [mode, setMode] = useState<CustomMode>("patch");
 
-  // 경고 후 이동할 대상 모드임
+  // 경고 후 이동 대상 모드
   const [pendingMode, setPendingMode] = useState<CustomMode | null>(null);
 
-  // 완료 안내 Toast 상태임
+  // 완료 안내 Toast 상태
   const [toast, setToast] = useState<ToastState>(null);
 
-  // 적용 전 변경사항 존재 여부임
+  // 소유 가방 목록 Query
+  const { data: bags = [], isPending: isBagsPending, isError: isBagsError } = useBags();
+
+  // 현재 커스텀 대상 가방 id
+  const userBagId = bags[0]?.userBagId;
+
+  // 적용 전 변경사항 존재 여부
   const isDirty = useBagCustomStore((state) => state.isDirty);
 
-  // 적용 전 변경사항 취소 함수임
+  // 적용 전 변경사항 취소 함수
   const discardDraft = useBagCustomStore((state) => state.discardDraft);
 
-  // 패치 선택 함수임
+  // 패치 선택 함수
   const selectPlacedPatch = useBagCustomStore((state) => state.selectPlacedPatch);
 
-  // 이니셜 선택 함수임
+  // 이니셜 선택 함수
   const selectPlacedInitial = useBagCustomStore((state) => state.selectPlacedInitial);
 
-  // AI 패치 저장 후 진입 시 생성 Toast 표시함
+  // AI 패치 저장 후 생성 Toast
   useEffect(() => {
     if (!locationState?.showPatchCreatedToast) {
       return;
@@ -70,14 +78,13 @@ export default function Customizing() {
       message: "새 패치가 생성되었습니다",
     });
 
-    // 뒤로가기 시 Toast 재출력 방지용 state 제거함
     navigate(location.pathname, {
       replace: true,
       state: null,
     });
   }, [location.pathname, locationState, navigate]);
 
-  // Toast 3초 후 자동 종료함
+  // Toast 자동 종료
   useEffect(() => {
     if (!toast) {
       return;
@@ -92,14 +99,12 @@ export default function Customizing() {
     };
   }, [toast]);
 
-  // 실제 커스텀 모드 전환함
+  // 실제 커스텀 모드 전환
   const changeMode = (nextMode: CustomMode) => {
-    // 패치 모드 진입 시 이니셜 선택 해제함
     if (nextMode === "patch") {
       selectPlacedInitial(null);
     }
 
-    // 이니셜 모드 진입 시 패치 선택 해제함
     if (nextMode === "initial") {
       selectPlacedPatch(null);
     }
@@ -107,25 +112,22 @@ export default function Customizing() {
     setMode(nextMode);
   };
 
-  // 커스텀 모드 변경 처리함
+  // 커스텀 모드 변경
   const handleModeChange = (nextMode: CustomMode) => {
-    // 현재 모드와 동일하면 처리하지 않음
     if (nextMode === mode) {
       return;
     }
 
-    // 패치와 이니셜 모두 미적용 변경사항 존재 시 동일하게 경고함
     if (isDirty) {
       setPendingMode(nextMode);
 
       return;
     }
 
-    // 변경사항 없으면 바로 전환함
     changeMode(nextMode);
   };
 
-  // 가방 상태 적용 완료 Toast 표시함
+  // 가방 상태 적용 완료 Toast
   const handleApplied = () => {
     setToast({
       type: "applied",
@@ -134,32 +136,46 @@ export default function Customizing() {
     });
   };
 
-  // 미적용 변경사항 버리고 상대 모드로 이동함
+  // 미적용 변경 폐기 후 모드 전환
   const handleConfirmModeChange = () => {
     if (!pendingMode) {
       return;
     }
 
-    // 패치와 이니셜 전체를 마지막 적용 상태로 복원함
     discardDraft();
 
     const nextMode = pendingMode;
 
-    // WarningModal 상태 먼저 종료함
     setPendingMode(null);
 
-    // 상대 커스텀 모드로 이동함
     changeMode(nextMode);
   };
 
-  // 모드 전환 WarningModal 닫음
+  // 모드 전환 WarningModal 종료
   const handleCloseModeWarning = () => {
-    // 현재 편집 상태 그대로 유지함
     setPendingMode(null);
   };
 
-  // 현재 전환 방향이 패치에서 이니셜인지 확인함
+  // 이니셜 이동 여부
   const isMovingToInitial = pendingMode === "initial";
+
+  // 가방 목록 로딩 상태
+  if (isBagsPending) {
+    return (
+      <main className="mx-auto flex h-dvh w-full max-w-97.5 items-center justify-center bg-[#F9F4F0]">
+        <p className="text-sm font-semibold text-[#B89B84]">가방 정보를 불러오는 중입니다</p>
+      </main>
+    );
+  }
+
+  // 가방 목록 오류 상태
+  if (isBagsError || userBagId === undefined) {
+    return (
+      <main className="mx-auto flex h-dvh w-full max-w-97.5 items-center justify-center bg-[#F9F4F0]">
+        <p className="text-sm font-semibold text-[#B89B84]">가방 정보를 불러오지 못했습니다</p>
+      </main>
+    );
+  }
 
   return (
     <main
@@ -174,11 +190,13 @@ export default function Customizing() {
       "
     >
       <PageHeader title="나의 가방 꾸미기" variant="plain" backTo="/custom" />
-      {/* 생성 / 적용 완료 Toast임 */}
+
+      {/* 생성 / 적용 완료 Toast */}
       {toast && (
         <NoticeToast type={toast.type} message={toast.message} positionClassName="top-38" />
       )}
-      {/* 고정 배경 이미지임 */}
+
+      {/* 고정 배경 이미지 */}
       <img
         src={floorBg}
         alt=""
@@ -196,19 +214,14 @@ export default function Customizing() {
         "
       />
 
-      {/* 현재 편집 중인 전체 가방 상태임 */}
+      {/* 현재 편집 가방 상태 */}
       <div className="absolute inset-0 z-0">
-        <ProductViewer
-          mode="draft"
-
-          // 현재 모드에 해당하는 요소만 편집 가능하도록 전달함
-          customMode={mode}
-        />
+        <ProductViewer mode="draft" customMode={mode} />
       </div>
 
-      {/* 화면 UI 레이어임 */}
+      {/* 화면 UI 레이어 */}
       <div className="pointer-events-none relative z-20 h-full">
-        {/* 이니셜 / 패치 모드 변경 토글임 */}
+        {/* 커스텀 모드 변경 토글 */}
         <div
           className="
             pointer-events-auto
@@ -222,14 +235,14 @@ export default function Customizing() {
           <CustomModeToggle mode={mode} onChange={handleModeChange} />
         </div>
 
-        {/* 패치 모드 UI임 */}
-        {mode === "patch" && <PatchPanel onApplied={handleApplied} />}
+        {/* 패치 모드 UI */}
+        {mode === "patch" && <PatchPanel userBagId={userBagId} onApplied={handleApplied} />}
 
-        {/* 이니셜 모드 UI임 */}
+        {/* 이니셜 모드 UI */}
         {mode === "initial" && <InitialPanel onApplied={handleApplied} />}
       </div>
 
-      {/* 패치 / 이니셜 양방향 전환 WarningModal임 */}
+      {/* 커스텀 모드 변경 WarningModal */}
       <WarningModal
         isOpen={pendingMode !== null}
         title={
@@ -244,14 +257,8 @@ export default function Customizing() {
         }
         primaryButtonText={isMovingToInitial ? "패치 마저 꾸미기" : "이니셜 마저 꾸미기"}
         secondaryButtonText={isMovingToInitial ? "이니셜로 전환하기" : "패치로 전환하기"}
-
-        // 현재 편집 상태 유지 후 모달만 닫음
         onPrimaryClick={handleCloseModeWarning}
-
-        // 미적용 변경사항 버리고 상대 모드로 이동함
         onSecondaryClick={handleConfirmModeChange}
-
-        // 외부 클릭 시 현재 편집 상태 유지함
         onClose={handleCloseModeWarning}
       />
     </main>
