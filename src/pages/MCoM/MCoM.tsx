@@ -4,9 +4,14 @@ import MCoMGallery from "@/components/mcom/MCoMGallery";
 import MCoMTabs from "@/components/mcom/MCoMTabs";
 
 import type { MCoMTab } from "@/types/mcom";
+import { useLocation } from "react-router-dom";
 
 export default function MCoM() {
-  const [MCoMTab, setMCoM] = useState<MCoMTab>("country");
+  const location = useLocation();
+
+  const initialTab: MCoMTab = location.state?.tab === "global" ? "global" : "country";
+
+  const [MCoMTab, setMCoM] = useState<MCoMTab>(initialTab);
 
   return (
     <main className="min-h-screen bg-gray-200">
