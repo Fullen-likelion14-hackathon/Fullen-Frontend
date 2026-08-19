@@ -1,7 +1,8 @@
 import { ChevronRight, Factory, Globe2, Leaf, RefreshCw } from "lucide-react";
-import { ddpProduct } from "@/components/myPage/MyPageData";
+
 import PageHeader from "@/components/common/PageHeader";
-import { useBags } from "@/hooks/queries/useBags";
+
+import { useBag, useBags } from "@/hooks/queries/useBags";
 
 const infoItems = [
   { label: "소재 정보", icon: Factory, color: "bg-[#f8e7e9]" },
@@ -11,15 +12,20 @@ const infoItems = [
 ];
 
 export default function DigitalProductPassport() {
-  const { data: bags = [], isPending, isError } = useBags();
+  // 소유한 가방 리스트 조회
+  const { data: bags = [], isPending: isBagsPending, isError: isBagsError } = useBags();
 
-  const bag = bags[0];
+  // 현재 사용할 가방 id
+  const bagId = bags[0]?.userBagId;
 
-  if (isPending) {
+  // 가방 상세 정보 조회
+  const { data: bag, isPending: isBagPending, isError: isBagError } = useBag(bagId);
+
+  if (isBagsPending || isBagPending) {
     return <div>로딩 중...</div>;
   }
 
-  if (isError || !bag) {
+  if (isBagsError || isBagError || !bag) {
     return <div>가방 정보를 불러오지 못했습니다.</div>;
   }
 
@@ -31,7 +37,7 @@ export default function DigitalProductPassport() {
         <section className="text-center">
           <h2 className="text-[25px] font-bold">{bag.bagName}</h2>
 
-          <p className="text-[17px] font-bold text-[#91949c]">{ddpProduct.size}</p>
+          <p className="text-[17px] font-bold text-[#91949c]">{bag.bagSize}</p>
 
           <img
             src={bag.bagFrontImgUrl}
@@ -47,6 +53,7 @@ export default function DigitalProductPassport() {
 
           <div className="min-w-0 flex-1">
             <h3 className="text-[18px] font-bold">정품 인증 완료</h3>
+
             <p className="text-[11px] font-semibold text-[#ac927c]">
               이 제품은 MCM에서 정식 인증한 제품입니다.
             </p>
@@ -58,12 +65,12 @@ export default function DigitalProductPassport() {
         <dl className="mt-6 text-[18px]">
           <div className="flex justify-between border-b border-[#c9c9c9] py-3">
             <dt className="font-bold">시리얼 번호</dt>
-            <dd>{ddpProduct.serialNumber}</dd>
+            <dd>{bag.serialNumber}</dd>
           </div>
 
           <div className="flex justify-between border-b border-[#c9c9c9] py-3">
             <dt className="font-bold">등록일</dt>
-            <dd>{ddpProduct.registeredAt}</dd>
+            <dd>{bag.useStartDate}</dd>
           </div>
         </dl>
 
