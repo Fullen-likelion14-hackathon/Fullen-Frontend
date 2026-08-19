@@ -3,13 +3,20 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@base-ui/react/button";
 
 import floorBg from "@/assets/images/Floor.png";
+
 import { ProductViewer } from "@/components/custom/viewer/ProductViewer";
 import OrderCompleteModal from "@/components/custom/OrderCompleteModal";
+
+import CustomLoading from "@/pages/Loading/CustomLoading";
 
 export default function OneToOneOrderMain() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Three.js 첫 렌더링 완료 여부
+  const [isThreeReady, setIsThreeReady] = useState(false);
+
+  // 주문 완료 모달 상태
   const [isOrderCompleteModalOpen, setIsOrderCompleteModalOpen] = useState(
     location.state?.showOrderCompleteModal ?? false,
   );
@@ -47,7 +54,7 @@ export default function OneToOneOrderMain() {
 
       {/* 제품 */}
       <div className="absolute inset-0">
-        <ProductViewer />
+        <ProductViewer onReady={() => setIsThreeReady(true)} />
       </div>
 
       {/* 주문 버튼 */}
@@ -57,6 +64,13 @@ export default function OneToOneOrderMain() {
       >
         1:1 커스텀 주문하기
       </Button>
+
+      {/* Three.js 렌더링 완료 전까지 로딩 화면 유지 */}
+      {!isThreeReady && (
+        <div className="absolute inset-0 z-40">
+          <CustomLoading overlayOnly />
+        </div>
+      )}
 
       {/* 주문 완료 모달 */}
       {isOrderCompleteModalOpen && (
