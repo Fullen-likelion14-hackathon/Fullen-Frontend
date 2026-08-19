@@ -1,6 +1,6 @@
 import api from "@/api/axios";
 
-import type { ArtistDetailResponse, ArtistListResponse } from "@/types/Artist";
+import type { ArtistDetailResponse, ArtistListResponse } from "@/types/artist";
 
 // 전체 작가 목록 조회
 export const getArtists = async (): Promise<ArtistListResponse> => {
