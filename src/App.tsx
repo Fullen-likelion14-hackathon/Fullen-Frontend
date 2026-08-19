@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import RootLayout from "@/layout/RootLayout";
+import CustomLoading from "@/pages/Loading/CustomLoading";
 
 import Login from "@/pages/Login/Login";
 import NfcTagging from "@/pages/NfcTagging/NfcTagging";
@@ -67,6 +68,8 @@ function App() {
         <Route path="/passport/:categoryId/:feedId" element={<FeedDetail />} />
 
         <Route element={<RootLayout />}>
+          <Route path="/loading" element={<CustomLoading />} />
+
           {/*메인 페이지 Passport - 내 여행기록 페이지*/}
           <Route path="/" element={<Passport />} />
           {/* MCoM - 피드 구경 페이지 */}
