@@ -17,29 +17,31 @@ type ToastState = {
 const AIPatchResult = () => {
   const navigate = useNavigate();
 
-  // 현재는 mock 데이터 사용함
-  // 추후 실제 AI 패치 생성 API 응답으로 변경 예정임
+  // 현재 AI 패치 mock 결과임
   const [patches, setPatches] = useState<AIPatchResultItem[]>(aiPatchResultMock);
 
-  // 현재 가운데 표시되는 패치 번호임
+  // 현재 중앙 패치 index임
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // 저장 결과 토스트 상태임
+  // 저장 결과 Toast 상태임
   const [toast, setToast] = useState<ToastState>(null);
 
-  // 선택했던 프레임 타입을 Zustand에서 가져옴
+  // 현재 생성 결과에서 패치 저장 여부임
+  const [hasSavedPatch, setHasSavedPatch] = useState(false);
+
+  // AI 생성 시 선택했던 프레임임
   const selectedFrame = useAIPatchStore((state) => state.selectedFrame);
 
-  // 저장된 패치 추가 함수임
+  // 저장 패치 추가 함수임
   const addSavedPatch = useAIPatchStore((state) => state.addSavedPatch);
 
-  // 이미 저장된 패치인지 확인하는 함수임
+  // 이미 저장한 패치인지 확인함
   const isPatchSaved = useAIPatchStore((state) => state.isPatchSaved);
 
-  // 현재 선택된 AI 패치 결과임
+  // 현재 중앙 패치임
   const currentPatch = patches[currentIndex];
 
-  // 토스트를 일정 시간 뒤 자동으로 닫아줌
+  // Toast 3초 후 종료함
   useEffect(() => {
     if (!toast) return;
 
@@ -52,18 +54,18 @@ const AIPatchResult = () => {
     };
   }, [toast]);
 
-  // 현재 보고 있는 패치 변경함
+  // 현재 패치 index 변경함
   const handlePatchChange = (index: number) => {
     setCurrentIndex(index);
   };
 
-  // 현재 선택한 패치를 저장함
+  // 현재 선택한 AI 패치 저장함
   const handleSave = () => {
     if (!currentPatch || !selectedFrame) {
       return;
     }
 
-    // 같은 생성 결과와 같은 프레임 조합이 이미 저장됐는지 확인함
+    // 이미 저장된 결과인지 확인함
     if (isPatchSaved(currentPatch.id, selectedFrame)) {
       setToast({
         type: "created",
@@ -73,47 +75,62 @@ const AIPatchResult = () => {
       return;
     }
 
-    // 실제 API 연결 전이라 Zustand에 임시 저장함
+    // 실제 API 연결 전 Zustand에 저장함
     addSavedPatch({
-      // mock id가 항상 1, 2, 3이므로 별도 고유 id 생성함
+      // 저장 패치 고유 id임
       id: crypto.randomUUID(),
 
+      // AI 생성 결과 원본 id임
       resultId: currentPatch.id,
 
+      // 패치 이미지임
       image: currentPatch.image,
 
+      // 생성 시 선택했던 프레임임
       frameType: selectedFrame,
     });
 
+    // 현재 결과에서 패치 저장 완료 상태임
+    setHasSavedPatch(true);
+
+    // 저장 완료 Toast임
     setToast({
       type: "created",
       message: `패치 ${currentIndex + 1}안을 저장했습니다`,
     });
   };
 
-  // AI 패치 디자인 다시 생성 요청함
+  // 선택 옵션 기준 AI 패치 재생성 요청함
   const handleRegenerate = () => {
     // TODO: 실제 AI 패치 재생성 API 연결 예정임
     console.log("AI 패치 디자인 다시 생성 요청");
 
-    // 현재는 mock 데이터로 다시 설정함
+    // 현재 mock 데이터 재사용함
     setPatches([...aiPatchResultMock]);
 
-    // 첫 번째 패치부터 표시함
+    // 새로운 결과 첫 패치부터 보여줌
     setCurrentIndex(0);
 
-    // 기존 토스트 초기화함
+    // 현재 재생성 결과 저장 여부 초기화함
+    setHasSavedPatch(false);
+
+    // 기존 Toast 초기화함
     setToast(null);
   };
 
   // 커스텀 화면으로 이동함
   const handleMoveCustom = () => {
-    navigate("/custom/customizing");
+    navigate("/custom/customizing", {
+      state: {
+        // 실제 저장한 패치가 있을 때만 생성 Toast 표시함
+        showPatchCreatedToast: hasSavedPatch,
+      },
+    });
   };
 
   return (
     <main className="relative mx-auto h-dvh w-full max-w-97.5 overflow-hidden bg-[#F9F4F0] text-[#192C44]">
-      {/* 저장 결과 토스트임 */}
+      {/* 저장 결과 Toast임 */}
       {toast && (
         <NoticeToast type={toast.type} message={toast.message} positionClassName="top-66" />
       )}
@@ -123,7 +140,7 @@ const AIPatchResult = () => {
         <h1 className="text-2xl font-bold text-white">AI 패치 저장</h1>
       </header>
 
-      {/* 결과 본문 영역임 */}
+      {/* AI 패치 생성 결과 본문임 */}
       <section className="flex h-[calc(100dvh-126px)] flex-col overflow-y-auto pb-8">
         {/* 생성 완료 안내 영역임 */}
         <div className="px-8 pt-12 text-center">
@@ -133,7 +150,7 @@ const AIPatchResult = () => {
             마음에 드는 디자인을 저장해주세요
           </p>
 
-          {/* 디자인 다시 생성 버튼임 */}
+          {/* 디자인 다시 생성하기 버튼임 */}
           <button
             type="button"
             onClick={handleRegenerate}
@@ -146,7 +163,7 @@ const AIPatchResult = () => {
           </button>
         </div>
 
-        {/* AI가 생성한 패치 3개임 */}
+        {/* AI 생성 패치 슬라이더임 */}
         <div className="mt-10">
           <AIPatchResultSlider
             patches={patches}
