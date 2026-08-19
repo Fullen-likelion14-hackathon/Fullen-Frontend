@@ -12,6 +12,7 @@ import MCMWarningDialog from "@/components/common/MCMWarningDialog";
 import LeaveConfirmDialog from "@/components/common/LeaveConfirmDialog";
 import { uploadImage } from "@/api/image";
 import { useCreatePost } from "@/hooks/queries/useCreatePost";
+import { extractPhotosGps } from "@/utils/extractPhotoGps";
 import uploadIcon from "@/assets/icons/Upload.png";
 import eyeOpenIcon from "@/assets/icons/public.png";
 import eyeClosedIcon from "@/assets/icons/private.png";
@@ -67,10 +68,18 @@ const FeedNew = () => {
     try {
       const imgUrlList = await Promise.all(images.map((item) => uploadImage(item.file, "FEED")));
 
+      // 업로드한 사진들 중 GPS 있는 첫 장을 대표 좌표로 사용
+      const gpsList = await extractPhotosGps(images.map((item) => item.file));
+      const representativeGps = gpsList.find((g) => g !== null) ?? null;
+
       await createPost({
         comment,
         isPublic,
         imgUrlList,
+        ...(representativeGps && {
+          latitude: representativeGps.lat,
+          longitude: representativeGps.lng,
+        }),
       });
 
       navigate(`/passport/${categoryId}`, { replace: true });

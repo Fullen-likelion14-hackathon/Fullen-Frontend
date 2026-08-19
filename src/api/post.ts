@@ -49,6 +49,8 @@ export interface CreatePostRequest {
   comment: string;
   isPublic: boolean;
   imgUrlList: string[];
+  latitude?: number;
+  longitude?: number;
 }
 
 export const createPost = async (journeyId: number, payload: CreatePostRequest) => {
@@ -66,6 +68,8 @@ export interface UpdatePostRequest {
   comment: string;
   isPublic: boolean;
   imgUrlList: string[];
+  latitude?: number;
+  longitude?: number;
 }
 
 export const updatePost = async (postId: number, payload: UpdatePostRequest) => {

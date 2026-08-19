@@ -11,6 +11,7 @@ import MCMWarningDialog from "@/components/common/MCMWarningDialog";
 import LeaveConfirmDialog from "@/components/common/LeaveConfirmDialog";
 import { uploadImage } from "@/api/image";
 import { useUpdatePost } from "@/hooks/queries/useUpdatePost";
+import { extractPhotosGps } from "@/utils/extractPhotoGps";
 import uploadIcon from "@/assets/icons/Upload.png";
 import eyeOpenIcon from "@/assets/icons/public.png";
 import eyeClosedIcon from "@/assets/icons/private.png";
@@ -95,10 +96,19 @@ const FeedEdit = () => {
         images.map((item) => (item.file ? uploadImage(item.file, "FEED") : item.previewUrl)),
       );
 
+      // 신규로 추가한 파일들 중 GPS 있는 첫 장을 대표 좌표로 사용
+      const newFiles = images.filter((item) => item.file).map((item) => item.file!);
+      const gpsList = await extractPhotosGps(newFiles);
+      const representativeGps = gpsList.find((g) => g !== null) ?? null;
+
       await updatePost({
         comment,
         isPublic,
         imgUrlList,
+        ...(representativeGps && {
+          latitude: representativeGps.lat,
+          longitude: representativeGps.lng,
+        }),
       });
 
       navigate(`/passport/${categoryId}/${feedId}`, { replace: true });
