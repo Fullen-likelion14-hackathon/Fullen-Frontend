@@ -316,7 +316,7 @@ const SavedPatchSlider = ({
   }
 
   return (
-    <div className="w-full overflow-hidden">
+    <div className="w-full mb-10 overflow-hidden">
       {/* 저장 패치 가로 슬라이더임 */}
       <div
         ref={sliderRef}
@@ -326,7 +326,7 @@ const SavedPatchSlider = ({
           overflow-x-auto
           scroll-smooth
           py-2
-          [scrollbar-width:none]
+          scrollbar-none
           [&::-webkit-scrollbar]:hidden
         "
       >

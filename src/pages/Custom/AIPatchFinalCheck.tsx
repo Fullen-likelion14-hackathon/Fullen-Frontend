@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 
+import PageHeader from "@/components/common/PageHeader";
 import ArtistSelectBox from "@/components/custom/common/selection/ArtistSelectBox";
 import FrameSelectBox from "@/components/custom/common/selection/FrameSelectBox";
 import PhotoSelectBox from "@/components/custom/common/selection/PhotoSelectBox";
@@ -29,11 +30,6 @@ const AIPatchFinalCheck = () => {
   // 선택한 작가 정보 찾음
   const selectedArtist = allArtists.find((artist) => artist.id === selectedArtistId) ?? null;
 
-  // 이전 페이지로 이동함
-  const handleBack = () => {
-    navigate(-1);
-  };
-
   // 수정할 단계로 이동함
   const handleEdit = (step: 1 | 2 | 3) => {
     navigate("/custom/ai-patch/options", {
@@ -53,19 +49,7 @@ const AIPatchFinalCheck = () => {
   return (
     <main className="relative mx-auto h-dvh w-full max-w-97.5 overflow-hidden bg-[#F9F4F0] text-[#192C44]">
       {/* 상단 헤더 영역임 */}
-      <header className="relative z-30 flex h-31.5 shrink-0 items-end justify-center border-b-[7px] border-[#A3642B] bg-[#192C44] px-8 pb-6">
-        <button
-          type="button"
-          onClick={handleBack}
-          aria-label="뒤로가기"
-          className="absolute bottom-7 left-8 flex h-10 w-10 items-center justify-center"
-        >
-          <span className="block h-5 w-5 rotate-45 border-b-[3px] border-l-[3px] border-white" />
-        </button>
-
-        <h1 className="text-2xl font-bold text-white">AI 패치 생성</h1>
-      </header>
-
+      <PageHeader title="AI 패치 생성" backTo="/custom/customizing" />
       {/* 최종 확인 스크롤 영역임 */}
       <section className="h-[calc(100dvh-126px)] overflow-y-auto pb-40">
         <div className="relative px-8 pb-8 pt-10 text-center">

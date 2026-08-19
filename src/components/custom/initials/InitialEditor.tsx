@@ -51,7 +51,7 @@ export default function InitialEditor({
         pointer-events-auto
         absolute
         inset-x-0
-        bottom-43
+        bottom-55
         flex
         flex-col
         items-center

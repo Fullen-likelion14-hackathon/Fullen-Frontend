@@ -14,6 +14,7 @@ import InitialPanel from "@/components/custom/initials/InitialsPanel";
 import { useBagCustomStore } from "@/stores/bagCustomStore";
 
 import floorBg from "@/assets/images/Floor.png";
+import PageHeader from "@/components/common/PageHeader";
 
 type CustomMode = "initial" | "patch";
 
@@ -172,11 +173,11 @@ export default function Customizing() {
         bg-[#F9F4F0]
       "
     >
+      <PageHeader title="나의 가방 꾸미기" variant="plain" backTo="/custom" />
       {/* 생성 / 적용 완료 Toast임 */}
       {toast && (
         <NoticeToast type={toast.type} message={toast.message} positionClassName="top-38" />
       )}
-
       {/* 고정 배경 이미지임 */}
       <img
         src={floorBg}
@@ -213,7 +214,7 @@ export default function Customizing() {
             pointer-events-auto
             absolute
             inset-x-0
-            top-10
+            top-3
             flex
             justify-center
           "

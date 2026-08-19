@@ -182,7 +182,7 @@ const AIPatchOptionSelect = () => {
   return (
     <main className="relative mx-auto h-dvh w-full max-w-97.5 overflow-hidden bg-[#F9F4F0] text-[#192C44]">
       {/* 상단 헤더 영역임 */}
-      <PageHeader title="AI 패치 생성" backTo="/custom" />
+      <PageHeader title="AI 패치 생성" backTo="/custom/customizing" />
 
       {/* 본문 영역임 */}
       <section className="flex h-[calc(100dvh-126px)] flex-col overflow-y-auto px-8 pb-12 pt-8">

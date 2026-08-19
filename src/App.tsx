@@ -40,6 +40,7 @@ import PhotoSelect from "@/pages/OneToOneOrder/PhotoSelect";
 import MyPage from "@/pages/MyPage/MyPage";
 import MyOrderList from "@/pages/MyPage/MyOrderList";
 import DigitalProductPassport from "@/pages/MyPage/DigitalProductPassport";
+import AIAnalysisEdit from "./pages/Custom/AIAnalysisEdit";
 
 function App() {
   return (
@@ -84,6 +85,7 @@ function App() {
           <Route path="/custom/order" element={<CustomOrder />} />
           <Route path="/custom/order/complete" element={<CustomOrderComplete />} />
           <Route path="/custom/order/detail" element={<CustomOrderDetail />} />
+          <Route path="/custom/analysis/edit" element={<AIAnalysisEdit />} />
           {/* Custom - AI 패치 생성 플로우 - 하단 네비게이션 없음 */}
           <Route path="/custom/ai-patch" element={<AIPatchGenerator />} />
           <Route path="/custom/ai-patch/options" element={<AIPatchOptionSelect />} />

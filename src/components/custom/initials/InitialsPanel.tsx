@@ -158,7 +158,8 @@ export default function InitialPanel({ onApplied }: InitialPanelProps) {
       )}
 
       {/* 이니셜 생성 버튼임 */}
-      <div className="pointer-events-auto absolute left-11 top-30">
+      {/* 처음에는 기본 스타일이고 생성 시작하면 active 상태 유지함 */}
+      <div className="pointer-events-auto absolute left-11 top-20">
         <CustomGenerateButton
           text="Aa 이니셜 생성"
           active={isGenerateActive}
@@ -172,9 +173,9 @@ export default function InitialPanel({ onApplied }: InitialPanelProps) {
         />
       </div>
 
-      {/* 이니셜 사용 안내 버튼임 */}
-      <div className="pointer-events-auto absolute right-11 top-30">
-        <InfoButton content="이니셜을 생성한 후 가방 위에서 위치와 크기를 조절하고 색상과 굵기를 변경한 뒤 ‘가방에 적용하기’를 눌러주세요." />
+      {/* 안내 버튼임 */}
+      <div className="pointer-events-auto absolute right-11 top-20">
+        <InfoButton content="이니셜을 생성한 후 선택해서 색상과 굵기를 변경할 수 있음" />
       </div>
 
       {/* 현재 선택된 이니셜 편집 UI임 */}
@@ -200,7 +201,7 @@ export default function InitialPanel({ onApplied }: InitialPanelProps) {
           pointer-events-auto
           absolute
           inset-x-0
-          bottom-25
+          bottom-35
           flex
           justify-center
         "

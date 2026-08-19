@@ -135,12 +135,12 @@ export default function PatchPanel({ onApplied }: PatchPanelProps) {
   return (
     <>
       {/* 패치 사용 안내 버튼임 */}
-      <div className="pointer-events-auto absolute inset-x-0 top-30 flex justify-start pl-11">
+      <div className="pointer-events-auto absolute inset-x-0 top-20 flex justify-start pl-11">
         <InfoButton content="패치를 선택한 후 화면 위로 끌어올려 원하는 위치에 자유롭게 배치하고 ‘가방에 적용하기’를 눌러주세요." />
       </div>
 
       {/* AI 패치 생성 버튼임 */}
-      <div className="pointer-events-auto absolute inset-x-0 top-30 flex justify-end pr-11">
+      <div className="pointer-events-auto absolute inset-x-0 top-20 flex justify-end pr-11">
         <CustomGenerateButton text="AI 패치 생성" path="/custom/ai-patch" />
       </div>
 
@@ -158,7 +158,7 @@ export default function PatchPanel({ onApplied }: PatchPanelProps) {
       )}
 
       {/* 패치 종류 선택 영역임 */}
-      <div className="pointer-events-auto absolute inset-x-0 bottom-45 flex items-center justify-center gap-2">
+      <div className="pointer-events-auto absolute inset-x-0 bottom-55 flex items-center justify-center gap-2">
         <PatchTypeButton
           type="ticket"
           text="티켓"
@@ -188,7 +188,7 @@ export default function PatchPanel({ onApplied }: PatchPanelProps) {
       </div>
 
       {/* 가방 상태 적용 버튼임 */}
-      <div className="pointer-events-auto absolute inset-x-0 bottom-25 flex justify-center">
+      <div className="pointer-events-auto absolute inset-x-0 bottom-35 flex justify-center">
         <ApplyButton
           text="가방에 적용하기"
           onApply={handleApplyPatch}
