@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import PageHeader from "@/components/common/PageHeader";
+import WarningModal from "@/components/common/modal/WarningModal";
 
 type AnalysisEditLocationState = {
   // 기존 분석 내용
@@ -23,6 +24,9 @@ export default function AIAnalysisEdit() {
   // 수정 중인 분석 내용
   const [analysisText, setAnalysisText] = useState(initialAnalysis);
 
+  // 수정 중단 모달
+  const [isExitModalOpen, setIsExitModalOpen] = useState(false);
+
   // 입력값 존재 여부
   const isValid = analysisText.trim().length > 0;
 
@@ -37,10 +41,16 @@ export default function AIAnalysisEdit() {
     });
   };
 
+  // 수정 중단
+  const handleExit = () => {
+    setIsExitModalOpen(false);
+    navigate("/custom/ai-patch");
+  };
+
   return (
     <main className="relative mx-auto min-h-dvh w-full max-w-97.5 overflow-hidden bg-[#EDE6DF] text-[#192C44]">
       {/* 헤더 */}
-      <PageHeader title="여행 스타일 분석 수정하기" backTo="/custom/ai-patch" />
+      <PageHeader title="여행 스타일 분석 수정하기" onBackClick={() => setIsExitModalOpen(true)} />
 
       {/* 큰 반원 배경 */}
       <div
@@ -102,7 +112,17 @@ export default function AIAnalysisEdit() {
         </button>
       </div>
 
-      {/* 기존 모달 컴포넌트는 여기에서 연결 */}
+      {/* 수정 중단 경고 모달 */}
+      <WarningModal
+        isOpen={isExitModalOpen}
+        title="수정을 중단하시겠습니까?"
+        description={"지금까지 수정한 내용은\n저장되지 않습니다."}
+        primaryButtonText="수정 중단하기"
+        secondaryButtonText="계속 수정하기"
+        onPrimaryClick={handleExit}
+        onSecondaryClick={() => setIsExitModalOpen(false)}
+        onClose={() => setIsExitModalOpen(false)}
+      />
     </main>
   );
 }
