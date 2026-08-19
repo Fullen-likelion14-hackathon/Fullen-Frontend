@@ -55,7 +55,7 @@ export default function MCoMFeedCard({ feed, variant = "current" }: MCoMFeedCard
           <img src={feed.thumbnailURL} alt="대표사진" className="h-full w-full object-cover" />
         </div>
 
-        <button type="button" className="mt-1 rounded-2xl bg-gray-200 px-20 py-2">
+        <button type="button" className="mt-5 rounded-2xl bg-gray-200 px-20 py-2">
           <span className="font-bold text-[#757575]" onClick={() => handleDetailClick(feed.postId)}>
             자세히 보기
           </span>
