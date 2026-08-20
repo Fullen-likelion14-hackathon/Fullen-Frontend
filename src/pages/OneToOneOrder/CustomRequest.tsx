@@ -223,7 +223,7 @@ const CustomRequest = () => {
       <PageHeader title="1:1 커스텀 주문" backTo="/onetooneorder" />
 
       {/* 본문 */}
-      <section className="flex h-[calc(100dvh-126px)] flex-col overflow-y-auto px-8 pb-12 pt-10">
+      <section className="flex h-[calc(100dvh-7.875rem)] flex-col overflow-y-auto px-8 pb-12 pt-10">
         <div className="flex-1">
           {/* 1단계 */}
           {currentStep === 1 && (

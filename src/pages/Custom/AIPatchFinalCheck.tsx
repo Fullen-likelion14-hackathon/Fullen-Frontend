@@ -133,7 +133,7 @@ const AIPatchFinalCheck = () => {
       <PageHeader title="AI 패치 생성" />
 
       {/* 최종 확인 스크롤 영역 */}
-      <section className="h-[calc(100dvh-126px)] overflow-y-auto pb-40">
+      <section className="h-[calc(100dvh-7.875rem)] overflow-y-auto pb-40">
         <div className="relative px-8 pb-8 pt-10 text-center">
           <h2 className="text-2xl font-bold text-black">이대로 패치를 생성할까요?</h2>
 
@@ -292,7 +292,7 @@ const AIPatchFinalCheck = () => {
       </section>
 
       {/* 하단 생성 버튼 영역 */}
-      <div className="absolute inset-x-0 bottom-0 z-40 rounded-t-4xl bg-[#F9F4F0] px-6 pb-7 pt-6 shadow-[0_-8px_20px_rgba(0,0,0,0.06)]">
+      <div className="absolute inset-x-0 bottom-0 z-40 rounded-t-4xl bg-[#F9F4F0] px-6 pb-7 pt-6 shadow-[0_-0.5rem_1.25rem_rgba(0,0,0,0.06)]">
         <CustomStepButton
           onNext={handleGenerate}
           nextLabel={isGenerating ? "패치 생성 중" : "이대로 생성하기"}

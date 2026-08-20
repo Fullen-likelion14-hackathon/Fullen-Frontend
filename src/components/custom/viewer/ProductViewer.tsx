@@ -41,6 +41,8 @@ interface ProductViewerProps {
 
   // Three.js 가방 첫 렌더링 완료 시 실행할 함수임
   onReady?: () => void;
+
+  intro?: boolean;
 }
 
 // 포인터 좌표 타입임
@@ -86,6 +88,7 @@ export function ProductViewer({
   customMode = "patch",
   onLocationChange,
   onReady,
+  intro = false,
 }: ProductViewerProps) {
   // 현재 화면을 누르고 있는 포인터 목록임
   const activePointersRef = useRef(new Map<number, PointerPosition>());
@@ -287,7 +290,12 @@ export function ProductViewer({
 
         {/* 실제 3D 가방이 준비된 뒤 첫 렌더링 완료 여부 확인함 */}
         <Suspense fallback={null}>
-          <Product mode={mode} customMode={customMode} onLocationChange={onLocationChange} />
+          <Product
+            mode={mode}
+            customMode={customMode}
+            onLocationChange={onLocationChange}
+            intro={intro}
+          />
 
           <SceneReadyReporter onReady={onReady} />
         </Suspense>

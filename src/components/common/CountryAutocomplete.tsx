@@ -38,7 +38,7 @@ const CountryAutocomplete = ({ value, onChange, disabled }: CountryAutocompleteP
         <>
           <div aria-hidden="true" className="fixed inset-0 z-10" onClick={() => setIsOpen(false)} />
 
-          <div className="absolute inset-x-0 top-0 z-20 overflow-hidden rounded-[10px] border-2 border-slate-800 bg-white shadow-lg">
+          <div className="absolute inset-x-0 top-0 z-20 overflow-hidden rounded-[0.625rem] border-2 border-slate-800 bg-white shadow-lg">
             <div className="flex h-12 items-center gap-2 border-b border-[#D3C5BB] px-4">
               <Search className="size-5 shrink-0 text-slate-800" />
               <input
@@ -90,7 +90,7 @@ const CountryAutocomplete = ({ value, onChange, disabled }: CountryAutocompleteP
           onClick={handleOpen}
           disabled={disabled}
           style={{ fontFamily: "Paperlogy" }}
-          className={`h-12 w-full rounded-[10px] border-2 bg-white text-center tracking-tight disabled:opacity-60 ${
+          className={`h-12 w-full rounded-[0.625rem] border-2 bg-white text-center tracking-tight disabled:opacity-60 ${
             value
               ? "border-slate-800 text-3xl font-bold text-slate-800"
               : "border-[#D3C5BB] text-sm font-semibold text-[#AC917C]"

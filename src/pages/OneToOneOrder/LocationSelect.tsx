@@ -102,12 +102,12 @@ export default function LocationSelect() {
       />
 
       {/* 본문 */}
-      <section className="relative z-10 flex h-[calc(100dvh-126px)] flex-col px-6 pt-12">
+      <section className="relative z-10 flex h-[calc(100dvh-7.875rem)] flex-col px-6 pt-12">
         {/* 제품 정보 */}
         <div className="relative z-20 text-center">
-          <h2 className="text-[24px] font-extrabold text-[#192C44]">Ottomar 비세토스 위켄더</h2>
+          <h2 className="text-[1.5rem] font-extrabold text-[#192C44]">Ottomar 비세토스 위켄더</h2>
 
-          <p className="text-[18px] font-bold text-[#9197A0]">50.5 cm (19.9 in)</p>
+          <p className="text-[1.125rem] font-bold text-[#9197A0]">50.5 cm (19.9 in)</p>
         </div>
 
         {/* 3D 가방 영역 */}
@@ -134,7 +134,7 @@ export default function LocationSelect() {
         </div>
 
         {/* 안내 문구 */}
-        <p className="relative z-20 mt-100 text-center text-[20px] font-bold leading-8 text-[#9197A0]">
+        <p className="relative z-20 mt-100 text-center text-[1.25rem] font-bold leading-8 text-[#9197A0]">
           커스텀 받고싶은 위치에
           <br />
           흰색 프레임을 올려놓아주세요
@@ -153,7 +153,7 @@ export default function LocationSelect() {
             z-20
             h-16
             rounded-xl
-            text-[20px]
+            text-[1.25rem]
             font-bold
             text-white
             shadow-md

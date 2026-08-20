@@ -18,7 +18,7 @@ export default function MCoMFeedCard({ feed, variant = "current" }: MCoMFeedCard
     return (
       <div className="pointer-events-none h-125 w-73 scale-90 rounded-2xl bg-white opacity-60">
         <div className="pt-14 text-center text-black">
-          <h2 className="text-[30px] font-bold">{feed.nationKRName}</h2>
+          <h2 className="text-[1.875rem] font-bold">{feed.nationKRName}</h2>
 
           <p>{feed.journeyType}</p>
 
@@ -45,11 +45,11 @@ export default function MCoMFeedCard({ feed, variant = "current" }: MCoMFeedCard
       </div>
 
       <div className="text-center">
-        <h2 className="text-[30px] font-bold">{feed.nationKRName}</h2>
+        <h2 className="text-[1.875rem] font-bold">{feed.nationKRName}</h2>
 
         <p className="mt-2 text-base font-medium">{feed.journeyType}</p>
 
-        <p className="mt-1 text-[14px] text-gray-400">{feed.date}</p>
+        <p className="mt-1 text-[max(12px,0.875rem)] text-gray-400">{feed.date}</p>
 
         <div className="m-auto mt-1 h-64 w-73 overflow-hidden">
           <img src={feed.thumbnailURL} alt="대표사진" className="h-full w-full object-cover" />

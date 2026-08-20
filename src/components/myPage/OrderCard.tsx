@@ -32,7 +32,7 @@ export default function OrderCard({ type, orderId, createdAt, frontImgUrl }: Ord
   };
 
   return (
-    <article className="mx-auto my-4 w-90 rounded-2xl border border-[#dfd2c5] bg-[#fffdf9] p-4 shadow-[0_4px_14px_rgba(25,41,64,0.06)]">
+    <article className="mx-auto my-4 w-90 rounded-2xl border border-[#dfd2c5] bg-[#fffdf9] p-4 shadow-[0_0.25rem_0.875rem_rgba(25,41,64,0.06)]">
       <div className="flex items-center gap-4">
         {/* 가방 이미지 */}
         <div className="flex h-32 w-[43%] shrink-0 items-center justify-center rounded-xl bg-[#f5efe9]">
@@ -42,7 +42,7 @@ export default function OrderCard({ type, orderId, createdAt, frontImgUrl }: Ord
         {/* 주문 정보 */}
         <div className="flex min-w-0 flex-1 flex-col">
           {/* 주문 타입 */}
-          <span className="w-fit rounded-lg bg-[#eadbc9] px-3 py-1 text-[14px] font-bold text-[#70482d]">
+          <span className="w-fit rounded-lg bg-[#eadbc9] px-3 py-1 text-[max(12px,0.875rem)] font-bold text-[#70482d]">
             {orderTypeLabel}
           </span>
 
@@ -52,7 +52,7 @@ export default function OrderCard({ type, orderId, createdAt, frontImgUrl }: Ord
           <div className="flex items-center gap-2 text-[#192940]">
             <CalendarDays size={18} strokeWidth={1.8} className="text-[#8a5a34]" />
 
-            <time className="text-[15px] font-semibold">{formattedDate}</time>
+            <time className="text-[0.9375rem] font-semibold">{formattedDate}</time>
           </div>
 
           {/* 상세보기 */}
@@ -72,7 +72,7 @@ export default function OrderCard({ type, orderId, createdAt, frontImgUrl }: Ord
               bg-white
               px-4
               py-2
-              text-[15px]
+              text-[0.9375rem]
               font-bold
               text-[#55321f]
               transition-colors

@@ -41,10 +41,10 @@ export default function ArtistCard({
             <img src={artist.nationImgUrl} alt="" className="mb-1 h-4 w-6 object-cover" />
 
             {/* 이름 */}
-            <p className="truncate text-[16px] font-bold text-[#192A40]">{artist.artistName}</p>
+            <p className="truncate text-[1rem] font-bold text-[#192A40]">{artist.artistName}</p>
 
             {/* 작가 소개 */}
-            <p className="mt-1 line-clamp-2 text-[12px] leading-4 text-[#515C6C]">
+            <p className="mt-1 line-clamp-2 text-[max(12px,0.75rem)] leading-4 text-[#515C6C]">
               {artist.introSummary}
             </p>
           </div>

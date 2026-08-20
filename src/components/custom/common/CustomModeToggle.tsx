@@ -33,8 +33,8 @@ export function CustomModeToggle({ mode, onChange }: CustomModeToggleProps) {
           absolute
           left-1
           top-1/2
-          h-[calc(100%-4px)]
-          w-[calc(50%-3px)]
+          h-[calc(100%-0.25rem)]
+          w-[calc(50%-0.1875rem)]
           -translate-y-1/2
           rounded-md
           bg-white
@@ -55,7 +55,7 @@ export function CustomModeToggle({ mode, onChange }: CustomModeToggleProps) {
           z-10
           flex-1
           rounded-lg
-          text-[16px]
+          text-[1rem]
           font-semibold
           transition-colors
           ${mode === "initial" ? "text-[#19273C]" : "text-[#8E8E93]"}
@@ -74,7 +74,7 @@ export function CustomModeToggle({ mode, onChange }: CustomModeToggleProps) {
           z-10
           flex-1
           rounded-lg
-          text-[16px]
+          text-[1rem]
           font-semibold
           transition-colors
           ${mode === "patch" ? "text-[#19273C]" : "text-[#8E8E93]"}

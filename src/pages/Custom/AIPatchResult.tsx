@@ -238,7 +238,7 @@ const AIPatchResult = () => {
       <PageHeader title="AI 패치 저장" />
 
       {/* AI 패치 생성 결과 본문 영역 */}
-      <section className="flex h-[calc(100dvh-126px)] flex-col overflow-y-auto pb-8">
+      <section className="flex h-[calc(100dvh-7.875rem)] flex-col overflow-y-auto pb-8">
         {/* 생성 완료 안내 영역 */}
         <div className="px-8 pt-12 text-center">
           <h2 className="text-2xl font-bold text-[#192C44]">패치 생성을 완료했습니다</h2>

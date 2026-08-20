@@ -16,7 +16,7 @@ const NfcTagging = () => {
   };
 
   return (
-    <div className="relative w-96 h-211 mx-auto bg-[#242D41] overflow-hidden">
+    <div className="relative w-96 h-211 min-h-dvh mx-auto bg-[#242D41] overflow-hidden">
       {/* 정적 배경 원형 레이어 */}
       <div className="size-125 left-74.5 top-21 absolute origin-top-left rotate-[61.78deg] bg-zinc-300/20 rounded-full" />
       <div className="size-150 left-10.75 top-4 absolute origin-top-left rotate-[61.78deg] bg-zinc-300/5 rounded-full" />

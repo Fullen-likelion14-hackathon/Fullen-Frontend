@@ -4,7 +4,7 @@ import { useJourney } from "@/hooks/queries/useJourney";
 import fileIcon from "@/assets/icons/file.png"; // TODO: 실제 파일명으로 교체
 
 const BADGE_SHADOW =
-  "shadow-[0_0_6.63px_0_rgba(94,140,136,0.25),inset_0_-0.99px_0.99px_0_rgba(159,159,159,0.25),inset_0_1.99px_1.99px_0_rgba(255,255,255,0.25)]";
+  "shadow-[0_0_0.414375rem_0_rgba(94,140,136,0.25),inset_0_-0.061875rem_0.061875rem_0_rgba(159,159,159,0.25),inset_0_0.124375rem_0.124375rem_0_rgba(255,255,255,0.25)]";
 
 interface DetailCardProps {
   category: JourneyItem;
@@ -19,7 +19,7 @@ export function DetailCard({ category, isActive }: DetailCardProps) {
 
   return (
     <div
-      className={`relative shrink-0 overflow-hidden rounded-xl shadow-[0px_0px_11.7px_2.34px_rgba(0,0,0,0.25),inset_1.76px_1.76px_0px_0px_rgba(255,255,255,0.50),inset_-1.76px_-1.76px_0px_0px_rgba(0,0,0,0.15)] transition-all duration-300 ${
+      className={`relative shrink-0 overflow-hidden rounded-xl shadow-[0rem_0rem_0.73125rem_0.14625rem_rgba(0,0,0,0.25),inset_0.11rem_0.11rem_0rem_0rem_rgba(255,255,255,0.50),inset_-0.11rem_-0.11rem_0rem_0rem_rgba(0,0,0,0.15)] transition-all duration-300 ${
         isActive ? "h-98.75 w-72.5 opacity-100" : "h-78.25 w-57.5 opacity-60"
       }`}
     >
@@ -82,7 +82,7 @@ export function DetailCard({ category, isActive }: DetailCardProps) {
 
         <div
           className={`absolute overflow-hidden ${
-            isActive ? "left-59 top-23 h-[36px] w-[30px]" : "left-48 top-18 h-7 w-5.5"
+            isActive ? "left-59 top-23 h-[2.25rem] w-[1.875rem]" : "left-48 top-18 h-7 w-5.5"
           }`}
         >
           <img src={fileIcon} alt="" className="absolute inset-0 h-full w-full" />

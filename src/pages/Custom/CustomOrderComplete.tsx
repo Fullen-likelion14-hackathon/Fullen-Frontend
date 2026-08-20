@@ -118,7 +118,7 @@ export default function CustomOrderComplete() {
         </div>
 
         {/* 주문 완료 문구 */}
-        <h1 className="mt-4 text-center text-[28px] font-extrabold leading-[1.35] text-[#192940]">
+        <h1 className="mt-4 text-center text-[1.75rem] font-extrabold leading-[1.35] text-[#192940]">
           나의 {orderType === "onetoone" ? "1:1 커스텀" : "커스텀"}
           <br />
           주문이 완료되었습니다.
@@ -135,7 +135,7 @@ export default function CustomOrderComplete() {
         </button>
 
         {/* 주문 상태 안내 */}
-        <p className="mt-14 text-[18px] text-[#B59A85]">가방을 MCM 측에 전달해주세요</p>
+        <p className="mt-14 text-[1.125rem] text-[#B59A85]">가방을 MCM 측에 전달해주세요</p>
 
         {/* 주문 진행 상태 */}
         <div className="relative mt-5 flex w-83 items-center justify-between">
@@ -170,7 +170,7 @@ export default function CustomOrderComplete() {
       <button
         type="button"
         onClick={handleMoveMain}
-        className="absolute bottom-10 left-1/2 h-14 w-83 -translate-x-1/2 rounded-xl border-2 border-[#A9672A] bg-[#F9F4F0] text-[18px] font-bold text-[#A9672A] shadow-lg"
+        className="absolute bottom-10 left-1/2 h-14 w-83 -translate-x-1/2 rounded-xl border-2 border-[#A9672A] bg-[#F9F4F0] text-[1.125rem] font-bold text-[#A9672A] shadow-lg"
       >
         메인 화면으로 이동하기
       </button>

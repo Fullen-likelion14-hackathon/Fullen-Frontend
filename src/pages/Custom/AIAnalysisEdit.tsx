@@ -67,12 +67,12 @@ export default function AIAnalysisEdit() {
               h-full
               w-full
               resize-none
-              rounded-[10px]
+              rounded-[0.625rem]
               border-2
               border-[#D4C8BE]
               bg-white
               p-6
-              text-[16px]
+              text-[1rem]
               font-semibold
               leading-7
               text-[#465264]
@@ -83,7 +83,7 @@ export default function AIAnalysisEdit() {
           />
 
           {!analysisText && (
-            <p className="pointer-events-none absolute inset-0 flex items-center justify-center text-[16px] font-semibold text-[#B59780]">
+            <p className="pointer-events-none absolute inset-0 flex items-center justify-center text-[1rem] font-semibold text-[#B59780]">
               원하는 분석 내용을 작성해주세요
             </p>
           )}
@@ -98,8 +98,8 @@ export default function AIAnalysisEdit() {
           className={`
             h-16
             w-full
-            rounded-[12px]
-            text-[20px]
+            rounded-[0.75rem]
+            text-[1.25rem]
             font-bold
             text-white
             shadow-md

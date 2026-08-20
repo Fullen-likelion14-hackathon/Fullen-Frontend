@@ -17,7 +17,7 @@ export default function MyPageMenuItem({ label, icon, onClick }: MyPageMenuItemP
       <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-white text-[#aa6829] [&_svg]:size-6">
         {icon}
       </span>
-      <span className="ml-4 flex-1 text-[23px] font-bold">{label}</span>
+      <span className="ml-4 flex-1 text-[1.4375rem] font-bold">{label}</span>
       <ChevronRight className="size-7 text-[#90959d]" strokeWidth={2.6} />
     </button>
   );

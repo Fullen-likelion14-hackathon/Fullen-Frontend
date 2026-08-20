@@ -35,7 +35,7 @@ const CustomStepButton = ({
         type="button"
         onClick={onNext}
         disabled={disabled}
-        className={`h-14.5 w-full rounded-xl text-[16px] font-bold shadow-md transition-opacity ${
+        className={`h-14.5 w-full rounded-xl text-[1rem] font-bold shadow-md transition-opacity ${
           disabled
             ? "cursor-not-allowed bg-[#D1D1D1] text-white"
             : "bg-[#192C44] text-white hover:opacity-90"
@@ -49,7 +49,7 @@ const CustomStepButton = ({
         <button
           type="button"
           onClick={onPrevious}
-          className="h-14.5 w-full rounded-xl border-2 border-[#B89B84] bg-transparent text-[16px] font-bold text-[#B89B84]"
+          className="h-14.5 w-full rounded-xl border-2 border-[#B89B84] bg-transparent text-[1rem] font-bold text-[#B89B84]"
         >
           {previousLabel}
         </button>

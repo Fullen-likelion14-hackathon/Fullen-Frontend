@@ -93,11 +93,11 @@ export default function FeedDetail() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-200">
-      <div className="relative mx-auto min-h-screen w-full max-w-97.5 overflow-hidden bg-white">
+    <div className="min-h-dvh bg-gray-200">
+      <div className="relative mx-auto min-h-dvh w-full max-w-97.5 overflow-hidden bg-white">
         {/* 헤더 */}
         <header className="relative h-31.25 w-97.5 bg-[#F9F4F0] pb-6 pt-9">
-          <div className="mt-[21px]">
+          <div className="mt-[1.3125rem]">
             <div className="flex items-center justify-between px-5 pt-1">
               <button
                 type="button"
@@ -105,10 +105,10 @@ export default function FeedDetail() {
                 onClick={() => navigate(-1)}
                 className="flex h-8 w-8 items-center justify-center"
               >
-                <span className="block h-4.5 w-4.5 rotate-45 border-b-[3px] border-l-[3px] border-[#CFCDCE]" />
+                <span className="block h-4.5 w-4.5 rotate-45 border-b-[0.1875rem] border-l-[0.1875rem] border-[#CFCDCE]" />
               </button>
 
-              <div className="flex items-center gap-[20px]">
+              <div className="flex items-center gap-[1.25rem]">
                 <div className="flex size-8 items-center justify-center overflow-hidden rounded-full bg-white">
                   <img
                     src={feed.isPublic ? publicIcon : privateIcon}
@@ -153,11 +153,11 @@ export default function FeedDetail() {
               </div>
             </div>
           </div>
-          <div className="absolute inset-x-0 bottom-0 h-[8px] bg-[#A3642B]" />
+          <div className="absolute inset-x-0 bottom-0 h-[0.5rem] bg-[#A3642B]" />
         </header>
 
         {/* 사진 슬라이드 */}
-        <div className="relative h-[435px] w-97.5 bg-stone-300">
+        <div className="relative h-[27.1875rem] w-97.5 bg-stone-300">
           <div
             ref={sliderRef}
             onScroll={handleScroll}
@@ -187,7 +187,7 @@ export default function FeedDetail() {
               {feed.photoList.map((_, index) => (
                 <span
                   key={index}
-                  className={`size-2.5 rounded-full border-[1.67px] border-white/80 ${
+                  className={`size-2.5 rounded-full border-[0.104375rem] border-white/80 ${
                     index === activeIndex ? "bg-white/80" : "bg-transparent"
                   }`}
                 />

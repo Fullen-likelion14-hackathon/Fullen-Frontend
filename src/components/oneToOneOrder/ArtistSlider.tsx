@@ -289,12 +289,12 @@ export default function ArtistSlider({
       </div>
 
       {/* 현재 작가 이름 */}
-      <p className="mt-4 text-center text-[24px] font-extrabold text-[#192A40]">
+      <p className="mt-4 text-center text-[1.5rem] font-extrabold text-[#192A40]">
         {currentArtist.artistName}
       </p>
 
       {/* AI 추천 고정 설명 */}
-      <p className="mt-3 text-center text-[14px] font-medium leading-5 text-[#AC917C]">
+      <p className="mt-3 text-center text-[max(12px,0.875rem)] font-medium leading-5 text-[#AC917C]">
         멋쟁이사자처럼님의 여행 스타일과 어울리는
         <br />
         <span className="font-extrabold text-[#A3642B]">성주재단 파트너 아티스트 3명</span>을

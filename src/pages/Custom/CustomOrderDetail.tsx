@@ -32,7 +32,7 @@ export default function CustomOrderDetail() {
   if (isPending) {
     return (
       <main className="mx-auto flex h-dvh w-full max-w-97.5 flex-col bg-[#F9F4F0]">
-        <PageHeader title="나의 커스텀 주문내용 상세보기" backTo="/custom/order/complete" />
+        <PageHeader title="나의 커스텀 주문내용 상세보기" backTo="/custom" />
 
         <div className="flex flex-1 items-center justify-center">
           <p className="text-sm font-semibold text-[#888D96]">주문 상세 정보를 불러오는 중입니다</p>
@@ -57,11 +57,11 @@ export default function CustomOrderDetail() {
 
   return (
     <main className="relative mx-auto h-dvh w-full max-w-97.5 overflow-hidden bg-[#F9F4F0]">
-      <PageHeader title="나의 커스텀 주문내용 상세보기" backTo="/custom/order/complete" />
+      <PageHeader title="나의 커스텀 주문내용 상세보기" backTo="/custom" />
 
       {/* 주문 가방 정보 */}
       <div className="pt-30 text-center">
-        <h1 className="text-[24px] font-bold text-[#242D41]">{bagDetail?.bagName}</h1>
+        <h1 className="text-[1.5rem] font-bold text-[#242D41]">{bagDetail?.bagName}</h1>
 
         <p className="mt-1 text-[#888D96]">{bagDetail?.bagSize}</p>
       </div>
@@ -73,7 +73,7 @@ export default function CustomOrderDetail() {
           onClick={() => {
             setSide("front");
           }}
-          className={`rounded-full px-4 py-1 text-[16px] font-bold ${
+          className={`rounded-full px-4 py-1 text-[1rem] font-bold ${
             side === "front" ? "bg-white text-[#242D41] shadow-sm" : "text-[#888D96]"
           }`}
         >
@@ -85,7 +85,7 @@ export default function CustomOrderDetail() {
           onClick={() => {
             setSide("back");
           }}
-          className={`rounded-full px-4 py-1 text-[16px] font-bold ${
+          className={`rounded-full px-4 py-1 text-[1rem] font-bold ${
             side === "back" ? "bg-white text-[#242D41] shadow-sm" : "text-[#888D96]"
           }`}
         >
