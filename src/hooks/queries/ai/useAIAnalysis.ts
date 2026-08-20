@@ -1,17 +1,28 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
-import { getAIAnalysis } from "@/api/ai";
+import { getAIAnalysis, retryAIAnalysis } from "@/api/ai";
+
+import type { RetryAIAnalysisRequest } from "@/types/ai";
+
+export const AI_ANALYSIS_QUERY_KEY = ["ai", "analysis"];
 
 // AI 여행 분석 조회 Query Hook
 export const useAIAnalysis = () => {
   return useQuery({
-    // AI 여행 분석 전용 Query Key
-    queryKey: ["ai", "analysis"],
-
-    // AI 여행 분석 조회 함수
+    queryKey: AI_ANALYSIS_QUERY_KEY,
     queryFn: getAIAnalysis,
-
-    // 공통 응답 객체에서 실제 분석 데이터 추출 처리
     select: (response) => response.data,
+
+    // 수정 페이지 갔다 돌아오는 동안 기존 분석 유지
+    staleTime: Infinity,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+  });
+};
+
+// AI 여행 분석 재분석 Mutation Hook
+export const useRetryAIAnalysis = () => {
+  return useMutation({
+    mutationFn: (request: RetryAIAnalysisRequest) => retryAIAnalysis(request),
   });
 };

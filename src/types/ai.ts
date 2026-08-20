@@ -34,6 +34,12 @@ export interface AIAnalysisResponse {
   data: AIAnalysis;
 }
 
+// AI 여행 분석 재분석 요청 타입
+export interface RetryAIAnalysisRequest {
+  // 사용자가 입력한 수정 요청 내용
+  request: string;
+}
+
 // AI 패치 생성 요청 타입
 export interface GenerateAIPatchRequest {
   // 피드에 등록된 사진 id
