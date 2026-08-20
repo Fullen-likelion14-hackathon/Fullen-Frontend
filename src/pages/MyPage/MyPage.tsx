@@ -1,8 +1,10 @@
 import { Headphones, KeyRound, MapPin, PackageCheck, Pencil, UserRound } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import MyPageMenuItem from "@/components/myPage/MyPageMenuItem";
+import { useUsernameQuery } from "@/hooks/queries/useUsernameQuery";
 
 export default function MyPage() {
+  const { data: username } = useUsernameQuery();
   const navigate = useNavigate();
   const menuItems = [
     { label: "아이디 관리", icon: <UserRound /> },
@@ -17,7 +19,7 @@ export default function MyPage() {
       </header>
       <main className="mx-auto max-w-107 px-8 pt-10">
         <div className="mb-1 flex items-center justify-center gap-2 border-b-2 border-[#e2cdb9] pb-4">
-          <p className="text-[24px] font-extrabold text-black">@멋쟁이사자처럼</p>
+          <p className="text-[24px] font-extrabold text-black">@{username}</p>
           <Pencil className="size-5 fill-[#c8c9cc] text-[#c8c9cc]" aria-label="닉네임 수정" />
         </div>
         <div>
