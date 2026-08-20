@@ -1,7 +1,6 @@
-// 제품 3D 렌더링 컴포넌트
 import * as THREE from "three";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { createPortal, type ThreeEvent } from "@react-three/fiber";
 
@@ -12,106 +11,300 @@ import bagUrl from "@/assets/models/OttomarBag.glb";
 import BagPatchDecal from "@/components/custom/viewer/BagPatchDecal";
 import BagInitialDecal from "@/components/custom/viewer/BagInitialDecal";
 
-import { useBagCustomStore } from "@/stores/bagCustomStore";
+import { useBagCustomStore, type PlacedInitial, type PlacedPatch } from "@/stores/bagCustomStore";
 
 import type { PatchLocation } from "@/types/patchLocation";
+import type { PatchSide } from "@/types/patch";
 
-// Product 전체 모드 타입
 export type ProductMode = "view" | "location-select" | "draft" | "applied";
 
-// 가방 꾸미기 종류 타입
 export type ProductCustomMode = "patch" | "initial";
 
 interface ProductProps {
-  // 현재 Product 동작 모드
   mode?: ProductMode;
 
-  // 현재 편집 커스텀 종류
   customMode?: ProductCustomMode;
 
-  // 위치 선택 결과 전달 함수
   onLocationChange?: (location: PatchLocation) => void;
 }
 
-// FRONT 몸통 X 최소 범위
+type CustomRenderItem =
+  | {
+      type: "patch";
+      layer: number;
+      patch: PlacedPatch;
+    }
+  | {
+      type: "initial";
+      layer: number;
+      initial: PlacedInitial;
+    };
+
+interface SurfaceGeometry {
+  position: [number, number, number];
+
+  normal: [number, number, number];
+
+  side: PatchSide;
+
+  posX: number;
+
+  posY: number;
+}
+
 const FRONT_MIN_X = -0.677;
 
-// FRONT 몸통 X 최대 범위
 const FRONT_MAX_X = 0.657;
 
-// FRONT 몸통 Y 최소 범위
 const FRONT_MIN_Y = -0.667;
 
-// FRONT 몸통 Y 최대 범위
 const FRONT_MAX_Y = 0.129;
 
-// BACK 몸통 X 최소 범위
 const BACK_MIN_X = -0.639;
 
-// BACK 몸통 X 최대 범위
 const BACK_MAX_X = 0.683;
 
-// BACK 몸통 Y 최소 범위
 const BACK_MIN_Y = -0.574;
 
-// BACK 몸통 Y 최대 범위
 const BACK_MAX_Y = 0.121;
 
+// Decal 표면 이격값
+const SURFACE_OFFSET = 0.002;
+
+// 서버 UV 기준 실제 Mesh 위치 계산
+const findMeshPointFromUv = (
+  mesh: THREE.Mesh,
+  targetU: number,
+  targetV: number,
+  side: PatchSide,
+): SurfaceGeometry | null => {
+  const geometry = mesh.geometry;
+
+  const uvAttribute = geometry.attributes.uv;
+
+  const positionAttribute = geometry.attributes.position;
+
+  if (!uvAttribute || !positionAttribute) {
+    return null;
+  }
+
+  const index = geometry.index;
+
+  const triangleCount = index
+    ? Math.floor(index.count / 3)
+    : Math.floor(positionAttribute.count / 3);
+
+  const targetUv = new THREE.Vector3(targetU, targetV, 0);
+
+  for (let triangleIndex = 0; triangleIndex < triangleCount; triangleIndex += 1) {
+    const firstIndex = index ? index.getX(triangleIndex * 3) : triangleIndex * 3;
+
+    const secondIndex = index ? index.getX(triangleIndex * 3 + 1) : triangleIndex * 3 + 1;
+
+    const thirdIndex = index ? index.getX(triangleIndex * 3 + 2) : triangleIndex * 3 + 2;
+
+    const uvA = new THREE.Vector3(uvAttribute.getX(firstIndex), uvAttribute.getY(firstIndex), 0);
+
+    const uvB = new THREE.Vector3(uvAttribute.getX(secondIndex), uvAttribute.getY(secondIndex), 0);
+
+    const uvC = new THREE.Vector3(uvAttribute.getX(thirdIndex), uvAttribute.getY(thirdIndex), 0);
+
+    const barycentric = THREE.Triangle.getBarycoord(targetUv, uvA, uvB, uvC, new THREE.Vector3());
+
+    if (!barycentric) {
+      continue;
+    }
+
+    const epsilon = -0.0001;
+
+    if (barycentric.x < epsilon || barycentric.y < epsilon || barycentric.z < epsilon) {
+      continue;
+    }
+
+    const positionA = new THREE.Vector3().fromBufferAttribute(positionAttribute, firstIndex);
+
+    const positionB = new THREE.Vector3().fromBufferAttribute(positionAttribute, secondIndex);
+
+    const positionC = new THREE.Vector3().fromBufferAttribute(positionAttribute, thirdIndex);
+
+    const centerZ = (positionA.z + positionB.z + positionC.z) / 3;
+
+    const triangleSide: PatchSide = centerZ >= 0 ? "FRONT" : "BACK";
+
+    if (triangleSide !== side) {
+      continue;
+    }
+
+    const position = new THREE.Vector3()
+      .addScaledVector(positionA, barycentric.x)
+      .addScaledVector(positionB, barycentric.y)
+      .addScaledVector(positionC, barycentric.z);
+
+    const triangle = new THREE.Triangle(positionA, positionB, positionC);
+
+    const normal = triangle.getNormal(new THREE.Vector3()).normalize();
+
+    // 표면 겹침 방지
+    position.addScaledVector(normal, SURFACE_OFFSET);
+
+    return {
+      position: [position.x, position.y, position.z],
+
+      normal: [normal.x, normal.y, normal.z],
+
+      side,
+
+      posX: targetU,
+
+      posY: targetV,
+    };
+  }
+
+  return null;
+};
+
+// 실제 가방 정면 최초 부착 위치 계산
+const findInitialFrontSurface = (mesh: THREE.Mesh): SurfaceGeometry | null => {
+  const geometry = mesh.geometry;
+
+  const uvAttribute = geometry.attributes.uv;
+
+  if (!uvAttribute) {
+    return null;
+  }
+
+  if (!geometry.boundingBox) {
+    geometry.computeBoundingBox();
+  }
+
+  const boundingBox = geometry.boundingBox;
+
+  if (!boundingBox) {
+    return null;
+  }
+
+  // 최신 Transform 반영
+  mesh.updateWorldMatrix(true, false);
+
+  const localCenter = new THREE.Vector3();
+
+  boundingBox.getCenter(localCenter);
+
+  // 가방 정면 바깥쪽 시작점
+  const localRayOrigin = new THREE.Vector3(localCenter.x, localCenter.y, boundingBox.max.z + 2);
+
+  const localRayTarget = new THREE.Vector3(localCenter.x, localCenter.y, boundingBox.min.z - 2);
+
+  const worldRayOrigin = localRayOrigin.clone();
+
+  mesh.localToWorld(worldRayOrigin);
+
+  const worldRayTarget = localRayTarget.clone();
+
+  mesh.localToWorld(worldRayTarget);
+
+  const worldDirection = worldRayTarget.sub(worldRayOrigin).normalize();
+
+  const raycaster = new THREE.Raycaster(worldRayOrigin, worldDirection);
+
+  const intersections = raycaster.intersectObject(mesh, false);
+
+  const intersection = intersections.find((item) => item.uv && item.face);
+
+  if (!intersection || !intersection.uv || !intersection.face) {
+    return null;
+  }
+
+  // World 좌표 → Mesh local 좌표
+  const localPoint = intersection.point.clone();
+
+  mesh.worldToLocal(localPoint);
+
+  const localNormal = intersection.face.normal.clone().normalize();
+
+  // 표면보다 아주 조금 앞으로 배치
+  localPoint.addScaledVector(localNormal, SURFACE_OFFSET);
+
+  return {
+    position: [localPoint.x, localPoint.y, localPoint.z],
+
+    normal: [localNormal.x, localNormal.y, localNormal.z],
+
+    side: "FRONT",
+
+    posX: intersection.uv.x,
+
+    posY: intersection.uv.y,
+  };
+};
+
 export function Product({ mode = "view", customMode = "patch", onLocationChange }: ProductProps) {
-  // GLB 전체 Scene
   const { scene } = useGLTF(bagUrl);
 
-  // 패치 및 이니셜 적용 가방 Mesh
   const [bagMesh, setBagMesh] = useState<THREE.Mesh | null>(null);
 
-  // 위치 선택 프레임 위치
   const [markerPosition, setMarkerPosition] = useState<[number, number, number] | null>(null);
 
-  // 이동 중 패치 id
   const [draggingPatchId, setDraggingPatchId] = useState<string | null>(null);
 
-  // 이동 중 이니셜 id
   const [draggingInitialId, setDraggingInitialId] = useState<string | null>(null);
 
-  // 현재 편집 패치 목록
   const draftPatches = useBagCustomStore((state) => state.draftPatches);
 
-  // 적용 완료 패치 목록
   const appliedPatches = useBagCustomStore((state) => state.appliedPatches);
 
-  // 현재 편집 이니셜 목록
   const draftInitials = useBagCustomStore((state) => state.draftInitials);
 
-  // 적용 완료 이니셜 목록
   const appliedInitials = useBagCustomStore((state) => state.appliedInitials);
 
-  // 패치 위치 변경 함수
   const moveDraftPatch = useBagCustomStore((state) => state.moveDraftPatch);
 
-  // 이니셜 위치 변경 함수
   const moveDraftInitial = useBagCustomStore((state) => state.moveDraftInitial);
 
-  // 패치 선택 함수
   const selectPlacedPatch = useBagCustomStore((state) => state.selectPlacedPatch);
 
-  // 이니셜 선택 함수
   const selectPlacedInitial = useBagCustomStore((state) => state.selectPlacedInitial);
 
-  // 패치 편집 상태 변경 함수
   const setIsEditingPatch = useBagCustomStore((state) => state.setIsEditingPatch);
 
-  // 이니셜 편집 상태 변경 함수
   const setIsEditingInitial = useBagCustomStore((state) => state.setIsEditingInitial);
 
-  // 현재 표시 패치 목록
+  const restorePatchGeometry = useBagCustomStore((state) => state.restorePatchGeometry);
+
+  const restoreInitialGeometry = useBagCustomStore((state) => state.restoreInitialGeometry);
+
   const visiblePatches = mode === "draft" ? draftPatches : mode === "applied" ? appliedPatches : [];
 
-  // 현재 표시 이니셜 목록
   const visibleInitials =
     mode === "draft" ? draftInitials : mode === "applied" ? appliedInitials : [];
 
-  // 실제 가방 Mesh 탐색
+  // layer 기반 통합 렌더링 목록
+  const customRenderItems = useMemo<CustomRenderItem[]>(() => {
+    const items: CustomRenderItem[] = [
+      ...visiblePatches.map((patch) => ({
+        type: "patch" as const,
+
+        layer: patch.layer,
+
+        patch,
+      })),
+
+      ...visibleInitials.map((initial) => ({
+        type: "initial" as const,
+
+        layer: initial.layer,
+
+        initial,
+      })),
+    ];
+
+    return items.sort((first, second) => first.layer - second.layer);
+  }, [visibleInitials, visiblePatches]);
+
+  // 가방 Mesh 탐색
   useEffect(() => {
+    scene.updateMatrixWorld(true);
+
     const targetMesh = scene.getObjectByName("mesh_0");
 
     if (!(targetMesh instanceof THREE.Mesh)) {
@@ -120,10 +313,12 @@ export function Product({ mode = "view", customMode = "patch", onLocationChange 
       return;
     }
 
+    targetMesh.geometry.computeBoundingBox();
+
     setBagMesh(targetMesh);
   }, [scene]);
 
-  // GLB 전체 재질 설정
+  // GLB 재질 설정
   useEffect(() => {
     scene.traverse((object: THREE.Object3D) => {
       if (!(object instanceof THREE.Mesh)) {
@@ -147,85 +342,109 @@ export function Product({ mode = "view", customMode = "patch", onLocationChange 
     });
   }, [scene]);
 
-  // 신규 패치 최초 위치 설정
+  // 저장 패치 위치 복원
   useEffect(() => {
-    if (mode !== "draft" || customMode !== "patch") {
-      return;
-    }
-
     if (!bagMesh) {
       return;
     }
 
-    const geometry = bagMesh.geometry;
-
-    if (!geometry.boundingBox) {
-      geometry.computeBoundingBox();
-    }
-
-    const box = geometry.boundingBox;
-
-    if (!box) {
-      return;
-    }
-
-    const center = new THREE.Vector3();
-
-    box.getCenter(center);
-
-    const initialPosition: [number, number, number] = [center.x, center.y, box.max.z];
-
-    const initialNormal: [number, number, number] = [0, 0, 1];
-
-    draftPatches.forEach((patch) => {
+    visiblePatches.forEach((patch) => {
       if (patch.position !== null) {
         return;
       }
 
-      moveDraftPatch(patch.id, initialPosition, initialNormal, "FRONT", 0.5, 0.5);
+      const restoredGeometry = findMeshPointFromUv(bagMesh, patch.posX, patch.posY, patch.side);
+
+      if (!restoredGeometry) {
+        return;
+      }
+
+      restorePatchGeometry(patch.id, restoredGeometry.position, restoredGeometry.normal);
     });
-  }, [bagMesh, customMode, draftPatches, mode, moveDraftPatch]);
+  }, [bagMesh, restorePatchGeometry, visiblePatches]);
 
-  // 신규 이니셜 최초 위치 설정
+  // 저장 이니셜 위치 복원
   useEffect(() => {
-    if (mode !== "draft" || customMode !== "initial") {
-      return;
-    }
-
     if (!bagMesh) {
       return;
     }
 
-    const geometry = bagMesh.geometry;
-
-    if (!geometry.boundingBox) {
-      geometry.computeBoundingBox();
-    }
-
-    const box = geometry.boundingBox;
-
-    if (!box) {
-      return;
-    }
-
-    const center = new THREE.Vector3();
-
-    box.getCenter(center);
-
-    const initialPosition: [number, number, number] = [center.x, center.y, box.max.z];
-
-    const initialNormal: [number, number, number] = [0, 0, 1];
-
-    draftInitials.forEach((initial) => {
+    visibleInitials.forEach((initial) => {
       if (initial.position !== null) {
         return;
       }
 
-      moveDraftInitial(initial.id, initialPosition, initialNormal);
+      const restoredGeometry = findMeshPointFromUv(
+        bagMesh,
+        initial.posX,
+        initial.posY,
+        initial.side,
+      );
+
+      if (!restoredGeometry) {
+        return;
+      }
+
+      restoreInitialGeometry(initial.id, restoredGeometry.position, restoredGeometry.normal);
+    });
+  }, [bagMesh, restoreInitialGeometry, visibleInitials]);
+
+  // 신규 패치 최초 위치
+  useEffect(() => {
+    if (mode !== "draft" || customMode !== "patch" || !bagMesh) {
+      return;
+    }
+
+    const initialSurface = findInitialFrontSurface(bagMesh);
+
+    if (!initialSurface) {
+      return;
+    }
+
+    draftPatches.forEach((patch) => {
+      if (patch.position !== null || patch.patchPositionId !== null) {
+        return;
+      }
+
+      moveDraftPatch(
+        patch.id,
+        initialSurface.position,
+        initialSurface.normal,
+        initialSurface.side,
+        initialSurface.posX,
+        initialSurface.posY,
+      );
+    });
+  }, [bagMesh, customMode, draftPatches, mode, moveDraftPatch]);
+
+  // 신규 이니셜 최초 위치
+  useEffect(() => {
+    if (mode !== "draft" || customMode !== "initial" || !bagMesh) {
+      return;
+    }
+
+    const initialSurface = findInitialFrontSurface(bagMesh);
+
+    if (!initialSurface) {
+      return;
+    }
+
+    draftInitials.forEach((initial) => {
+      if (initial.position !== null || initial.initialId !== null) {
+        return;
+      }
+
+      moveDraftInitial(
+        initial.id,
+        initialSurface.position,
+        initialSurface.normal,
+        initialSurface.side,
+        initialSurface.posX,
+        initialSurface.posY,
+      );
     });
   }, [bagMesh, customMode, draftInitials, mode, moveDraftInitial]);
 
-  // 패치 이동 시작
   const handlePatchDragStart = (patchId: string) => {
     if (mode !== "draft" || customMode !== "patch") {
       return;
@@ -240,7 +459,6 @@ export function Product({ mode = "view", customMode = "patch", onLocationChange 
     selectPlacedPatch(patchId);
   };
 
-  // 이니셜 이동 시작
   const handleInitialDragStart = (initialId: string) => {
     if (mode !== "draft" || customMode !== "initial") {
       return;
@@ -255,7 +473,6 @@ export function Product({ mode = "view", customMode = "patch", onLocationChange 
     selectPlacedInitial(initialId);
   };
 
-  // 가방 빈 영역 클릭
   const handleBagPointerDown = (event: ThreeEvent<PointerEvent>) => {
     if (mode === "location-select") {
       handleLocationSelect(event);
@@ -276,13 +493,9 @@ export function Product({ mode = "view", customMode = "patch", onLocationChange 
     selectPlacedPatch(null);
   };
 
-  // 포인터 이동 기반 커스텀 위치 변경
+  // 실제 드래그 위치 갱신
   const handlePointerMove = (event: ThreeEvent<PointerEvent>) => {
-    if (mode !== "draft") {
-      return;
-    }
-
-    if (!bagMesh) {
+    if (mode !== "draft" || !bagMesh) {
       return;
     }
 
@@ -292,7 +505,7 @@ export function Product({ mode = "view", customMode = "patch", onLocationChange 
 
     const intersection = event.intersections.find((item) => item.object === bagMesh);
 
-    if (!intersection || !intersection.face) {
+    if (!intersection || !intersection.face || !intersection.uv) {
       return;
     }
 
@@ -302,29 +515,33 @@ export function Product({ mode = "view", customMode = "patch", onLocationChange 
 
     const localNormal = intersection.face.normal.clone().normalize();
 
+    // 표면 겹침 방지
+    localPoint.addScaledVector(localNormal, SURFACE_OFFSET);
+
     const position: [number, number, number] = [localPoint.x, localPoint.y, localPoint.z];
 
     const normal: [number, number, number] = [localNormal.x, localNormal.y, localNormal.z];
 
+    const side: PatchSide = localPoint.z >= 0 ? "FRONT" : "BACK";
+
     if (draggingPatchId && customMode === "patch") {
-      if (!intersection.uv) {
-        return;
-      }
-
-      // 서버 패치 적용 면
-      const side: "FRONT" | "BACK" = localPoint.z >= 0 ? "FRONT" : "BACK";
-
       moveDraftPatch(draggingPatchId, position, normal, side, intersection.uv.x, intersection.uv.y);
 
       return;
     }
 
     if (draggingInitialId && customMode === "initial") {
-      moveDraftInitial(draggingInitialId, position, normal);
+      moveDraftInitial(
+        draggingInitialId,
+        position,
+        normal,
+        side,
+        intersection.uv.x,
+        intersection.uv.y,
+      );
     }
   };
 
-  // 위치 이동 종료
   const handlePointerUp = () => {
     if (draggingPatchId) {
       setDraggingPatchId(null);
@@ -339,7 +556,6 @@ export function Product({ mode = "view", customMode = "patch", onLocationChange 
     }
   };
 
-  // 상대방 위치 선택
   const handleLocationSelect = (event: ThreeEvent<PointerEvent>) => {
     if (mode !== "location-select") {
       return;
@@ -353,7 +569,7 @@ export function Product({ mode = "view", customMode = "patch", onLocationChange 
 
     const localPoint = scene.worldToLocal(event.point.clone());
 
-    const side = localPoint.z >= 0 ? "FRONT" : "BACK";
+    const side: PatchSide = localPoint.z >= 0 ? "FRONT" : "BACK";
 
     let previewX: number;
 
@@ -388,25 +604,10 @@ export function Product({ mode = "view", customMode = "patch", onLocationChange 
     });
 
     setMarkerPosition([event.point.x, event.point.y, event.point.z]);
-
-    console.log("선택 위치:", {
-      side,
-
-      x: localPoint.x,
-
-      y: localPoint.y,
-
-      z: localPoint.z,
-
-      previewX: normalizedPreviewX,
-
-      previewY: normalizedPreviewY,
-    });
   };
 
   return (
     <>
-      {/* 실제 GLB 가방 */}
       <primitive
         object={scene}
         position={[0, 1.9, 0]}
@@ -434,35 +635,36 @@ export function Product({ mode = "view", customMode = "patch", onLocationChange 
         }}
       />
 
-      {/* 가방 위 커스텀 렌더링 */}
+      {/* layer 기반 렌더링 */}
       {bagMesh &&
         (mode === "draft" || mode === "applied") &&
         createPortal(
           <>
-            {/* 가방 위 패치 목록 */}
-            {visiblePatches.map((patch) => (
-              <BagPatchDecal
-                key={patch.id}
-                patch={patch}
-                editable={mode === "draft" && customMode === "patch"}
-                onDragStart={handlePatchDragStart}
-              />
-            ))}
+            {customRenderItems.map((item) => {
+              if (item.type === "patch") {
+                return (
+                  <BagPatchDecal
+                    key={`patch-${item.patch.id}`}
+                    patch={item.patch}
+                    editable={mode === "draft" && customMode === "patch"}
+                    onDragStart={handlePatchDragStart}
+                  />
+                );
+              }
 
-            {/* 가방 위 이니셜 목록 */}
-            {visibleInitials.map((initial) => (
-              <BagInitialDecal
-                key={initial.id}
-                initial={initial}
-                editable={mode === "draft" && customMode === "initial"}
-                onDragStart={handleInitialDragStart}
-              />
-            ))}
+              return (
+                <BagInitialDecal
+                  key={`initial-${item.initial.id}`}
+                  initial={item.initial}
+                  editable={mode === "draft" && customMode === "initial"}
+                  onDragStart={handleInitialDragStart}
+                />
+              );
+            })}
           </>,
           bagMesh,
         )}
 
-      {/* 위치 선택 프레임 */}
       {mode === "location-select" && markerPosition && (
         <Html
           position={markerPosition}
@@ -487,5 +689,4 @@ export function Product({ mode = "view", customMode = "patch", onLocationChange 
   );
 }
 
-// GLB 사전 로딩
 useGLTF.preload(bagUrl);
