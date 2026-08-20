@@ -7,6 +7,7 @@ import { CustomizeButton, OrderButton, DPPButton } from "@/components/custom/Cus
 import { ProductViewer } from "@/components/custom/viewer/ProductViewer";
 
 import OrderCompleteModal from "@/components/custom/OrderCompleteModal";
+import CustomLoading from "@/pages/Loading/CustomLoading";
 
 import { useBags } from "@/hooks/queries/useBags";
 import { usePatchPositions } from "@/hooks/queries/patch/usePatchPositions";
@@ -18,6 +19,7 @@ import floorBg from "@/assets/images/Floor.png";
 
 export default function CustomMain() {
   const location = useLocation();
+  const [isThreeReady, setIsThreeReady] = useState(false);
 
   // 서버 상태 초기화 기준
   const hydratedPatchBagIdRef = useRef<number | null>(null);
@@ -204,7 +206,7 @@ export default function CustomMain() {
 
       {/* 적용 완료 가방 상태 */}
       <div className="absolute inset-0">
-        <ProductViewer mode="applied" />
+        <ProductViewer onReady={() => setIsThreeReady(true)} />
       </div>
 
       <div className="pointer-events-none relative z-10 h-full">
@@ -227,6 +229,12 @@ export default function CustomMain() {
           <OrderButton />
         </div>
       </div>
+      {/* Three.js 렌더링이 완료될 때까지 로딩 화면 덮기 */}
+      {!isThreeReady && (
+        <div className="absolute inset-0 z-40">
+          <CustomLoading overlayOnly />
+        </div>
+      )}
 
       {isOrderCompleteModalOpen && (
         <OrderCompleteModal orderType="custom" onClose={() => setIsOrderCompleteModalOpen(false)} />

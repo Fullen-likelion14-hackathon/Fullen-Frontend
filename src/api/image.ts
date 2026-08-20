@@ -6,7 +6,6 @@ export type ImageDirName = "NATION" | "FEED";
 export const uploadImage = async (file: File, dirName: ImageDirName) => {
   const formData = new FormData();
   formData.append("file", file);
-
   const response = await api.post<{
     success: boolean;
     code: number;

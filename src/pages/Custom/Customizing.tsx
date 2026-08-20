@@ -12,6 +12,8 @@ import { CustomModeToggle } from "@/components/custom/common/CustomModeToggle";
 import PatchPanel from "@/components/custom/patch/PatchPanel";
 import InitialPanel from "@/components/custom/initials/InitialsPanel";
 
+import { ThreeLoadingOverlay } from "@/pages/Loading/CustomLoading";
+
 import { useBags } from "@/hooks/queries/useBags";
 import { usePatchPositions } from "@/hooks/queries/patch/usePatchPositions";
 import { useInitials } from "@/hooks/queries/initials/useInitials";
@@ -46,6 +48,13 @@ export default function Customizing() {
 
   const [mode, setMode] = useState<CustomMode>("patch");
 
+  // Three.js 첫 렌더링 완료 여부
+  const [isThreeReady, setIsThreeReady] = useState(false);
+
+  // 로딩 완료 후 가방 표시 여부
+  const [isThreeVisible, setIsThreeVisible] = useState(false);
+
+  // 경고 후 이동 대상 모드
   const [pendingMode, setPendingMode] = useState<CustomMode | null>(null);
 
   const [toast, setToast] = useState<ToastState>(null);
@@ -115,6 +124,10 @@ export default function Customizing() {
     hydratedPatchBagIdRef.current = null;
 
     hydratedInitialBagIdRef.current = null;
+
+    setIsThreeReady(false);
+
+    setIsThreeVisible(false);
   }, [userBagId]);
 
   // 서버 패치 상태 초기화
@@ -331,11 +344,35 @@ export default function Customizing() {
         "
       />
 
-      {/* 편집 가방 상태 */}
-      <div className="absolute inset-0 z-0">
-        <ProductViewer mode="draft" customMode={mode} />
+      {/* 현재 편집 가방 상태 */}
+      <div
+        className={`
+          absolute
+          inset-0
+          z-0
+          transition-opacity
+          duration-300
+          ${isThreeVisible ? "opacity-100" : "opacity-0"}
+        `}
+      >
+        <ProductViewer
+          mode="draft"
+          customMode={mode}
+          onReady={() => {
+            setIsThreeReady(true);
+          }}
+        />
       </div>
 
+      {/* Three.js 준비 중 로딩 애니메이션 */}
+      <ThreeLoadingOverlay
+        isReady={isThreeReady}
+        onComplete={() => {
+          setIsThreeVisible(true);
+        }}
+      />
+
+      {/* 화면 UI 레이어 */}
       <div className="pointer-events-none relative z-20 h-full">
         <div
           className="

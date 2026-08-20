@@ -1,6 +1,6 @@
-import { useRef } from "react";
+import { Suspense, useRef } from "react";
 
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useFrame } from "@react-three/fiber";
 
 import { Environment, OrbitControls } from "@react-three/drei";
 
@@ -38,6 +38,9 @@ interface ProductViewerProps {
 
   // 위치 선택 모드에서 선택한 위치 전달 함수임
   onLocationChange?: (location: PatchLocation) => void;
+
+  // Three.js 가방 첫 렌더링 완료 시 실행할 함수임
+  onReady?: () => void;
 }
 
 // 포인터 좌표 타입임
@@ -57,11 +60,32 @@ const getPointerDistance = (first: PointerPosition, second: PointerPosition) => 
 
   return Math.sqrt(dx * dx + dy * dy);
 };
+// Three.js 첫 렌더링 완료 여부 전달용 컴포넌트임
+function SceneReadyReporter({ onReady }: { onReady?: () => void }) {
+  const hasReportedRef = useRef(false);
+
+  useFrame(() => {
+    // 이미 완료 전달했으면 다시 실행하지 않음
+    if (hasReportedRef.current) {
+      return;
+    }
+
+    hasReportedRef.current = true;
+
+    // 실제 브라우저 화면에 한 프레임 그려진 뒤 완료 처리함
+    requestAnimationFrame(() => {
+      onReady?.();
+    });
+  });
+
+  return null;
+}
 
 export function ProductViewer({
   mode = "view",
   customMode = "patch",
   onLocationChange,
+  onReady,
 }: ProductViewerProps) {
   // 현재 화면을 누르고 있는 포인터 목록임
   const activePointersRef = useRef(new Map<number, PointerPosition>());
@@ -261,8 +285,12 @@ export function ProductViewer({
         {/* 가방 조명임 */}
         <directionalLight position={[4, 6, 5]} intensity={1.5} />
 
-        {/* 실제 3D 가방 렌더링임 */}
-        <Product mode={mode} customMode={customMode} onLocationChange={onLocationChange} />
+        {/* 실제 3D 가방이 준비된 뒤 첫 렌더링 완료 여부 확인함 */}
+        <Suspense fallback={null}>
+          <Product mode={mode} customMode={customMode} onLocationChange={onLocationChange} />
+
+          <SceneReadyReporter onReady={onReady} />
+        </Suspense>
 
         {/* 가방 아래 가짜 그림자임 */}
         <FloatingShadow />
