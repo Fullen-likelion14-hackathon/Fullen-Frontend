@@ -506,7 +506,7 @@ export default function MyOrderList() {
       </div>
 
       {/* 업데이트 된 목록 */}
-      <div className="mt-1 w-full">
+      <div className="-mt-2 w-full">
         <button
           type="button"
           onClick={() => {
