@@ -48,74 +48,81 @@ function App() {
     <BrowserRouter>
       <Routes>
         {/* Login / NFC 태깅 - 하단 네비게이션 없는 온보딩 플로우 */}
-        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<Login />} />
         <Route path="/nfc-tagging" element={<NfcTagging />} />
-        {/* 지도 페이지 - 하단 네비게이션 없음(전체화면) */}
+        {/* 지도 페이지 */}
         <Route path="/map" element={<Map />} />
-        {/* Passport - 카테고리 추가 페이지 - 하단 네비게이션 없음 (⚠️ /passport/:categoryId 보다 반드시 위에 있어야 함) */}
+        {/* Passport - 카테고리 추가 페이지  (⚠️ /passport/:categoryId 보다 반드시 위에 있어야 함) */}
         <Route path="/passport/new" element={<CategoryNew />} />
-        {/* Passport - 대륙별 상세 페이지 - 하단 네비게이션 없음, "전체" 모드는 continent에 "all" 전달 */}
+        {/* Passport - 대륙별 상세 페이지  "전체" 모드는 continent에 "all" 전달 */}
         <Route path="/passport/detail/:continent" element={<PassportDetail />} />
-        {/* Passport - 새 게시물 생성 페이지 - 하단 네비게이션 없음 (⚠️ /passport/:categoryId/:feedId 보다 반드시 위에 있어야 함) */}
+        {/* Passport - 새 게시물 생성 페이지 (⚠️ /passport/:categoryId/:feedId 보다 반드시 위에 있어야 함) */}
         <Route path="/passport/:categoryId/new" element={<FeedNew />} />
-        {/* Passport - 카테고리 수정 페이지 - 하단 네비게이션 없음 (⚠️ /passport/:categoryId/:feedId 보다 반드시 위에 있어야 함) */}
+        {/* Passport - 카테고리 수정 페이지  (⚠️ /passport/:categoryId/:feedId 보다 반드시 위에 있어야 함) */}
         <Route path="/passport/:categoryId/edit" element={<CategoryEdit />} />
-        {/* Passport - 카테고리 안 피드 목록 페이지 - 하단 네비게이션 없음 */}
+        {/* Passport - 카테고리 안 피드 목록 페이지 */}
         <Route path="/passport/:categoryId" element={<CategoryFeed />} />
-        {/* Passport - 게시물 수정 페이지 - 하단 네비게이션 없음 (⚠️ /passport/:categoryId/:feedId 보다 반드시 위에 있어야 함) */}
+        {/* Passport - 게시물 수정 페이지  (⚠️ /passport/:categoryId/:feedId 보다 반드시 위에 있어야 함) */}
         <Route path="/passport/:categoryId/:feedId/edit" element={<FeedEdit />} />
-        {/* Passport - 피드 상세 페이지 - 하단 네비게이션 없음 */}
+        {/* Passport - 피드 상세 페이지 */}
         <Route path="/passport/:categoryId/:feedId" element={<FeedDetail />} />
+        {/* MCoM - 피드 미리보기 페이지 */}
+        <Route path="/mcom/view/:feedId" element={<MCoMView />} />
+        {/* MCoM - 피드 디테일 페이지 */}
+        <Route path="/mcom/view/:feedId/detail" element={<McoMDetail />} />
+
+        {/* Custom 나의 가방 꾸미기, 주문하기 페이지 */}
+        <Route path="/custom/customizing" element={<Customizing />} />
+        <Route path="/custom/order" element={<CustomOrder />} />
+        <Route path="/custom/order/complete" element={<CustomOrderComplete />} />
+        <Route path="/custom/order/detail" element={<CustomOrderDetail />} />
+        <Route path="/custom/analysis/edit" element={<AIAnalysisEdit />} />
+
+        {/* Custom - AI 패치 생성 플로우 - 하단 네비게이션 없음 */}
+        <Route path="/custom/ai-patch" element={<AIPatchGenerator />} />
+        <Route path="/custom/ai-patch/options" element={<AIPatchOptionSelect />} />
+        <Route path="/custom/ai-patch/final-check" element={<AIPatchFinalCheck />} />
+        <Route path="/custom/ai-patch/result" element={<AIPatchResult />} />
+
+        {/* Custom - 1:1 커스텀 신청 */}
+        <Route path="/onetooneorder/request" element={<CustomRequest />} />
+        {/* Custom - 1:1 커스텀 작가 선택 */}
+        <Route path="/onetooneorder/artist" element={<CustomArtistSelect />} />
+        {/* Custom - 1:1 커스텀 위치 선택 */}
+        <Route path="/onetooneorder/location" element={<LocationSelect />} />
+        {/* Custom - 1:1 커스텀 주문 확인 */}
+        <Route path="/onetooneorder/confirm" element={<CustomRequestConfirm />} />
+        {/* 1:1 커스텀 주문 상세보기 */}
+        <Route path="/onetooneorder/detail/:premiumId" element={<OneToOneOrderDetail />} />
+        {/* 사진선택 */}
+        <Route path="/onetooneorder/photo" element={<PhotoSelect />} />
+
+        {/* MyPage- 마이페이지 주문내역 */}
+        <Route path="/mypage/orders" element={<MyOrderList />} />
+        {/* MyPage- 마이페이지 ddp */}
+        <Route path="/mypage/ddp" element={<DigitalProductPassport />} />
 
         <Route element={<RootLayout />}>
+          {/*로딩 페이지*/}
           <Route path="/loading" element={<CustomLoading />} />
 
           {/*메인 페이지 Passport - 내 여행기록 페이지*/}
           <Route path="/" element={<Passport />} />
+
           {/* MCoM - 피드 구경 페이지 */}
           <Route path="/mcom" element={<MCoM />} />
-          {/* MCoM - 피드 미리보기 페이지 */}
-          <Route path="/mcom/view/:feedId" element={<MCoMView />} />
-          {/* MCoM - 피드 디테일 페이지 */}
-          <Route path="/mcom/view/:feedId/detail" element={<McoMDetail />} />
 
           {/* Passport - 내 여행기록 페이지 */}
           <Route path="/passport" element={<Passport />} />
 
           {/* Custom - 제품 커스텀 페이지 */}
           <Route path="/custom" element={<CustomMain />} />
-          <Route path="/custom/customizing" element={<Customizing />} />
-          <Route path="/custom/order" element={<CustomOrder />} />
-          <Route path="/custom/order/complete" element={<CustomOrderComplete />} />
-          <Route path="/custom/order/detail" element={<CustomOrderDetail />} />
-          <Route path="/custom/analysis/edit" element={<AIAnalysisEdit />} />
-          {/* Custom - AI 패치 생성 플로우 - 하단 네비게이션 없음 */}
-          <Route path="/custom/ai-patch" element={<AIPatchGenerator />} />
-          <Route path="/custom/ai-patch/options" element={<AIPatchOptionSelect />} />
-          <Route path="/custom/ai-patch/final-check" element={<AIPatchFinalCheck />} />
-          <Route path="/custom/ai-patch/result" element={<AIPatchResult />} />
 
           {/* Custom - 1:1 커스텀 신청 메인 화면 */}
           <Route path="/onetooneorder" element={<OneToOneOrderMain />} />
-          {/* Custom - 1:1 커스텀 신청 */}
-          <Route path="/onetooneorder/request" element={<CustomRequest />} />
-          {/* Custom - 1:1 커스텀 작가 선택 */}
-          <Route path="/onetooneorder/artist" element={<CustomArtistSelect />} />
-          {/* Custom - 1:1 커스텀 위치 선택 */}
-          <Route path="/onetooneorder/location" element={<LocationSelect />} />
-          {/* Custom - 1:1 커스텀 주문 확인 */}
-          <Route path="/onetooneorder/confirm" element={<CustomRequestConfirm />} />
-          {/* 1:1 커스텀 주문 상세보기 */}
-          <Route path="/onetooneorder/detail/:premiumId" element={<OneToOneOrderDetail />} />
-          {/* 사진선택 */}
-          <Route path="/onetooneorder/photo" element={<PhotoSelect />} />
 
           {/* MyPage- 마이페이지 */}
           <Route path="/mypage" element={<MyPage />} />
-          {/* MyPage- 마이페이지 주문내역 */}
-          <Route path="/mypage/orders" element={<MyOrderList />} />
-          {/* MyPage- 마이페이지 ddp */}
-          <Route path="/mypage/ddp" element={<DigitalProductPassport />} />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -67,28 +67,8 @@ export default function FooterNavigation() {
   // /loading?to=/custom 형태의 query parameter 가져오기
   const searchParams = new URLSearchParams(search);
 
-  // 로딩 페이지에서는 실제 이동할 페이지를 기준으로
-  // 하단 네비게이션의 활성 메뉴를 결정
-  //
-  // /loading?to=/custom
-  // → targetPath = "/custom"
-  //
-  // /loading?to=/onetooneorder
-  // → targetPath = "/onetooneorder"
+  // 로딩 중이면 목적지(to)를 현재 페이지처럼 취급함
   const targetPath = pathname === "/loading" ? (searchParams.get("to") ?? "/custom") : pathname;
-
-  // Footer를 숨길 페이지
-  const hideFooter =
-    pathname.startsWith("/mcom/view/") ||
-    pathname.startsWith("/onetooneorder/") ||
-    pathname.startsWith("/mypage/orders") ||
-    pathname.startsWith("/mypage/ddp") ||
-    pathname.startsWith("/custom/order") ||
-    pathname.startsWith("/custom/analysis/edit");
-
-  if (hideFooter) {
-    return null;
-  }
 
   // 현재 주소와 일치하는 네비게이션 메뉴의 index 찾기
   const matchedIndex = navigationItems.findIndex(({ path }) => {
@@ -96,10 +76,8 @@ export default function FooterNavigation() {
     // 예: /passport/1 → /passport 메뉴 활성화
     return targetPath === path || targetPath.startsWith(`${path}/`);
   });
-
-  // 일치하는 메뉴가 없는 경우 -1이 되면서 에러가 발생하지 않도록 처리
-  // "/"에서는 기존대로 나의 여정(index 2)을 기본 활성화
-  const activeIndex = targetPath === "/" ? 2 : matchedIndex >= 0 ? matchedIndex : 2;
+  //현재 주소에 맞는 메뉴 찾으면 그 메뉴 활성화 하고, 못찾으면 나의 여정으로 기본 설정함
+  const activeIndex = matchedIndex >= 0 ? matchedIndex : 2;
 
   // 현재 선택된 메뉴 정보
   const activeItem = navigationItems[activeIndex];
