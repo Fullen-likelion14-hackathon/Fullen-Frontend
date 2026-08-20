@@ -19,15 +19,15 @@ const MCMWarningDialog = ({ onClose }: MCMWarningDialogProps) => {
             style={{ fontFamily: "Paperlogy" }}
             className="text-center text-base font-semibold pt-[10px] leading-5 tracking-tight text-black"
           >
-            나의 MCM 제품이 포함되지
+            MCM 제품이 포함되지 않은
             <br />
-            않은 사진은 올릴 수 없습니다
+            사진은 등록할 수 없습니다
           </p>
           <p
             style={{ fontFamily: "Paperlogy" }}
             className="text-center text-xs font-semibold pt-[5px] tracking-tight text-[#888D96]"
           >
-            사진을 다시 선택해주세요
+            MCM 제품이 포함된 사진을 선택해주세요
           </p>
         </div>
 

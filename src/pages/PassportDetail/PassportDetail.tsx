@@ -150,7 +150,7 @@ export default function PassportDetail() {
       className="relative mx-auto h-dvh w-full max-w-97.5 overflow-hidden bg-stone-100 bg-cover bg-center"
       style={{ backgroundImage: `url(${bgDetail})` }}
     >
-      <PageHeader title="나의 여정" backTo="/" />
+      <PageHeader title="나의 여정" backTo="/passport" />
 
       {homeContinent && (
         <div className="mx-auto mt-9.5 flex h-[42px] w-[300px] items-center gap-0.5 rounded-[10px] bg-stone-300 p-0.5">

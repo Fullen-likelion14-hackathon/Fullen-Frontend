@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDeletePost } from "@/hooks/queries/useDeletePost";
 
@@ -18,6 +18,13 @@ export default function FeedDetail() {
 
   const { data: feed, isLoading } = usePost(Number(feedId));
 
+  // 마우스 드래그 스크롤용 상태/ref
+  const sliderRef = useRef<HTMLDivElement>(null);
+  const isDraggingRef = useRef(false);
+  const dragStartXRef = useRef(0);
+  const dragStartScrollLeftRef = useRef(0);
+  const didDragRef = useRef(false);
+
   if (isLoading || !feed) {
     return <div>불러오는 중...</div>;
   }
@@ -25,6 +32,50 @@ export default function FeedDetail() {
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
     const { scrollLeft, clientWidth } = e.currentTarget;
     const index = Math.round(scrollLeft / clientWidth);
+    setActiveIndex(index);
+  };
+
+  // 드래그 시작
+  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    const slider = sliderRef.current;
+    if (!slider) return;
+
+    isDraggingRef.current = true;
+    didDragRef.current = false;
+    dragStartXRef.current = e.pageX - slider.offsetLeft;
+    dragStartScrollLeftRef.current = slider.scrollLeft;
+  };
+
+  // 드래그 중
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const slider = sliderRef.current;
+    if (!slider || !isDraggingRef.current) return;
+
+    e.preventDefault();
+    const x = e.pageX - slider.offsetLeft;
+    const walk = x - dragStartXRef.current;
+
+    // 살짝만 움직인 건 클릭으로 취급하기 위한 임계값
+    if (Math.abs(walk) > 5) {
+      didDragRef.current = true;
+    }
+
+    slider.scrollLeft = dragStartScrollLeftRef.current - walk;
+  };
+
+  // 드래그 종료 (스냅 위치로 정렬)
+  const endDrag = () => {
+    if (!isDraggingRef.current) return;
+    isDraggingRef.current = false;
+
+    const slider = sliderRef.current;
+    if (!slider) return;
+
+    const index = Math.round(slider.scrollLeft / slider.clientWidth);
+    slider.scrollTo({
+      left: index * slider.clientWidth,
+      behavior: "smooth",
+    });
     setActiveIndex(index);
   };
 
@@ -108,14 +159,24 @@ export default function FeedDetail() {
         {/* 사진 슬라이드 */}
         <div className="relative h-[435px] w-97.5 bg-stone-300">
           <div
+            ref={sliderRef}
             onScroll={handleScroll}
-            className="flex h-full w-full snap-x snap-mandatory overflow-x-auto scroll-smooth [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={endDrag}
+            onMouseLeave={endDrag}
+            className="flex h-full w-full cursor-grab snap-x snap-mandatory overflow-x-auto scroll-smooth select-none [-ms-overflow-style:none] [scrollbar-width:none] active:cursor-grabbing [&::-webkit-scrollbar]:hidden"
           >
             {feed.photoList.map((photo) => (
               <img
                 key={photo.photoId}
                 src={photo.imgURL}
                 alt=""
+                draggable={false}
+                onClick={(e) => {
+                  // 드래그 직후 발생하는 클릭(예: 이미지 링크 등)은 무시
+                  if (didDragRef.current) e.preventDefault();
+                }}
                 className="h-full w-full flex-shrink-0 snap-center object-cover"
               />
             ))}
