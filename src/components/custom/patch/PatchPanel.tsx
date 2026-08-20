@@ -32,31 +32,27 @@ import type { AIPatchApiType } from "@/types/ai";
 type PatchType = "ticket" | "stamp" | "label";
 
 interface PatchPanelProps {
-  // 현재 커스텀 대상 가방 id
   userBagId: number;
 
-  // 가방 상태 적용 완료 Toast 함수
   onApplied: () => void;
 }
 
-// 패치 위치 변경 여부 비교 함수
-const hasPatchPositionChanged = (draftPatch: PlacedPatch, appliedPatch: PlacedPatch) =>
+// 패치 서버 상태 변경 여부
+const hasPatchChanged = (draftPatch: PlacedPatch, appliedPatch: PlacedPatch) =>
   draftPatch.side !== appliedPatch.side ||
   draftPatch.posX !== appliedPatch.posX ||
   draftPatch.posY !== appliedPatch.posY ||
-  draftPatch.rotation !== appliedPatch.rotation;
+  draftPatch.rotation !== appliedPatch.rotation ||
+  draftPatch.scale !== appliedPatch.scale ||
+  draftPatch.flipped !== appliedPatch.flipped ||
+  draftPatch.layer !== appliedPatch.layer;
 
 export default function PatchPanel({ userBagId, onApplied }: PatchPanelProps) {
-  // 현재 선택 패치 종류
   const [selectedType, setSelectedType] = useState<PatchType | null>(null);
 
-  // 현재 활성 저장 패치 index
-  const [currentPatchIndex, setCurrentPatchIndex] = useState<number | null>(null);
-
-  // 영구 삭제 대상 패치
+  // 영구삭제 대상 원본 패치
   const [deleteTargetPatch, setDeleteTargetPatch] = useState<SavedPatch | null>(null);
 
-  // 서버 전송 패치 타입
   const apiPatchType: AIPatchApiType | undefined =
     selectedType === "ticket"
       ? "TICKET"
@@ -66,49 +62,44 @@ export default function PatchPanel({ userBagId, onApplied }: PatchPanelProps) {
           ? "LABEL"
           : undefined;
 
-  // 저장 패치 목록 Query
   const {
     data: serverPatches = [],
     isPending: isPatchesPending,
     isError: isPatchesError,
   } = usePatches(apiPatchType);
 
-  // 저장 패치 삭제 Mutation
   const { mutateAsync: deleteSavedPatch, isPending: isDeletingSavedPatch } = useDeletePatch();
 
-  // 가방 패치 적용 Mutation
   const { mutateAsync: savePatchPosition, isPending: isSavingPosition } = useSavePatchPosition();
 
-  // 가방 패치 위치 수정 Mutation
   const { mutateAsync: updatePatchPosition, isPending: isUpdatingPosition } =
     useUpdatePatchPosition();
 
-  // 가방 패치 위치 삭제 Mutation
   const { mutateAsync: deletePatchPosition, isPending: isDeletingPosition } =
     useDeletePatchPosition();
 
-  // 가방 상태 변경 여부
   const isDirty = useBagCustomStore((state) => state.isDirty);
 
-  // 현재 편집 패치 목록
   const draftPatches = useBagCustomStore((state) => state.draftPatches);
 
-  // 마지막 적용 패치 목록
   const appliedPatches = useBagCustomStore((state) => state.appliedPatches);
 
-  // 저장 패치 편집 가방 추가 함수
+  const activeSavedPatchId = useBagCustomStore((state) => state.activeSavedPatchId);
+
   const addDraftPatch = useBagCustomStore((state) => state.addDraftPatch);
 
-  // 패치 서버 위치 id 변경 함수
+  const setActiveSavedPatchId = useBagCustomStore((state) => state.setActiveSavedPatchId);
+
+  const removeUnappliedDraftPatchesBySavedPatchId = useBagCustomStore(
+    (state) => state.removeUnappliedDraftPatchesBySavedPatchId,
+  );
+
   const setDraftPatchPositionId = useBagCustomStore((state) => state.setDraftPatchPositionId);
 
-  // 편집 상태 실제 적용 함수
   const applyDraft = useBagCustomStore((state) => state.applyDraft);
 
-  // 서버 요청 진행 여부
   const isApplying = isSavingPosition || isUpdatingPosition || isDeletingPosition;
 
-  // 서버 저장 패치 UI 변환 목록
   const filteredPatches = useMemo<SavedPatch[]>(() => {
     if (!selectedType) {
       return [];
@@ -127,17 +118,61 @@ export default function PatchPanel({ userBagId, onApplied }: PatchPanelProps) {
     }));
   }, [serverPatches, selectedType]);
 
-  // 패치 종류 변경 시 활성 패치 초기화
-  useEffect(() => {
-    setCurrentPatchIndex(null);
-  }, [selectedType]);
+  // 목록 active index
+  const currentPatchIndex = useMemo(() => {
+    if (!activeSavedPatchId) {
+      return null;
+    }
 
-  // 패치 종류 선택
+    const index = filteredPatches.findIndex(
+      (patch) => String(patch.patchId) === activeSavedPatchId,
+    );
+
+    return index >= 0 ? index : null;
+  }, [activeSavedPatchId, filteredPatches]);
+
+  // 미적용 동일 원본 패치 존재 여부
+  const hasUnappliedDeleteTarget = useMemo(() => {
+    if (!deleteTargetPatch) {
+      return false;
+    }
+
+    const savedPatchId = String(deleteTargetPatch.patchId);
+
+    return draftPatches.some(
+      (patch) => patch.savedPatchId === savedPatchId && patch.patchPositionId === null,
+    );
+  }, [deleteTargetPatch, draftPatches]);
+
+  // 종류 변경 시 저장 패치 active 초기화
+  useEffect(() => {
+    setActiveSavedPatchId(null);
+  }, [selectedType, setActiveSavedPatchId]);
+
   const handleTypeSelect = (type: PatchType) => {
-    setSelectedType((prev) => (prev === type ? null : type));
+    setSelectedType((previousType) => (previousType === type ? null : type));
   };
 
-  // 저장 패치 가방 추가
+  // 저장 패치 active 변경
+  const handlePatchIndexChange = (index: number | null) => {
+    if (index === null) {
+      setActiveSavedPatchId(null);
+
+      return;
+    }
+
+    const patch = filteredPatches[index];
+
+    if (!patch) {
+      setActiveSavedPatchId(null);
+
+      return;
+    }
+
+    setActiveSavedPatchId(String(patch.patchId));
+  };
+
+  // 원본 패치 신규 인스턴스 생성
   const handlePatchActivate = (patch: SavedPatch) => {
     addDraftPatch({
       id: crypto.randomUUID(),
@@ -166,19 +201,17 @@ export default function PatchPanel({ userBagId, onApplied }: PatchPanelProps) {
     });
   };
 
-  // 현재 편집 패치 서버 적용
+  // 가방 패치 적용
   const handleApplyPatch = async () => {
     if (!isDirty || isApplying) {
       return;
     }
 
     try {
-      // 서버 신규 적용 대상
       const newPatches = draftPatches.filter(
         (patch) => patch.patchPositionId === null && patch.position !== null,
       );
 
-      // 서버 위치 수정 대상
       const updatedPatches = draftPatches.filter((draftPatch) => {
         if (draftPatch.patchPositionId === null) {
           return false;
@@ -192,10 +225,9 @@ export default function PatchPanel({ userBagId, onApplied }: PatchPanelProps) {
           return false;
         }
 
-        return hasPatchPositionChanged(draftPatch, appliedPatch);
+        return hasPatchChanged(draftPatch, appliedPatch);
       });
 
-      // 서버 위치 삭제 대상
       const deletedPatches = appliedPatches.filter((appliedPatch) => {
         if (appliedPatch.patchPositionId === null) {
           return false;
@@ -206,17 +238,18 @@ export default function PatchPanel({ userBagId, onApplied }: PatchPanelProps) {
         );
       });
 
-      // 기존 패치 위치 삭제 요청
+      // 가방에서 제거한 적용 패치 삭제
       await Promise.all(
         deletedPatches.map((patch) =>
           deletePatchPosition({
             patchPositionId: patch.patchPositionId!,
+
             userBagId,
           }),
         ),
       );
 
-      // 기존 패치 위치 수정 요청
+      // 기존 적용 패치 수정
       await Promise.all(
         updatedPatches.map((patch) =>
           updatePatchPosition({
@@ -232,12 +265,18 @@ export default function PatchPanel({ userBagId, onApplied }: PatchPanelProps) {
               posY: patch.posY,
 
               rotation: patch.rotation,
+
+              scale: patch.scale,
+
+              flipped: patch.flipped,
+
+              layer: patch.layer,
             },
           }),
         ),
       );
 
-      // 신규 패치 적용 요청
+      // 신규 패치 적용
       const savedPositions = await Promise.all(
         newPatches.map(async (patch) => {
           const response = await savePatchPosition({
@@ -252,6 +291,12 @@ export default function PatchPanel({ userBagId, onApplied }: PatchPanelProps) {
             posY: patch.posY,
 
             rotation: patch.rotation,
+
+            scale: patch.scale,
+
+            flipped: patch.flipped,
+
+            layer: patch.layer,
           });
 
           return {
@@ -262,26 +307,27 @@ export default function PatchPanel({ userBagId, onApplied }: PatchPanelProps) {
         }),
       );
 
-      // 서버 패치 위치 id 저장
       savedPositions.forEach(({ localPatchId, patchPositionId }) => {
         setDraftPatchPositionId(localPatchId, patchPositionId);
       });
 
-      // 편집 상태 적용 상태 확정
       applyDraft();
 
-      // 적용 완료 Toast
+      setActiveSavedPatchId(null);
+
       onApplied();
     } catch (error) {
       console.error("가방 패치 적용 실패", error);
     }
   };
 
-  // 저장 패치 영구 삭제
+  // 저장 패치 영구삭제
   const handleDeleteSavedPatch = async () => {
     if (!deleteTargetPatch || !apiPatchType || isDeletingSavedPatch) {
       return;
     }
+
+    const savedPatchId = String(deleteTargetPatch.patchId);
 
     try {
       await deleteSavedPatch({
@@ -290,7 +336,10 @@ export default function PatchPanel({ userBagId, onApplied }: PatchPanelProps) {
         type: apiPatchType,
       });
 
-      setCurrentPatchIndex(null);
+      // 현재 정책에서는 미적용 draft만 함께 제거
+      removeUnappliedDraftPatchesBySavedPatchId(savedPatchId);
+
+      setActiveSavedPatchId(null);
 
       setDeleteTargetPatch(null);
     } catch (error) {
@@ -298,51 +347,50 @@ export default function PatchPanel({ userBagId, onApplied }: PatchPanelProps) {
     }
   };
 
-  // 저장 패치 삭제 취소
   const handleCloseDeleteModal = () => {
     setDeleteTargetPatch(null);
   };
 
   return (
     <>
-      {/* 패치 사용 안내 버튼 */}
+      {/* 패치 안내 */}
       <div className="pointer-events-auto absolute inset-x-0 top-20 flex justify-start pl-11">
         <InfoButton content="패치를 선택한 후 화면 위로 끌어올려 원하는 위치에 자유롭게 배치하고 ‘가방에 적용하기’를 눌러주세요." />
       </div>
 
-      {/* AI 패치 생성 버튼 */}
+      {/* AI 패치 생성 */}
       <div className="pointer-events-auto absolute inset-x-0 top-20 flex justify-end pr-11">
         <CustomGenerateButton text="AI 패치 생성" path="/custom/ai-patch" />
       </div>
 
-      {/* 저장 패치 조회 로딩 상태 */}
+      {/* 저장 패치 로딩 */}
       {selectedType && isPatchesPending && (
         <div className="pointer-events-auto absolute inset-x-0 bottom-62 flex justify-center">
           <p className="text-sm font-semibold text-[#B89B84]">저장 패치를 불러오는 중입니다</p>
         </div>
       )}
 
-      {/* 저장 패치 조회 실패 상태 */}
+      {/* 저장 패치 오류 */}
       {selectedType && isPatchesError && (
         <div className="pointer-events-auto absolute inset-x-0 bottom-62 flex justify-center">
           <p className="text-sm font-semibold text-[#B89B84]">저장 패치를 불러오지 못했습니다</p>
         </div>
       )}
 
-      {/* 선택 종류 저장 패치 목록 */}
+      {/* 저장 패치 목록 */}
       {selectedType && !isPatchesPending && !isPatchesError && (
         <div className="pointer-events-auto absolute inset-x-0 bottom-62">
           <SavedPatchSlider
             patches={filteredPatches}
             currentIndex={currentPatchIndex}
-            onIndexChange={setCurrentPatchIndex}
+            onIndexChange={handlePatchIndexChange}
             onPatchActivate={handlePatchActivate}
             onDeleteRequest={setDeleteTargetPatch}
           />
         </div>
       )}
 
-      {/* 패치 종류 선택 영역 */}
+      {/* 패치 종류 */}
       <div className="pointer-events-auto absolute inset-x-0 bottom-55 flex items-center justify-center gap-2">
         <PatchTypeButton
           type="ticket"
@@ -372,7 +420,7 @@ export default function PatchPanel({ userBagId, onApplied }: PatchPanelProps) {
         />
       </div>
 
-      {/* 가방 상태 적용 버튼 */}
+      {/* 가방 적용 */}
       <div className="pointer-events-auto absolute inset-x-0 bottom-35 flex justify-center">
         <ApplyButton
           text={isApplying ? "적용 중" : "가방에 적용하기"}
@@ -381,11 +429,15 @@ export default function PatchPanel({ userBagId, onApplied }: PatchPanelProps) {
         />
       </div>
 
-      {/* 저장 패치 영구 삭제 WarningModal */}
+      {/* 저장 패치 영구삭제 */}
       <WarningModal
         isOpen={deleteTargetPatch !== null}
         title="해당 패치를 영구 삭제하시겠습니까?"
-        description="한번 영구삭제한 패치는 복원할 수 없습니다."
+        description={
+          hasUnappliedDeleteTarget
+            ? "아직 가방에 적용하지 않은 패치입니다. 영구삭제하면 현재 가방 위에 배치한 패치도 함께 삭제됩니다."
+            : "한번 영구삭제한 패치는 복원할 수 없습니다."
+        }
         primaryButtonText="보관 유지하기"
         secondaryButtonText={isDeletingSavedPatch ? "삭제 중" : "영구 삭제하기"}
         imageUrl={deleteTargetPatch?.image}

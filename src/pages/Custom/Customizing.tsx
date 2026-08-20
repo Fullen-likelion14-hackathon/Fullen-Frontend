@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -15,6 +15,8 @@ import InitialPanel from "@/components/custom/initials/InitialsPanel";
 import { ThreeLoadingOverlay } from "@/pages/Loading/CustomLoading";
 
 import { useBags } from "@/hooks/queries/useBags";
+import { usePatchPositions } from "@/hooks/queries/patch/usePatchPositions";
+import { useInitials } from "@/hooks/queries/initials/useInitials";
 
 import { useBagCustomStore } from "@/stores/bagCustomStore";
 
@@ -29,7 +31,6 @@ type ToastState = {
 } | null;
 
 interface CustomizingLocationState {
-  // AI 패치 저장 후 이동 여부
   showPatchCreatedToast?: boolean;
 }
 
@@ -38,10 +39,13 @@ export default function Customizing() {
 
   const navigate = useNavigate();
 
-  // 이전 페이지 전달 State
+  // 서버 상태 초기화 기준
+  const hydratedPatchBagIdRef = useRef<number | null>(null);
+
+  const hydratedInitialBagIdRef = useRef<number | null>(null);
+
   const locationState = location.state as CustomizingLocationState | null;
 
-  // 현재 커스텀 모드
   const [mode, setMode] = useState<CustomMode>("patch");
 
   // Three.js 첫 렌더링 완료 여부
@@ -53,28 +57,36 @@ export default function Customizing() {
   // 경고 후 이동 대상 모드
   const [pendingMode, setPendingMode] = useState<CustomMode | null>(null);
 
-  // 완료 안내 Toast 상태
   const [toast, setToast] = useState<ToastState>(null);
 
-  // 소유 가방 목록 Query
   const { data: bags = [], isPending: isBagsPending, isError: isBagsError } = useBags();
 
-  // 현재 커스텀 대상 가방 id
   const userBagId = bags[0]?.userBagId;
 
-  // 적용 전 변경사항 존재 여부
+  const {
+    data: patchPositions = [],
+    isPending: isPatchPositionsPending,
+    isError: isPatchPositionsError,
+  } = usePatchPositions(userBagId);
+
+  const {
+    data: initials = [],
+    isPending: isInitialsPending,
+    isError: isInitialsError,
+  } = useInitials(userBagId);
+
   const isDirty = useBagCustomStore((state) => state.isDirty);
 
-  // 적용 전 변경사항 취소 함수
   const discardDraft = useBagCustomStore((state) => state.discardDraft);
 
-  // 패치 선택 함수
   const selectPlacedPatch = useBagCustomStore((state) => state.selectPlacedPatch);
 
-  // 이니셜 선택 함수
   const selectPlacedInitial = useBagCustomStore((state) => state.selectPlacedInitial);
 
-  // AI 패치 저장 후 생성 Toast
+  const setAppliedPatches = useBagCustomStore((state) => state.setAppliedPatches);
+
+  const setAppliedInitials = useBagCustomStore((state) => state.setAppliedInitials);
+
   useEffect(() => {
     if (!locationState?.showPatchCreatedToast) {
       return;
@@ -88,11 +100,11 @@ export default function Customizing() {
 
     navigate(location.pathname, {
       replace: true,
+
       state: null,
     });
   }, [location.pathname, locationState, navigate]);
 
-  // Toast 자동 종료
   useEffect(() => {
     if (!toast) {
       return;
@@ -107,7 +119,125 @@ export default function Customizing() {
     };
   }, [toast]);
 
-  // 실제 커스텀 모드 전환
+  // 사용자 가방 변경 기준
+  useEffect(() => {
+    hydratedPatchBagIdRef.current = null;
+
+    hydratedInitialBagIdRef.current = null;
+
+    setIsThreeReady(false);
+
+    setIsThreeVisible(false);
+  }, [userBagId]);
+
+  // 서버 패치 상태 초기화
+  useEffect(() => {
+    if (userBagId === undefined) {
+      return;
+    }
+
+    if (isPatchPositionsPending || isPatchPositionsError) {
+      return;
+    }
+
+    if (hydratedPatchBagIdRef.current === userBagId) {
+      return;
+    }
+
+    const restoredPatches = patchPositions.map((patch) => ({
+      id: `server-patch-${patch.patchPositionId}`,
+
+      patchPositionId: patch.patchPositionId,
+
+      savedPatchId: String(patch.patchId),
+
+      image: patch.imgUrl,
+
+      // Product UV 복원 대상
+      position: null,
+
+      normal:
+        patch.side === "FRONT"
+          ? ([0, 0, 1] as [number, number, number])
+          : ([0, 0, -1] as [number, number, number]),
+
+      side: patch.side,
+
+      posX: patch.posX,
+
+      posY: patch.posY,
+
+      rotation: patch.rotation,
+
+      scale: patch.scale,
+
+      flipped: patch.flipped,
+
+      layer: patch.layer,
+    }));
+
+    setAppliedPatches(restoredPatches);
+
+    hydratedPatchBagIdRef.current = userBagId;
+  }, [
+    isPatchPositionsError,
+    isPatchPositionsPending,
+    patchPositions,
+    setAppliedPatches,
+    userBagId,
+  ]);
+
+  // 서버 이니셜 상태 초기화
+  useEffect(() => {
+    if (userBagId === undefined) {
+      return;
+    }
+
+    if (isInitialsPending || isInitialsError) {
+      return;
+    }
+
+    if (hydratedInitialBagIdRef.current === userBagId) {
+      return;
+    }
+
+    const restoredInitials = initials.map((initial) => ({
+      id: `server-initial-${initial.initialId}`,
+
+      initialId: initial.initialId,
+
+      text: initial.initialPhrase,
+
+      color: initial.color,
+
+      fontWeight: initial.isBold ? ("bold" as const) : ("normal" as const),
+
+      // Product UV 복원 대상
+      position: null,
+
+      normal:
+        initial.side === "FRONT"
+          ? ([0, 0, 1] as [number, number, number])
+          : ([0, 0, -1] as [number, number, number]),
+
+      side: initial.side,
+
+      posX: initial.posX,
+
+      posY: initial.posY,
+
+      rotation: initial.rotation,
+
+      scale: initial.scale,
+
+      layer: initial.layer,
+    }));
+
+    setAppliedInitials(restoredInitials);
+
+    hydratedInitialBagIdRef.current = userBagId;
+  }, [initials, isInitialsError, isInitialsPending, setAppliedInitials, userBagId]);
+
   const changeMode = (nextMode: CustomMode) => {
     if (nextMode === "patch") {
       selectPlacedInitial(null);
@@ -120,7 +250,6 @@ export default function Customizing() {
     setMode(nextMode);
   };
 
-  // 커스텀 모드 변경
   const handleModeChange = (nextMode: CustomMode) => {
     if (nextMode === mode) {
       return;
@@ -135,7 +264,6 @@ export default function Customizing() {
     changeMode(nextMode);
   };
 
-  // 가방 상태 적용 완료 Toast
   const handleApplied = () => {
     setToast({
       type: "applied",
@@ -144,7 +272,6 @@ export default function Customizing() {
     });
   };
 
-  // 미적용 변경 폐기 후 모드 전환
   const handleConfirmModeChange = () => {
     if (!pendingMode) {
       return;
@@ -159,15 +286,12 @@ export default function Customizing() {
     changeMode(nextMode);
   };
 
-  // 모드 전환 WarningModal 종료
   const handleCloseModeWarning = () => {
     setPendingMode(null);
   };
 
-  // 이니셜 이동 여부
   const isMovingToInitial = pendingMode === "initial";
 
-  // 가방 목록 로딩 상태
   if (isBagsPending) {
     return (
       <main className="mx-auto flex h-dvh w-full max-w-97.5 items-center justify-center bg-[#F9F4F0]">
@@ -176,7 +300,6 @@ export default function Customizing() {
     );
   }
 
-  // 가방 목록 오류 상태
   if (isBagsError || userBagId === undefined) {
     return (
       <main className="mx-auto flex h-dvh w-full max-w-97.5 items-center justify-center bg-[#F9F4F0]">
@@ -199,12 +322,11 @@ export default function Customizing() {
     >
       <PageHeader title="나의 가방 꾸미기" variant="plain" backTo="/custom" />
 
-      {/* 생성 / 적용 완료 Toast */}
       {toast && (
         <NoticeToast type={toast.type} message={toast.message} positionClassName="top-38" />
       )}
 
-      {/* 고정 배경 이미지 */}
+      {/* 고정 배경 */}
       <img
         src={floorBg}
         alt=""
@@ -225,20 +347,33 @@ export default function Customizing() {
       {/* 현재 편집 가방 상태 */}
       <div
         className={`
-          absolute inset-0 z-0
-          transition-opacity duration-300
+          absolute
+          inset-0
+          z-0
+          transition-opacity
+          duration-300
           ${isThreeVisible ? "opacity-100" : "opacity-0"}
         `}
       >
-        <ProductViewer mode="draft" customMode={mode} onReady={() => setIsThreeReady(true)} />
+        <ProductViewer
+          mode="draft"
+          customMode={mode}
+          onReady={() => {
+            setIsThreeReady(true);
+          }}
+        />
       </div>
 
       {/* Three.js 준비 중 로딩 애니메이션 */}
-      <ThreeLoadingOverlay isReady={isThreeReady} onComplete={() => setIsThreeVisible(true)} />
+      <ThreeLoadingOverlay
+        isReady={isThreeReady}
+        onComplete={() => {
+          setIsThreeVisible(true);
+        }}
+      />
 
       {/* 화면 UI 레이어 */}
       <div className="pointer-events-none relative z-20 h-full">
-        {/* 커스텀 모드 변경 토글 */}
         <div
           className="
             pointer-events-auto
@@ -252,14 +387,11 @@ export default function Customizing() {
           <CustomModeToggle mode={mode} onChange={handleModeChange} />
         </div>
 
-        {/* 패치 모드 UI */}
         {mode === "patch" && <PatchPanel userBagId={userBagId} onApplied={handleApplied} />}
 
-        {/* 이니셜 모드 UI */}
-        {mode === "initial" && <InitialPanel onApplied={handleApplied} />}
+        {mode === "initial" && <InitialPanel userBagId={userBagId} onApplied={handleApplied} />}
       </div>
 
-      {/* 커스텀 모드 변경 WarningModal */}
       <WarningModal
         isOpen={pendingMode !== null}
         title={
