@@ -4,12 +4,10 @@ import { useLocation, useNavigate } from "react-router-dom";
 import PageHeader from "@/components/common/PageHeader";
 import WarningModal from "@/components/common/modal/WarningModal";
 
-type AnalysisEditLocationState = {
-  // 기존 분석 내용
-  analysisText?: string;
+import { useRetryAIAnalysis } from "@/hooks/queries/ai/useAIAnalysis";
 
-  // 분석 완료 후 돌아갈 페이지
-  returnTo?: string;
+type AnalysisEditLocationState = {
+  analysisText?: string;
 };
 
 export default function AIAnalysisEdit() {
@@ -18,30 +16,33 @@ export default function AIAnalysisEdit() {
 
   const locationState = location.state as AnalysisEditLocationState | null;
 
-  // 기존 분석 내용
-  const initialAnalysis = locationState?.analysisText ?? "";
+  const [analysisText, setAnalysisText] = useState(locationState?.analysisText ?? "");
 
-  // 수정 중인 분석 내용
-  const [analysisText, setAnalysisText] = useState(initialAnalysis);
-
-  // 수정 중단 모달
   const [isExitModalOpen, setIsExitModalOpen] = useState(false);
 
-  // 입력값 존재 여부
+  const { mutateAsync: retryAnalysis, isPending } = useRetryAIAnalysis();
+
   const isValid = analysisText.trim().length > 0;
 
-  // 분석하기
-  const handleAnalyze = () => {
-    if (!isValid) return;
+  const handleAnalyze = async () => {
+    if (!isValid || isPending) return;
 
-    navigate(locationState?.returnTo ?? "/custom", {
-      state: {
-        analysisText: analysisText.trim(),
-      },
-    });
+    try {
+      const response = await retryAnalysis({
+        request: analysisText.trim(),
+      });
+
+      navigate("/custom/ai-patch", {
+        replace: true,
+        state: {
+          editedAnalysis: response.data,
+        },
+      });
+    } catch (error) {
+      console.error("AI 여행 분석 재분석 실패", error);
+    }
   };
 
-  // 수정 중단
   const handleExit = () => {
     setIsExitModalOpen(false);
     navigate("/custom/ai-patch");
@@ -49,21 +50,19 @@ export default function AIAnalysisEdit() {
 
   return (
     <main className="relative mx-auto min-h-dvh w-full max-w-97.5 overflow-hidden bg-[#EDE6DF] text-[#192C44]">
-      {/* 헤더 */}
       <PageHeader title="여행 스타일 분석 수정하기" onBackClick={() => setIsExitModalOpen(true)} />
 
-      {/* 큰 반원 배경 */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute left-1/2 top-120 z-0 h-160 w-240 -translate-x-1/2 rounded-[90%] bg-[#F9F4F0]"
       />
 
-      {/* 분석 내용 입력 영역 */}
       <section className="relative z-10 px-7 pb-32 pt-28">
         <div className="relative h-95 w-full">
           <textarea
             value={analysisText}
             onChange={(event) => setAnalysisText(event.target.value)}
+            disabled={isPending}
             className="
               h-full
               w-full
@@ -78,10 +77,11 @@ export default function AIAnalysisEdit() {
               leading-7
               text-[#465264]
               outline-none
+              disabled:cursor-not-allowed
+              disabled:opacity-60
             "
           />
 
-          {/* 입력값이 없을 때 중앙 안내 문구 */}
           {!analysisText && (
             <p className="pointer-events-none absolute inset-0 flex items-center justify-center text-[16px] font-semibold text-[#B59780]">
               원하는 분석 내용을 작성해주세요
@@ -90,11 +90,10 @@ export default function AIAnalysisEdit() {
         </div>
       </section>
 
-      {/* 하단 분석 버튼 */}
       <div className="fixed bottom-20 left-1/2 z-20 w-full max-w-97.5 -translate-x-1/2 bg-[#F9F4F0] px-7 pb-7 pt-3">
         <button
           type="button"
-          disabled={!isValid}
+          disabled={!isValid || isPending}
           onClick={handleAnalyze}
           className={`
             h-16
@@ -105,14 +104,17 @@ export default function AIAnalysisEdit() {
             text-white
             shadow-md
             transition
-            ${isValid ? "cursor-pointer bg-[#192C44]" : "cursor-not-allowed bg-[#D2D2D2]"}
+            ${
+              isValid && !isPending
+                ? "cursor-pointer bg-[#192C44]"
+                : "cursor-not-allowed bg-[#D2D2D2]"
+            }
           `}
         >
-          분석하기
+          {isPending ? "분석 중..." : "분석하기"}
         </button>
       </div>
 
-      {/* 수정 중단 경고 모달 */}
       <WarningModal
         isOpen={isExitModalOpen}
         title="수정을 중단하시겠습니까?"
