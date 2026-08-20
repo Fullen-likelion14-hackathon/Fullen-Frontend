@@ -133,7 +133,7 @@ export default function Login() {
       <Button
         onClick={handleTestLogin}
         disabled={isPending}
-        className="absolute bottom-[60px] left-1/2 h-14 w-80 max-w-full -translate-x-1/2 shrink-0 rounded-[10px] bg-stone-300 px-6 py-2 text-xl font-bold tracking-tight text-slate-800 shadow-[0_0_10px_0_rgba(81,66,54,0.20),inset_0_1px_1px_1px_rgba(255,255,255,0.10),inset_0_-1px_1px_1px_rgba(0,0,0,0.10)] hover:bg-stone-300/90"
+        className="absolute bottom-[60px] left-1/2 h-14 w-80 max-w-full -translate-x-1/2 shrink-0 rounded-[10px] bg-stone-300 px-6 py-2 text-xl font-bold tracking-tight text-slate-800 shadow-[0_0_10px_0_rgba(81,66,54,0.20),inset_0_1px_1px_1px_rgba(255,255,255,0.10),inset_0_-1px_1px_1px_rgba(0,0,0,0.10)] transition-colors hover:bg-[#A3642B] hover:text-[#F5F0EA]"
       >
         {isPending ? "로그인 중..." : "테스트 버튼으로 시작하기"}
       </Button>

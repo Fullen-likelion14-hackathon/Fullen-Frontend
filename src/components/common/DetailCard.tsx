@@ -2,7 +2,6 @@
 import type { JourneyItem } from "@/api/journey";
 import { useJourney } from "@/hooks/queries/useJourney";
 import fileIcon from "@/assets/icons/file.png"; // TODO: 실제 파일명으로 교체
-import { countryNameKoMap } from "@/mocks/countryFlags.mock";
 
 const BADGE_SHADOW =
   "shadow-[0_0_6.63px_0_rgba(94,140,136,0.25),inset_0_-0.99px_0.99px_0_rgba(159,159,159,0.25),inset_0_1.99px_1.99px_0_rgba(255,255,255,0.25)]";
@@ -55,7 +54,7 @@ export function DetailCard({ category, isActive }: DetailCardProps) {
           <div
             className={`font-['Paperlogy'] font-bold tracking-wide text-white ${isActive ? "text-2xl" : "text-1xl"}`}
           >
-            {countryNameKoMap[nationKRName] ?? nationKRName}
+            {nationKRName}
           </div>
           <div
             className={`font-['Paperlogy'] font-semibold tracking-tight text-white ${isActive ? "text-base" : "text-sm"}`}
