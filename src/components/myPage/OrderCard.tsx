@@ -1,29 +1,53 @@
 import { useNavigate } from "react-router-dom";
+import { CalendarDays, ChevronRight } from "lucide-react";
 
 import type { Order } from "@/types/order";
 
 export default function OrderCard({ type, orderId, createdAt, frontImgUrl }: Order) {
   const navigate = useNavigate();
   const formattedDate = createdAt.split("T")[0].replaceAll("-", ".");
-  const orderTypeLabel = type === "PREMIUM" ? "1:1 커스텀" : type;
+  const orderTypeLabel =
+    type === "PREMIUM" ? "1:1 커스텀" : type === "REGULAR" ? "나만의 가방 꾸미기" : type;
   const handleDetailClick = () => {
     navigate(`/onetooneorder/detail/${orderId}`);
   };
 
   return (
-    <article className="pb-6">
-      <img src={frontImgUrl} alt="커스텀 가방" className="mx-auto h-56 w-full object-contain" />
+    <article className="mx-auto my-4 rounded-2xl w-90 border border-[#dfd2c5] bg-[#fffdf9] p-4 shadow-[0_4px_14px_rgba(25,41,64,0.06)]">
+      <div className="flex items-center gap-4">
+        {/* 가방 이미지 */}
+        <div className="flex h-32 w-[43%] shrink-0 items-center justify-center rounded-xl bg-[#f5efe9]">
+          <img src={frontImgUrl} alt="커스텀 가방" className="h-full w-full object-contain p-2" />
+        </div>
 
-      <button
-        type="button"
-        onClick={handleDetailClick}
-        className="mt-1 w-full rounded-full border-2 border-[#ac927c] bg-white py-2 text-[20px] font-bold text-[#192940]"
-      >
-        주문 내역 상세보기
-      </button>
-      <div className="mt-2 flex items-center justify-center gap-10 text-[16px] font-bold text-[#e5cfbb]">
-        <span>{orderTypeLabel}</span>
-        <time>{formattedDate}</time>
+        {/* 주문 정보 */}
+        <div className="flex min-w-0 flex-1 flex-col">
+          {/* 주문 타입 */}
+          <span className="w-fit rounded-lg bg-[#eadbc9] px-3 py-1 text-[14px] font-bold text-[#70482d]">
+            {orderTypeLabel}
+          </span>
+
+          <div className="my-3 h-px w-full bg-[#e8ddd2]" />
+
+          {/* 주문 날짜 */}
+          <div className="flex items-center gap-2 text-[#192940]">
+            <CalendarDays size={18} strokeWidth={1.8} className="text-[#8a5a34]" />
+
+            <time className="text-[15px] font-semibold">{formattedDate}</time>
+          </div>
+
+          {/* 상세보기 */}
+          <button
+            type="button"
+            onClick={handleDetailClick}
+            className="cursor-pointer
+            mt-3 flex w-full items-center justify-between rounded-xl border border-[#8a5a34] bg-white px-4 py-2 text-[15px] font-bold text-[#55321f] transition-colors hover:bg-[#f7f0e9]"
+          >
+            <span>주문 내역 상세보기</span>
+
+            <ChevronRight size={19} strokeWidth={2} className="text-[#8a5a34]" />
+          </button>
+        </div>
       </div>
     </article>
   );
