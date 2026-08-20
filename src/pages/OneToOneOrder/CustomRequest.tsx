@@ -11,7 +11,7 @@ import RequestTextBox from "@/components/custom/common/selection/RequestTextBox"
 import CustomStep from "@/components/custom/common/step/CustomStep";
 import CustomStepButton from "@/components/custom/common/step/CustomStepButton";
 
-import { useArtist } from "@/hooks/queries/artist/useArtist";
+import { useArtists } from "@/hooks/queries/artist/useArtists";
 import { useBag, useBags } from "@/hooks/queries/useBags";
 
 import type { Artist } from "@/types/artist";
@@ -75,30 +75,20 @@ const CustomRequest = () => {
   // 사용자 소유 가방 목록 조회
   const { data: bags = [] } = useBags();
 
-  // 현재 서비스에서는 첫 번째 소유 가방을 커스텀 대상으로 사용
+  // 현재 서비스에서는 소유 가방 한 개를 커스텀 대상으로 사용
   const userBagId = bags[0]?.userBagId;
 
-  // 현재 가방 상세 조회
+  // 가방 상세 조회
   // 앞면 / 뒷면 이미지를 위치 선택 미리보기에 사용
   const { data: bagDetail } = useBag(userBagId);
 
-  // 선택한 작가 상세 정보 조회
-  const {
-    data: selectedArtistDetail,
-    isPending: isArtistPending,
-    isError: isArtistError,
-  } = useArtist(selectedArtistId ?? undefined);
+  // 작가 리스트 조회
+  // ArtistSelectBox에서 필요한 대표 이미지(imgUrl)도 리스트 API에서 가져옴
+  const { data: artists = [], isPending: isArtistsPending, isError: isArtistsError } = useArtists();
 
-  // ArtistDetail → Artist 형태로 변환
-  const selectedArtist: Artist | null = selectedArtistDetail
-    ? {
-        artistId: selectedArtistDetail.artistId,
-        artistName: selectedArtistDetail.artistName,
-        imgUrl: selectedArtistDetail.imgUrls?.[0] ?? "",
-        nationImgUrl: selectedArtistDetail.nationImgUrl,
-        introSummary: selectedArtistDetail.introSummary,
-      }
-    : null;
+  // 리스트에서 현재 선택한 작가 찾기
+  const selectedArtist: Artist | null =
+    artists.find((artist) => artist.artistId === selectedArtistId) ?? null;
 
   // 사진 선택 페이지 이동
   const handlePhotoSelect = () => {
@@ -158,7 +148,8 @@ const CustomRequest = () => {
   // 2단계 → 3단계
   const handleArtistNext = () => {
     if (selectedArtistId === null) return;
-    if (isArtistPending || isArtistError) return;
+    if (isArtistsPending || isArtistsError) return;
+    if (!selectedArtist) return;
 
     setCurrentStep(3);
   };
@@ -199,6 +190,13 @@ const CustomRequest = () => {
       setCurrentStep((prev) => prev - 1);
     }
   };
+
+  // 최종 제출 가능 여부
+  const isSubmitDisabled =
+    !requestText.trim() ||
+    selectedPhotoId === null ||
+    selectedArtistId === null ||
+    !selectedLocation;
 
   // 최종 입력 완료
   const handleSubmit = () => {
@@ -329,7 +327,7 @@ const CustomRequest = () => {
               onNext={handleArtistNext}
               onPrevious={handlePrevious}
               disabled={
-                selectedArtistId === null || isArtistPending || isArtistError || !selectedArtist
+                selectedArtistId === null || isArtistsPending || isArtistsError || !selectedArtist
               }
               showPrevious
             />
@@ -355,7 +353,7 @@ const CustomRequest = () => {
               onNext={handleSubmit}
               onPrevious={handlePrevious}
               nextLabel="입력 완료하기"
-              disabled={!requestText.trim()}
+              disabled={isSubmitDisabled}
               showPrevious
             />
           </div>

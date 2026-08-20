@@ -2,14 +2,14 @@ import bagImage from "@/assets/images/testBag.png";
 
 import ConfirmStep from "@/components/custom/common/step/ConfirmStep";
 
-import type { ArtistDetail } from "@/types/artist";
+import type { Artist } from "@/types/artist";
 import type { PatchLocation } from "@/types/patchLocation";
 
 interface OrderDetailContentProps {
   selectedImage?: string;
 
-  // 주문 확인 페이지에서 사용하는 작가 상세 데이터
-  selectedArtist?: ArtistDetail | null;
+  // 주문 확인 페이지에서 사용하는 작가 리스트 데이터
+  selectedArtist?: Artist | null;
 
   // 주문 상세 조회 API에서 사용하는 작가 데이터
   artistName?: string;
@@ -36,8 +36,11 @@ export default function OrderDetailContent({
 }: OrderDetailContentProps) {
   // 주문 확인 페이지 / 주문 상세 페이지 모두 대응
   const displayArtistName = selectedArtist?.artistName ?? artistName;
-  const displayArtistImage = selectedArtist?.imgUrls?.[0] ?? artistImage;
+
+  const displayArtistImage = selectedArtist?.imgUrl ?? artistImage;
+
   const displayArtistIntro = selectedArtist?.introSummary ?? artistIntro;
+
   const displayNationImage = selectedArtist?.nationImgUrl;
 
   return (
@@ -57,17 +60,27 @@ export default function OrderDetailContent({
       <ConfirmStep step={2} title="작가 선택" onEdit={onEdit ? () => onEdit(2) : undefined}>
         {displayArtistName && (
           <div className="flex h-24 overflow-hidden rounded-xl border-2 border-[#192C44] bg-white">
+            {/* 작가 대표 이미지 */}
             {displayArtistImage && (
               <img src={displayArtistImage} alt={displayArtistName} className="w-24 object-cover" />
             )}
 
+            {/* 작가 정보 */}
             <div className="flex flex-1 flex-col justify-center px-3">
+              {/* 국가 이미지 */}
               {displayNationImage && (
-                <img src={displayNationImage} alt="" className="mb-1 h-4 w-6 object-cover" />
+                <img
+                  src={displayNationImage}
+                  alt=""
+                  aria-hidden="true"
+                  className="mb-1 h-4 w-6 object-cover"
+                />
               )}
 
+              {/* 작가 이름 */}
               <p className="font-bold">{displayArtistName}</p>
 
+              {/* 작가 소개 */}
               {displayArtistIntro && (
                 <p className="mt-1 line-clamp-2 text-xs text-[#515C6C]">{displayArtistIntro}</p>
               )}
@@ -82,6 +95,7 @@ export default function OrderDetailContent({
           <div className="relative flex h-52 items-center justify-center overflow-hidden rounded-xl border-2 border-[#192C44] bg-white">
             <img src={bagImage} alt="커스텀 가방" className="w-[90%] object-contain" />
 
+            {/* 선택 위치 */}
             <div
               className="absolute h-14 w-14 border-2 border-[#192C44] bg-transparent"
               style={{
