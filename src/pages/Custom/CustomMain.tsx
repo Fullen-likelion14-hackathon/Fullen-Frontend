@@ -24,7 +24,6 @@ export default function CustomMain() {
 
   // 서버 상태 초기화 기준
   const hydratedPatchBagIdRef = useRef<number | null>(null);
-
   const hydratedInitialBagIdRef = useRef<number | null>(null);
 
   const [isOrderCompleteModalOpen, setIsOrderCompleteModalOpen] = useState(
@@ -54,7 +53,6 @@ export default function CustomMain() {
   // 사용자 가방 변경 기준
   useEffect(() => {
     hydratedPatchBagIdRef.current = null;
-
     hydratedInitialBagIdRef.current = null;
 
     setIsThreeReady(false);
@@ -104,6 +102,10 @@ export default function CustomMain() {
       flipped: patch.flipped,
 
       layer: patch.layer,
+
+      // 서버 기준 수정 가능 여부
+      // 주문 완료 패치는 false
+      isEditable: patch.isEditable,
     }));
 
     setAppliedPatches(restoredPatches);

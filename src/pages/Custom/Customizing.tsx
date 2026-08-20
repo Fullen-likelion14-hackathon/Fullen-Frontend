@@ -26,7 +26,6 @@ type CustomMode = "initial" | "patch";
 
 type ToastState = {
   type: "created" | "applied";
-
   message: string;
 } | null;
 
@@ -36,12 +35,10 @@ interface CustomizingLocationState {
 
 export default function Customizing() {
   const location = useLocation();
-
   const navigate = useNavigate();
 
   // 서버 상태 초기화 기준
   const hydratedPatchBagIdRef = useRef<number | null>(null);
-
   const hydratedInitialBagIdRef = useRef<number | null>(null);
 
   const locationState = location.state as CustomizingLocationState | null;
@@ -87,6 +84,7 @@ export default function Customizing() {
 
   const setAppliedInitials = useBagCustomStore((state) => state.setAppliedInitials);
 
+  // 새 패치 생성 토스트
   useEffect(() => {
     if (!locationState?.showPatchCreatedToast) {
       return;
@@ -94,17 +92,16 @@ export default function Customizing() {
 
     setToast({
       type: "created",
-
       message: "새 패치가 생성되었습니다",
     });
 
     navigate(location.pathname, {
       replace: true,
-
       state: null,
     });
   }, [location.pathname, locationState, navigate]);
 
+  // 토스트 자동 제거
   useEffect(() => {
     if (!toast) {
       return;
@@ -122,11 +119,9 @@ export default function Customizing() {
   // 사용자 가방 변경 기준
   useEffect(() => {
     hydratedPatchBagIdRef.current = null;
-
     hydratedInitialBagIdRef.current = null;
 
     setIsThreeReady(false);
-
     setIsThreeVisible(false);
   }, [userBagId]);
 
@@ -174,6 +169,10 @@ export default function Customizing() {
       flipped: patch.flipped,
 
       layer: patch.layer,
+
+      // 서버 기준 수정 가능 여부
+      // 주문 완료 패치의 경우 false
+      isEditable: patch.isEditable,
     }));
 
     setAppliedPatches(restoredPatches);
@@ -267,7 +266,6 @@ export default function Customizing() {
   const handleApplied = () => {
     setToast({
       type: "applied",
-
       message: "변경사항이 적용되었습니다",
     });
   };

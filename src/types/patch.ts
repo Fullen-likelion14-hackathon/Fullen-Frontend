@@ -86,7 +86,8 @@ export interface PatchPositionData {
 
   layer: number;
 
-  isEditable?: boolean;
+  // 주문 완료 여부에 따른 수정 가능 상태
+  isEditable: boolean;
 }
 
 // 가방 패치 적용 응답 타입

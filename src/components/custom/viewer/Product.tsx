@@ -450,6 +450,13 @@ export function Product({ mode = "view", customMode = "patch", onLocationChange 
       return;
     }
 
+    const targetPatch = draftPatches.find((patch) => patch.id === patchId);
+
+    // 주문 완료 등 서버에서 수정 불가 처리된 패치는 편집 시작 차단
+    if (!targetPatch || targetPatch.isEditable === false) {
+      return;
+    }
+
     setDraggingPatchId(patchId);
 
     setDraggingInitialId(null);
@@ -646,7 +653,9 @@ export function Product({ mode = "view", customMode = "patch", onLocationChange 
                   <BagPatchDecal
                     key={`patch-${item.patch.id}`}
                     patch={item.patch}
-                    editable={mode === "draft" && customMode === "patch"}
+                    editable={
+                      mode === "draft" && customMode === "patch" && item.patch.isEditable !== false
+                    }
                     onDragStart={handlePatchDragStart}
                   />
                 );
