@@ -1,9 +1,3 @@
-// ============================================================
-// Passport.tsx — 메인 피드 페이지 (3번)
-// 대륙별로 그룹핑된 여행 카테고리를 가로 카드 형태로 보여주고,
-// 최근 등록순으로 오른쪽에 쌓이며 가로 슬라이드로 이전 기록 탐색 가능
-// ============================================================
-
 import { useNavigate } from "react-router-dom";
 import { useJourneys } from "@/hooks/queries/useJourneys";
 import type { Continent } from "@/api/journey";
