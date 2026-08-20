@@ -183,7 +183,13 @@ export default function MyOrderList() {
       flipped: patch.flipped,
 
       layer: patch.layer,
+
+      // 서버 기준 수정 가능 여부
+      // 주문 완료 패치는 false
+      isEditable: patch.isEditable,
     }));
+
+    setAppliedPatches(restoredPatches);
 
     setAppliedPatches(restoredPatches);
 

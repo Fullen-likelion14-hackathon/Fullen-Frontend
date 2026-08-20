@@ -35,6 +35,9 @@ export interface PlacedPatch {
   flipped: boolean;
 
   layer: number;
+
+  // 주문 완료 여부에 따른 수정 가능 상태
+  isEditable: boolean;
 }
 
 // 가방 위 이니셜 상태 타입
@@ -210,6 +213,7 @@ export const useBagCustomStore = create<BagCustomStore>((set) => ({
           ...state.draftPatches,
           {
             ...patch,
+
             layer,
           },
         ],
@@ -232,6 +236,7 @@ export const useBagCustomStore = create<BagCustomStore>((set) => ({
           ...state.draftInitials,
           {
             ...initial,
+
             layer,
           },
         ],
@@ -470,6 +475,11 @@ export const useBagCustomStore = create<BagCustomStore>((set) => ({
   removeDraftPatch: (patchId) =>
     set((state) => {
       const targetPatch = state.draftPatches.find((patch) => patch.id === patchId);
+
+      // 주문 완료 패치는 제거 불가능
+      if (targetPatch?.isEditable === false) {
+        return state;
+      }
 
       return {
         draftPatches: state.draftPatches.filter((patch) => patch.id !== patchId),

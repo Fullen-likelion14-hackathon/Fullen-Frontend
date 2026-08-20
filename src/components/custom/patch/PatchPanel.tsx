@@ -198,6 +198,9 @@ export default function PatchPanel({ userBagId, onApplied }: PatchPanelProps) {
       scale: 0.5,
 
       flipped: false,
+
+      // 신규 배치 패치는 주문 전이므로 수정 가능
+      isEditable: true,
     });
   };
 
@@ -213,7 +216,7 @@ export default function PatchPanel({ userBagId, onApplied }: PatchPanelProps) {
       );
 
       const updatedPatches = draftPatches.filter((draftPatch) => {
-        if (draftPatch.patchPositionId === null) {
+        if (draftPatch.patchPositionId === null || draftPatch.isEditable === false) {
           return false;
         }
 
@@ -221,7 +224,7 @@ export default function PatchPanel({ userBagId, onApplied }: PatchPanelProps) {
           (patch) => patch.patchPositionId === draftPatch.patchPositionId,
         );
 
-        if (!appliedPatch) {
+        if (!appliedPatch || appliedPatch.isEditable === false) {
           return false;
         }
 
@@ -229,7 +232,7 @@ export default function PatchPanel({ userBagId, onApplied }: PatchPanelProps) {
       });
 
       const deletedPatches = appliedPatches.filter((appliedPatch) => {
-        if (appliedPatch.patchPositionId === null) {
+        if (appliedPatch.patchPositionId === null || appliedPatch.isEditable === false) {
           return false;
         }
 
