@@ -48,7 +48,7 @@ export default function MCoMView() {
     <div className="min-h-screen bg-gray-50">
       <div className="mx-auto flex min-h-screen w-full max-w-97.5 flex-col bg-[#242D41] text-white">
         <PageHeader
-          title={tab === "country" ? "현재 위치한 나라" : "GLOBAL"}
+          title={tab === "country" ? "현재 위치한 나라" : "글로벌"}
           onBackClick={() =>
             navigate("/mcom", {
               state: {
