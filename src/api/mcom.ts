@@ -1,6 +1,11 @@
 import api from "@/api/axios";
 
-import type { MCoMArchiveResponse, MCoMPreviewResponse, MCoMScope } from "@/types/mcom";
+import type {
+  MCoMArchiveResponse,
+  MCoMPreviewResponse,
+  MCoMDetailResponse,
+  MCoMScope,
+} from "@/types/mcom";
 
 // MCoM 게시물 아카이브 조회
 export const getMCoMArchive = async (scope: MCoMScope): Promise<MCoMArchiveResponse> => {
@@ -18,4 +23,10 @@ export const getMCoMPreview = async (postId: number): Promise<MCoMPreviewRespons
   const response = await api.get<MCoMPreviewResponse>(`/api/posts/${postId}/preview`);
 
   return response.data;
+};
+// 게시물 상세 조회
+export const getMCoMDetail = async (postId: number) => {
+  const response = await api.get<MCoMDetailResponse>(`/api/posts/${postId}`);
+
+  return response.data.data;
 };
