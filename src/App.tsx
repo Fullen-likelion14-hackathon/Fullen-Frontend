@@ -48,7 +48,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         {/* Login / NFC 태깅 - 하단 네비게이션 없는 온보딩 플로우 */}
-        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<Login />} />
         <Route path="/nfc-tagging" element={<NfcTagging />} />
         {/* 지도 페이지 */}
         <Route path="/map" element={<Map />} />
