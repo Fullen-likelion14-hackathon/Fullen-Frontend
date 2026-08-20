@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 import { useLocation, useNavigate } from "react-router-dom";
 
 import PageHeader from "@/components/common/PageHeader";
@@ -129,6 +130,12 @@ const AIPatchOptionSelect = () => {
 
         // 작가 선택 후 복귀 경로
         returnTo: "/custom/ai-patch/options",
+
+        // AI 여행 분석 추천 작가 id 목록
+        recommendedArtistIds: analysis?.artistIdList ?? [],
+
+        // 기존 선택 작가 id
+        selectedArtistId: selectedArtistId ?? undefined,
 
         // 수정 모드 유지 정보
         mode: isEditMode ? "edit" : undefined,
@@ -552,22 +559,22 @@ const AIPatchOptionSelect = () => {
                 <>
                   <p
                     className="
-                        text-lg
-                        font-bold
-                        leading-tight
-                      "
+                      text-lg
+                      font-bold
+                      leading-tight
+                    "
                   >
                     {nickname}님의 여행 스타일
                   </p>
 
                   <p
                     className="
-                        mt-1
-                        text-2xl
-                        font-bold
-                        leading-none
-                        text-[#A3642B]
-                      "
+                      mt-1
+                      text-2xl
+                      font-bold
+                      leading-none
+                      text-[#A3642B]
+                    "
                   >
                     {travelStyle}
                   </p>
