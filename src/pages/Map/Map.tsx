@@ -57,7 +57,7 @@ export default function Map() {
 
   return (
     <div className="relative mx-auto flex h-dvh w-full max-w-97.5 flex-col overflow-hidden">
-      <PageHeader title="지도 위 나의 여정" backTo="/passport" />
+      <PageHeader title="지도 위 나의 여정" />
 
       <div className="relative flex-1 overflow-hidden">
         <MapLeaflet

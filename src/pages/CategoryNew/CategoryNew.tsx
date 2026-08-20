@@ -72,7 +72,7 @@ const CategoryNew = () => {
         endDate: formatDate(endDate),
       });
 
-      navigate("/", { replace: true });
+      navigate("/passport", { replace: true });
     } catch (error) {
       console.error(error);
       setIsCreating(false);

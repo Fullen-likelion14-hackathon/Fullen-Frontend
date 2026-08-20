@@ -678,8 +678,8 @@ export function Product({ mode = "view", customMode = "patch", onLocationChange 
                 h-16
                 w-16
                 border-3
-                border-white
-                bg-transparent
+               border-[#192C44]
+                bg-[#192C44]/50
                 shadow-md
               "
           />

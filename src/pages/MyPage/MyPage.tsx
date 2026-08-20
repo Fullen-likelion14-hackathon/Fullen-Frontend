@@ -32,7 +32,7 @@ export default function MyPage() {
         </div>
         <button
           type="button"
-          className="mt-10 flex w-full items-center rounded-2xl bg-[#e5e2e2] px-7 py-3 text-left"
+          className="mt-7 flex w-full items-center rounded-2xl bg-[#e5e2e2] px-7 py-3 text-left"
         >
           <Headphones className="mr-6 size-12 text-[#a7abb0]" strokeWidth={1.8} />
           <span className="flex-1">

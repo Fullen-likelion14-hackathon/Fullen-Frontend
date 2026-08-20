@@ -4,7 +4,7 @@ import PageHeader from "@/components/common/PageHeader";
 import OrderDetailContent from "@/components/oneToOneOrder/OrderDetailContent";
 
 import { useBags } from "@/hooks/queries/useBags";
-import { useArtist } from "@/hooks/queries/artist/useArtist";
+import { useArtists } from "@/hooks/queries/artist/useArtists";
 import { useCreatePremiumOrder } from "@/hooks/mutations/useCreatePremiumOrder";
 
 import type { PatchLocation } from "@/types/patchLocation";
@@ -44,12 +44,12 @@ export default function CustomRequestConfirm() {
   // 현재 사용하는 가방 id
   const userBagId = bags[0]?.userBagId;
 
-  // 선택한 작가 상세 정보 조회
-  const {
-    data: selectedArtist,
-    isPending: isArtistPending,
-    isError: isArtistError,
-  } = useArtist(selectedArtistId);
+  // 작가 리스트 조회
+  // 대표 이미지가 필요한 화면이므로 상세 API가 아닌 리스트 API 사용
+  const { data: artists = [], isPending: isArtistsPending, isError: isArtistsError } = useArtists();
+
+  // 선택한 작가 id와 일치하는 작가 찾기
+  const selectedArtist = artists.find((artist) => artist.artistId === selectedArtistId) ?? null;
 
   // 1:1 커스텀 주문 생성 mutation
   const { mutate: createPremiumOrder, isPending: isOrderPending } = useCreatePremiumOrder();
@@ -91,6 +91,8 @@ export default function CustomRequestConfirm() {
         posX: selectedLocation.posX,
         posY: selectedLocation.posY,
         rotation: selectedLocation.rotation,
+        previewX: selectedLocation.previewX,
+        previewY: selectedLocation.previewY,
       },
       {
         // 주문 생성 성공
@@ -124,14 +126,19 @@ export default function CustomRequestConfirm() {
     return <div>가방 정보를 불러오지 못했습니다.</div>;
   }
 
-  // 선택한 작가 정보 로딩
-  if (selectedArtistId !== undefined && isArtistPending) {
+  // 작가 리스트 로딩
+  if (selectedArtistId !== undefined && isArtistsPending) {
     return <div>작가 정보를 불러오는 중입니다.</div>;
   }
 
-  // 선택한 작가 정보 에러
-  if (selectedArtistId !== undefined && isArtistError) {
+  // 작가 리스트 에러
+  if (selectedArtistId !== undefined && isArtistsError) {
     return <div>작가 정보를 불러오지 못했습니다.</div>;
+  }
+
+  // 선택한 작가를 찾지 못한 경우
+  if (selectedArtistId !== undefined && !selectedArtist) {
+    return <div>선택한 작가 정보를 찾을 수 없습니다.</div>;
   }
 
   return (
@@ -151,8 +158,8 @@ export default function CustomRequestConfirm() {
         {/* 주문 내용 */}
         <OrderDetailContent
           selectedImage={selectedImage}
-          selectedArtist={selectedArtist ?? null}
-          selectedLocation={selectedLocation ?? undefined}
+          selectedArtist={selectedArtist}
+          selectedLocation={selectedLocation}
           requestText={requestText}
           onEdit={handleEdit}
         />
