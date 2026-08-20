@@ -77,19 +77,6 @@ export default function FooterNavigation() {
   // → targetPath = "/onetooneorder"
   const targetPath = pathname === "/loading" ? (searchParams.get("to") ?? "/custom") : pathname;
 
-  // Footer를 숨길 페이지
-  const hideFooter =
-    pathname.startsWith("/mcom/view/") ||
-    pathname.startsWith("/onetooneorder/") ||
-    pathname.startsWith("/mypage/orders") ||
-    pathname.startsWith("/mypage/ddp") ||
-    pathname.startsWith("/custom/order") ||
-    pathname.startsWith("/custom/analysis/edit");
-
-  if (hideFooter) {
-    return null;
-  }
-
   // 현재 주소와 일치하는 네비게이션 메뉴의 index 찾기
   const matchedIndex = navigationItems.findIndex(({ path }) => {
     // 하위 페이지가 생겨도 해당 메뉴가 활성화되도록 함
