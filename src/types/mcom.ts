@@ -29,3 +29,31 @@ export interface MCoMPreviewResponse {
   message: string;
   data: PostPreviewResponse;
 }
+
+// 게시물 상세 조회 사진
+export interface PostPhotoResponse {
+  photoId: number;
+  imgURL: string;
+}
+
+// 게시물 상세 조회
+export interface PostDetailResponse {
+  postId: number;
+  nationFlagURL: string;
+  nationKRName: string;
+  journeyType: string;
+  date: string;
+  photoList: PostPhotoResponse[];
+  comment: string;
+  photoCount: number;
+  commentLength: number;
+  isPublic: boolean;
+}
+
+// 게시물 상세 조회 API 응답
+export interface MCoMDetailResponse {
+  success: boolean;
+  code: number;
+  message: string;
+  data: PostDetailResponse;
+}
