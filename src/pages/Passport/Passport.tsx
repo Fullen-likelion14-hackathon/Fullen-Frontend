@@ -7,12 +7,12 @@
 import { useNavigate } from "react-router-dom";
 import { useJourneys } from "@/hooks/queries/useJourneys";
 import type { Continent } from "@/api/journey";
+import { useUsernameQuery } from "@/hooks/queries/useUsernameQuery";
 
 import mainGlobeIcon from "@/assets/icons/mainglobe.png"; // 지도 보기 버튼 아이콘
 import planeIcon from "@/assets/icons/mainplane.png"; // 인사말 옆 비행기 아이콘
 import plusIcon from "@/assets/icons/plus.png"; // 여행 추가 버튼 + 아이콘
-
-const mockUserName = "멋쟁이사자처럼"; // TODO: 로그인 연동 후 실제 사용자명으로 교체
+// TODO: 로그인 연동 후 실제 사용자명으로 교체
 
 // 백엔드 Continent enum 키 → 화면에 보여줄 한글 대륙명 + 렌더링 순서
 const CONTINENT_LABELS: Record<Continent, string> = {
@@ -97,6 +97,7 @@ const ContinentGroup = ({ continentLabel, journeys, count, onOpen }: ContinentGr
 const Passport = () => {
   const navigate = useNavigate();
   const { data: continents, isLoading, isError } = useJourneys();
+  const { data: username } = useUsernameQuery();
 
   const handleAddCategory = () => {
     navigate("/passport/new");
@@ -147,7 +148,7 @@ const Passport = () => {
           <p className="text-slate-800 text-base font-medium font-['Paperlogy']">MCM과 함께한,</p>
           <p className="leading-tight">
             <span className="text-slate-800 text-2xl font-extrabold font-['Paperlogy'] align-middle">
-              {mockUserName}
+              {username}
             </span>
             <span className="text-slate-800 text-2xl font-extrabold font-['Paperlogy'] align-middle">
               {" "}
