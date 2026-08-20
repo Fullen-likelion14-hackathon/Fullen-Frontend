@@ -17,7 +17,12 @@ export const createPremiumOrder = async (
 
 // 1:1 커스텀 요청 주문 상세 조회
 export const getPremiumOrderDetail = async (premiumId: number): Promise<PremiumOrderDetail> => {
-  const response = await api.get(`/api/orders/premiums/${premiumId}`);
+  const response = await api.get<{
+    success: boolean;
+    code: number;
+    message: string;
+    data: PremiumOrderDetail;
+  }>(`/api/orders/premiums/${premiumId}`);
 
   return response.data.data;
 };

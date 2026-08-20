@@ -35,6 +35,8 @@ export default function OneToOneOrderDetail() {
           artistImage={orderDetail.artistImgUrl}
           artistIntro={orderDetail.introSummary}
           requestText={orderDetail.requestDetail}
+          previewX={orderDetail.previewX}
+          previewY={orderDetail.previewY}
         />
       </section>
     </main>

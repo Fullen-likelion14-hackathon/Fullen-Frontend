@@ -109,7 +109,7 @@ export default function CustomOrderComplete() {
 
   return (
     <div className="relative mx-auto h-dvh w-full max-w-97.5 overflow-hidden bg-[#F9F4F0]">
-      <PageHeader title="나의 커스텀 주문" backTo="/custom/order" />
+      <PageHeader title="나의 커스텀 주문" />
 
       <div className="flex flex-col items-center">
         {/* 주문 완료 표시 */}
