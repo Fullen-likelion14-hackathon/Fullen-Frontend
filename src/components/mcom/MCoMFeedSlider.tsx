@@ -28,6 +28,13 @@ export default function MCoMFeedSlider({ feed, previousFeed, nextFeed, tab }: MC
   const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
     if (isAnimating) return;
 
+    // 버튼 클릭은 슬라이더 드래그에서 제외
+    const target = event.target as HTMLElement;
+
+    if (target.closest("button")) {
+      return;
+    }
+
     dragStartX.current = event.clientX;
     setIsDragging(true);
 
