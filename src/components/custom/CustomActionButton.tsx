@@ -20,7 +20,7 @@ export function CustomizeButton() {
         text-[1.25rem]
         font-semibold
         text-[#757575]
-        shadow-[0_0_7.82px_0_rgba(94,140,136,0.25),inset_0_2.24px_2.24px_0_rgba(255,255,255,0.70)]
+        shadow-[0_0_0.48875rem_0_rgba(94,140,136,0.25),inset_0_0.14rem_0.14rem_0_rgba(255,255,255,0.70)]
          flex 
         items-center 
         justify-center
@@ -51,7 +51,7 @@ export function OrderButton() {
         text-[1.25rem]
         font-semibold
           text-[#757575]
-        shadow-[0_0_7.82px_0_rgba(94,140,136,0.25),inset_0_2.24px_2.24px_0_rgba(255,255,255,0.70)]
+        shadow-[0_0_0.48875rem_0_rgba(94,140,136,0.25),inset_0_0.14rem_0.14rem_0_rgba(255,255,255,0.70)]
          flex 
         items-center 
         justify-center
@@ -83,7 +83,7 @@ export function DPPButton() {
         text-[max(12px,0.75rem)]
         font-semibold
          text-[#757575]
-        shadow-[0_0_7.82px_0_rgba(94,140,136,0.25)]
+        shadow-[0_0_0.48875rem_0_rgba(94,140,136,0.25)]
         flex 
         items-center 
         justify-center

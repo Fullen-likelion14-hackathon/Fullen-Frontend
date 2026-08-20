@@ -51,7 +51,7 @@ const ContinentGroup = ({ continentLabel, journeys, count, onOpen }: ContinentGr
           <button
             key={journey.journeyId}
             onClick={() => onOpen(continentLabel)}
-            className="w-24 h-32 shrink-0 relative bg-neutral-50 rounded-[5px] shadow-[4px_4px_4px_0px_rgba(0,0,0,0.25)] overflow-hidden"
+            className="w-24 h-32 shrink-0 relative bg-neutral-50 rounded-[0.3125rem] shadow-[0.25rem_0.25rem_0.25rem_0rem_rgba(0,0,0,0.25)] overflow-hidden"
           >
             <img
               src={journey.coverImgUrl}
@@ -59,7 +59,7 @@ const ContinentGroup = ({ continentLabel, journeys, count, onOpen }: ContinentGr
               className="absolute inset-0 w-full h-full object-cover"
             />
             {/* 국가명 텍스트: text-lg로 조정 */}
-            <span className="absolute inset-0 flex items-center justify-center text-neutral-50 text-lg font-bold font-['PT_Serif'] [text-shadow:_0px_4px_4px_rgb(0_0_0_/_0.25)]">
+            <span className="absolute inset-0 flex items-center justify-center text-neutral-50 text-lg font-bold font-['PT_Serif'] [text-shadow:_0rem_0.25rem_0.25rem_rgb(0_0_0_/_0.25)]">
               {journey.nationENName.toUpperCase()}
             </span>
           </button>
@@ -76,10 +76,10 @@ const ContinentGroup = ({ continentLabel, journeys, count, onOpen }: ContinentGr
               좌우 padding을 px-[50px]로 설정함 (7px + 8px(원 지름) + 35px = 50px) */}
       <button
         onClick={() => onOpen(continentLabel)}
-        className="absolute left-1/2 top-[6.875rem] -translate-x-1/2 w-[23.1875rem] h-[2.6875rem] flex items-center justify-between px-[3.125rem] bg-stone-400/20 backdrop-blur-[2px] rounded-[10px] shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] overflow-hidden"
+        className="absolute left-1/2 top-[6.875rem] -translate-x-1/2 w-[23.1875rem] h-[2.6875rem] flex items-center justify-between px-[3.125rem] bg-stone-400/20 backdrop-blur-[0.125rem] rounded-[0.625rem] shadow-[0rem_0.25rem_0.25rem_0rem_rgba(0,0,0,0.25)] overflow-hidden"
       >
-        <div className="size-2 absolute left-[0.4375rem] top-1/2 -translate-y-1/2 bg-conic-63 from-black/20 to-stone-500/20 rounded-[50px]" />
-        <div className="size-2 absolute right-[0.4375rem] top-1/2 -translate-y-1/2 bg-conic-63 from-black/20 to-stone-500/20 rounded-[50px]" />
+        <div className="size-2 absolute left-[0.4375rem] top-1/2 -translate-y-1/2 bg-conic-63 from-black/20 to-stone-500/20 rounded-[3.125rem]" />
+        <div className="size-2 absolute right-[0.4375rem] top-1/2 -translate-y-1/2 bg-conic-63 from-black/20 to-stone-500/20 rounded-[3.125rem]" />
 
         <span className="text-white text-base font-bold font-['Paperlogy']">{continentLabel}</span>
         <span className="text-white text-sm font-bold font-['Paperlogy']">{count}개의 여정</span>
@@ -121,7 +121,7 @@ const Passport = () => {
           {/* 버튼 아이콘 사이즈 확대: plus size-3.5→size-5, globe size-4→size-5 */}
           <button
             onClick={handleAddCategory}
-            className="w-[4.75rem] h-[2.1875rem] flex items-center justify-center gap-1.25 bg-white/80 rounded-[10px] shadow-[0px_0px_5px_0px_rgba(25,39,60,0.10),inset_0px_3px_3px_0px_rgba(255,255,255,0.25),inset_0px_-1.5px_1.5px_0px_rgba(159,159,159,0.25)]"
+            className="w-[4.75rem] h-[2.1875rem] flex items-center justify-center gap-1.25 bg-white/80 rounded-[0.625rem] shadow-[0rem_0rem_0.3125rem_0rem_rgba(25,39,60,0.10),inset_0rem_0.1875rem_0.1875rem_0rem_rgba(255,255,255,0.25),inset_0rem_-0.09375rem_0.09375rem_0rem_rgba(159,159,159,0.25)]"
           >
             <img src={plusIcon} alt="" className="size-5" />
             <span className="text-slate-800/80 text-base font-semibold font-['Paperlogy']">
@@ -131,7 +131,7 @@ const Passport = () => {
 
           <button
             onClick={handleOpenMap}
-            className="w-[4.75rem] h-[2.1875rem] flex items-center justify-center gap-1.25 bg-white/80 rounded-[10px] shadow-[0px_0px_5px_0px_rgba(25,39,60,0.10),inset_0px_3px_3px_0px_rgba(255,255,255,0.25),inset_0px_-1.5px_1.5px_0px_rgba(159,159,159,0.25)]"
+            className="w-[4.75rem] h-[2.1875rem] flex items-center justify-center gap-1.25 bg-white/80 rounded-[0.625rem] shadow-[0rem_0rem_0.3125rem_0rem_rgba(25,39,60,0.10),inset_0rem_0.1875rem_0.1875rem_0rem_rgba(255,255,255,0.25),inset_0rem_-0.09375rem_0.09375rem_0rem_rgba(159,159,159,0.25)]"
           >
             <img src={mainGlobeIcon} alt="" className="size-5" />
             <span className="text-slate-800 text-base font-semibold font-['Paperlogy']">지도</span>

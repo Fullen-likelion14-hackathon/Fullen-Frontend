@@ -32,7 +32,7 @@ export default function DeleteConfirmDialog({
 
       {/* 모달: 화면 전체 기준 정중앙, w-72 h-56 */}
       <div className="fixed inset-0 z-51 flex items-center justify-center pointer-events-none">
-        <div className="pointer-events-auto relative h-56 w-72 overflow-hidden rounded-[20px] bg-stone-100">
+        <div className="pointer-events-auto relative h-56 w-72 overflow-hidden rounded-[1.25rem] bg-stone-100">
           <div className="absolute left-[2.4375rem] top-[2rem] flex w-52 flex-col items-center gap-2.5">
             <div className="flex w-full flex-col items-center gap-2.5">
               <img src={warningIcon} alt="" className="h-7 w-8 object-contain" />
@@ -58,7 +58,7 @@ export default function DeleteConfirmDialog({
                 type="button"
                 onClick={onCancel}
                 style={{ fontFamily: "Paperlogy" }}
-                className="h-9 w-full rounded-[10px] bg-slate-800 text-center text-xs font-bold tracking-tight text-stone-100"
+                className="h-9 w-full rounded-[0.625rem] bg-slate-800 text-center text-xs font-bold tracking-tight text-stone-100"
               >
                 유지하기
               </button>
@@ -66,7 +66,7 @@ export default function DeleteConfirmDialog({
                 type="button"
                 onClick={onConfirm}
                 style={{ fontFamily: "Paperlogy" }}
-                className="h-9 w-full rounded-[10px] bg-stone-300 text-center text-xs font-bold tracking-tight text-slate-800/50"
+                className="h-9 w-full rounded-[0.625rem] bg-stone-300 text-center text-xs font-bold tracking-tight text-slate-800/50"
               >
                 삭제하기
               </button>

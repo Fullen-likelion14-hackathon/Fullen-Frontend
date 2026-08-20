@@ -97,14 +97,14 @@ const AIPatchGenerator = () => {
   return (
     <main className="relative mx-auto h-dvh w-full max-w-97.5 overflow-hidden bg-[#EDE6DF] text-[#19273C]">
       {/* 상단 헤더 */}
-      <header className="relative z-20 flex h-31.5 shrink-0 items-end justify-center border-b-[7px] border-[#A3642B] bg-[#19273C] px-8 pb-6">
+      <header className="relative z-20 flex h-31.5 shrink-0 items-end justify-center border-b-[0.4375rem] border-[#A3642B] bg-[#19273C] px-8 pb-6">
         <button
           type="button"
           onClick={handleBack}
           aria-label="뒤로가기"
           className="absolute bottom-7 left-8 flex h-10 w-10 items-center justify-center"
         >
-          <span className="block h-5 w-5 rotate-45 border-b-[3px] border-l-[3px] border-white" />
+          <span className="block h-5 w-5 rotate-45 border-b-[0.1875rem] border-l-[0.1875rem] border-white" />
         </button>
 
         <h1 className="text-2xl font-bold text-white">AI 사용자 분석</h1>

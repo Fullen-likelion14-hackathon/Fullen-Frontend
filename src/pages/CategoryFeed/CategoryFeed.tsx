@@ -41,7 +41,7 @@ export default function CategoryFeed() {
         <header className="relative h-52.5 bg-[#F9F4F0] pb-6 pt-9">
           <div className="mt-[1.4375rem]">
             <div className="flex flex-col items-center gap-2.5">
-              <div className="h-7 w-11 overflow-hidden outline outline-[0.75px] outline-stone-100">
+              <div className="h-7 w-11 overflow-hidden outline outline-[0.046875rem] outline-stone-100">
                 <img
                   src={journeyDetail.flagImgUrl}
                   alt={`${journeyDetail.nationKRName} 국기`}
@@ -79,7 +79,7 @@ export default function CategoryFeed() {
               onClick={() => navigate(-1)}
               className="mt-[1.4375rem] absolute left-5 top-9 flex h-8 w-8 items-center justify-center"
             >
-              <span className="block h-4.5 w-4.5 rotate-45 border-b-[3px] border-l-[3px] border-[#CFCDCE]" />
+              <span className="block h-4.5 w-4.5 rotate-45 border-b-[0.1875rem] border-l-[0.1875rem] border-[#CFCDCE]" />
             </button>
 
             <div className="mt-[1.4375rem] absolute right-5 top-9 flex items-center gap-1.5">
@@ -142,7 +142,7 @@ export default function CategoryFeed() {
             <button
               type="button"
               onClick={() => navigate(`/passport/${categoryId}/new`)}
-              className="flex h-12 w-62.5 items-center justify-center gap-2.5 overflow-hidden rounded-[100px] bg-white/80 shadow-[0px_0px_5px_0px_rgba(25,39,60,0.30),inset_0px_3px_3px_0px_rgba(255,255,255,0.25),inset_0px_-1.5px_1.5px_0px_rgba(159,159,159,0.25)]"
+              className="flex h-12 w-62.5 items-center justify-center gap-2.5 overflow-hidden rounded-[6.25rem] bg-white/80 shadow-[0rem_0rem_0.3125rem_0rem_rgba(25,39,60,0.30),inset_0rem_0.1875rem_0.1875rem_0rem_rgba(255,255,255,0.25),inset_0rem_-0.09375rem_0.09375rem_0rem_rgba(159,159,159,0.25)]"
             >
               <span
                 className="text-xl font-semibold tracking-tight text-slate-800"

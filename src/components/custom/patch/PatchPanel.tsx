@@ -34,6 +34,8 @@ type PatchType = "ticket" | "stamp" | "label";
 interface PatchPanelProps {
   userBagId: number;
 
+  intro?: boolean;
+
   onApplied: () => void;
 }
 
@@ -47,7 +49,7 @@ const hasPatchChanged = (draftPatch: PlacedPatch, appliedPatch: PlacedPatch) =>
   draftPatch.flipped !== appliedPatch.flipped ||
   draftPatch.layer !== appliedPatch.layer;
 
-export default function PatchPanel({ userBagId, onApplied }: PatchPanelProps) {
+export default function PatchPanel({ userBagId, intro = true, onApplied }: PatchPanelProps) {
   const [selectedType, setSelectedType] = useState<PatchType | null>(null);
 
   // 영구삭제 대상 원본 패치
@@ -394,7 +396,11 @@ export default function PatchPanel({ userBagId, onApplied }: PatchPanelProps) {
       )}
 
       {/* 패치 종류 */}
-      <div className="pointer-events-auto absolute inset-x-0 bottom-55 flex items-center justify-center gap-2">
+      <div
+        className={`pointer-events-auto absolute inset-x-0 bottom-55 flex items-center justify-center gap-2 transition-all delay-150 duration-700 ease-out ${
+          intro ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
+        }`}
+      >
         <PatchTypeButton
           type="ticket"
           text="티켓"

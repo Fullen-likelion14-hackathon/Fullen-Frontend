@@ -8,7 +8,7 @@ type OrderCompleteModalProps = {
 export default function OrderCompleteModal({ onClose, orderType }: OrderCompleteModalProps) {
   return (
     <div className="pointer-events-none absolute inset-x-0 top-28 z-50 flex justify-center">
-      <div className="pointer-events-auto relative w-82 rounded-[20px] border-2 border-[#CCA774] bg-[#F7EBBF] px-4 pb-3 pt-3 shadow-lg">
+      <div className="pointer-events-auto relative w-82 rounded-[1.25rem] border-2 border-[#CCA774] bg-[#F7EBBF] px-4 pb-3 pt-3 shadow-lg">
         {/* X */}
         <button type="button" onClick={onClose} className="absolute right-3 top-3 text-[#CCA774]">
           <X size={26} strokeWidth={2.5} />

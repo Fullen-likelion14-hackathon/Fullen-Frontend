@@ -493,7 +493,7 @@ export default function MyOrderList() {
       </div>
 
       {/* 2D 커스텀 가방 이미지 */}
-      <div className="relative mx-auto mt-3 flex h-67 w-82 items-center justify-center">
+      <div className="relative mx-auto mt-6 flex h-70 w-85.5 items-center justify-center">
         {isCapturing || !frontPreviewUrl || !backPreviewUrl ? (
           <CustomLoading overlayOnly />
         ) : (

@@ -258,7 +258,7 @@ export default function CustomArtistSelect() {
             mt-8
             h-16
             w-full
-            rounded-[20px]
+            rounded-[1.25rem]
             text-[1.125rem]
             font-bold
             shadow-md
@@ -320,7 +320,7 @@ export default function CustomArtistSelect() {
               className={`
                 h-16
                 w-full
-                rounded-[20px]
+                rounded-[1.25rem]
                 text-[1.125rem]
                 font-bold
                 shadow-md

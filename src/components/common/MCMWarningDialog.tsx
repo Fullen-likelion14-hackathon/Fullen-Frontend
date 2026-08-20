@@ -11,7 +11,7 @@ type MCMWarningDialogProps = {
 const MCMWarningDialog = ({ onClose }: MCMWarningDialogProps) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-9">
-      <div className="flex w-72 h-57.5 flex-col items-center justify-center rounded-[14px] bg-[#F9F4F0] p-6">
+      <div className="flex w-72 h-57.5 flex-col items-center justify-center rounded-[0.875rem] bg-[#F9F4F0] p-6">
         <div className="flex flex-col items-center">
           <img src={warningIcon} alt="" className="h-7.875 w-7.875 object-contain" />
 
@@ -36,7 +36,7 @@ const MCMWarningDialog = ({ onClose }: MCMWarningDialogProps) => {
             type="button"
             onClick={onClose}
             style={{ fontFamily: "Paperlogy" }}
-            className="flex h-9.25 w-52.75 items-center justify-center rounded-[10px] bg-[#19273C] text-xs font-bold text-white"
+            className="flex h-9.25 w-52.75 items-center justify-center rounded-[0.625rem] bg-[#19273C] text-xs font-bold text-white"
           >
             수정하기
           </button>

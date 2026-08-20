@@ -8,7 +8,7 @@ import type { Continent, JourneyItem } from "@/api/journey";
 import bgDetail from "@/assets/images/BG_detail.png";
 import planeIcon from "@/assets/icons/plane1.png";
 
-const CARD_STEP = 288.5;
+const CARD_STEP = 296.5;
 const SWIPE_THRESHOLD = 60;
 const ANIMATION_DURATION = 300;
 const TAP_MOVE_THRESHOLD = 5; // 이 값(px) 이하로 움직였으면 "탭"으로 간주
@@ -225,7 +225,7 @@ export default function PassportDetail() {
       <PageHeader title="나의 여정" />
 
       {homeContinent && (
-        <div className="mx-auto mt-9.5 flex h-[2.625rem] w-[18.75rem] items-center gap-0.5 rounded-[10px] bg-stone-300 p-0.5">
+        <div className="mx-auto mt-9.5 flex h-[2.625rem] w-[18.75rem] items-center gap-0.5 rounded-[0.625rem] bg-stone-300 p-0.5">
           <button
             onClick={handleSelectAll}
             className={`h-9 flex-1 rounded-lg font-['Paperlogy'] text-base font-semibold tracking-tight transition-colors ${
@@ -300,7 +300,7 @@ export default function PassportDetail() {
             className={`absolute -top-4 flex size-10 -translate-x-1/2 cursor-grab items-center justify-center overflow-hidden rounded-full bg-slate-800 select-none touch-none active:cursor-grabbing ${
               isPlaneDragging || isDragging ? "" : "transition-all duration-200"
             }`}
-            style={{ left: `calc(20px + ${planeProgress} * (100% - 40px))` }}
+            style={{ left: `calc(1.25rem + ${planeProgress} * (100% - 2.5rem))` }}
           >
             <img src={planeIcon} alt="" className="h-10 w-10" draggable={false} />
           </div>
@@ -310,7 +310,7 @@ export default function PassportDetail() {
       <div className="mt-8 flex justify-center pb-[max(2.5rem,env(safe-area-inset-bottom))]">
         <button
           onClick={handleOpen}
-          className="flex h-12 w-62.5 items-center justify-center rounded-full bg-white/80 font-['Paperlogy'] text-lg font-semibold tracking-tight text-slate-800 shadow-[0px_0px_5px_0px_rgba(25,39,60,0.30),inset_0px_3px_3px_0px_rgba(255,255,255,0.25),inset_0px_-1.5px_1.5px_0px_rgba(159,159,159,0.25)]"
+          className="flex h-12 w-62.5 items-center justify-center rounded-full bg-white/80 font-['Paperlogy'] text-lg font-semibold tracking-tight text-slate-800 shadow-[0rem_0rem_0.3125rem_0rem_rgba(25,39,60,0.30),inset_0rem_0.1875rem_0.1875rem_0rem_rgba(255,255,255,0.25),inset_0rem_-0.09375rem_0.09375rem_0rem_rgba(159,159,159,0.25)]"
         >
           열기
         </button>

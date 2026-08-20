@@ -32,7 +32,7 @@ export default function OrderCard({ type, orderId, createdAt, frontImgUrl }: Ord
   };
 
   return (
-    <article className="mx-auto my-4 w-90 rounded-2xl border border-[#dfd2c5] bg-[#fffdf9] p-4 shadow-[0_4px_14px_rgba(25,41,64,0.06)]">
+    <article className="mx-auto my-4 w-90 rounded-2xl border border-[#dfd2c5] bg-[#fffdf9] p-4 shadow-[0_0.25rem_0.875rem_rgba(25,41,64,0.06)]">
       <div className="flex items-center gap-4">
         {/* 가방 이미지 */}
         <div className="flex h-32 w-[43%] shrink-0 items-center justify-center rounded-xl bg-[#f5efe9]">

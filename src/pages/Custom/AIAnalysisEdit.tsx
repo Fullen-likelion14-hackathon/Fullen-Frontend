@@ -67,7 +67,7 @@ export default function AIAnalysisEdit() {
               h-full
               w-full
               resize-none
-              rounded-[10px]
+              rounded-[0.625rem]
               border-2
               border-[#D4C8BE]
               bg-white
@@ -98,7 +98,7 @@ export default function AIAnalysisEdit() {
           className={`
             h-16
             w-full
-            rounded-[12px]
+            rounded-[0.75rem]
             text-[1.25rem]
             font-bold
             text-white

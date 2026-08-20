@@ -131,7 +131,7 @@ const FeedNew = () => {
           />
 
           {images.length === 0 ? (
-            <label className="relative flex h-[18.8125rem] w-[20.625rem] cursor-pointer flex-col items-center justify-center gap-3.5 overflow-hidden rounded-[10px] border-2 border-stone-300 bg-white text-center">
+            <label className="relative flex h-[18.8125rem] w-[20.625rem] cursor-pointer flex-col items-center justify-center gap-3.5 overflow-hidden rounded-[0.625rem] border-2 border-stone-300 bg-white text-center">
               <input
                 type="file"
                 accept="image/*"
@@ -148,11 +148,11 @@ const FeedNew = () => {
               </p>
             </label>
           ) : (
-            <div className="flex h-72 w-full gap-2 overflow-x-auto rounded-[10px]">
+            <div className="flex h-72 w-full gap-2 overflow-x-auto rounded-[0.625rem]">
               {images.map((item, index) => (
                 <div
                   key={item.previewUrl}
-                  className="relative h-72 w-64 shrink-0 snap-start overflow-hidden rounded-[10px] border-2 border-stone-300"
+                  className="relative h-72 w-64 shrink-0 snap-start overflow-hidden rounded-[0.625rem] border-2 border-stone-300"
                 >
                   <img
                     src={item.previewUrl}
@@ -176,7 +176,7 @@ const FeedNew = () => {
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={isCreating}
-                  className="flex h-72 w-24 shrink-0 items-center justify-center rounded-[10px] border-2 border-dashed border-stone-300 bg-white text-stone-300"
+                  className="flex h-72 w-24 shrink-0 items-center justify-center rounded-[0.625rem] border-2 border-dashed border-stone-300 bg-white text-stone-300"
                 >
                   <img src={uploadIcon} alt="사진 추가" className="size-8 object-contain" />
                 </button>
@@ -190,12 +190,12 @@ const FeedNew = () => {
             placeholder="코멘트를 입력해주세요."
             disabled={isCreating}
             style={{ fontFamily: "Paperlogy" }}
-            className={`h-[10.125rem] w-full resize-none rounded-[10px] border-2 bg-white p-3 text-sm font-normal leading-4 tracking-tight text-zinc-900 placeholder:font-semibold placeholder:text-[#AC917C] disabled:opacity-60 transition-colors placeholder-shown:pt-[4.375rem] placeholder-shown:text-center ${
+            className={`h-[10.125rem] w-full resize-none rounded-[0.625rem] border-2 bg-white p-3 text-sm font-normal leading-4 tracking-tight text-zinc-900 placeholder:font-semibold placeholder:text-[#AC917C] disabled:opacity-60 transition-colors placeholder-shown:pt-[4.375rem] placeholder-shown:text-center ${
               comment ? "border-slate-800" : "border-stone-300"
             }`}
           />
 
-          <div className="flex h-14 w-full items-center justify-between gap-6 rounded-[10px] bg-white px-3.5">
+          <div className="flex h-14 w-full items-center justify-between gap-6 rounded-[0.625rem] bg-white px-3.5">
             <p
               style={{ fontFamily: "Paperlogy" }}
               className="text-xs font-semibold leading-4 text-stone-300"
@@ -232,10 +232,10 @@ const FeedNew = () => {
           disabled={!isFormValid || isCreating}
           onClick={handleCreate}
           style={{ fontFamily: "Paperlogy" }}
-          className={`h-14 rounded-[10px] px-6 text-xl font-semibold tracking-tight transition-colors ${
+          className={`h-14 rounded-[0.625rem] px-6 text-xl font-semibold tracking-tight transition-colors ${
             isFormValid
-              ? "cursor-pointer bg-slate-800 text-white shadow-[0px_0px_10px_0px_rgba(81,66,54,0.20)]"
-              : "cursor-not-allowed bg-stone-300 text-stone-100 shadow-[1px_1px_1px_0px_rgba(81,66,54,0.30),inset_0px_2px_2px_0px_rgba(255,255,255,0.6),inset_0px_-2px_2px_0px_rgba(120,100,80,0.2)]"
+              ? "cursor-pointer bg-slate-800 text-white shadow-[0rem_0rem_0.625rem_0rem_rgba(81,66,54,0.20)]"
+              : "cursor-not-allowed bg-stone-300 text-stone-100 shadow-[0.0625rem_0.0625rem_0.0625rem_0rem_rgba(81,66,54,0.30),inset_0rem_0.125rem_0.125rem_0rem_rgba(255,255,255,0.6),inset_0rem_-0.125rem_0.125rem_0rem_rgba(120,100,80,0.2)]"
           }`}
         >
           생성하기

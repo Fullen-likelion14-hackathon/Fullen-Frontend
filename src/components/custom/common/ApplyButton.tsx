@@ -21,7 +21,7 @@ export function ApplyButton({ text, onApply, disabled = false }: ApplyButtonProp
         text-[1rem]
         font-semibold
         text-white
-        shadow-[0_2px_8px_rgba(0,0,0,0.18)]
+        shadow-[0_0.125rem_0.5rem_rgba(0,0,0,0.18)]
         hover:bg-[#202C46]
         disabled:bg-[#D1D1D1]
         disabled:text-white

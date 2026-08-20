@@ -42,7 +42,7 @@ const LeaveConfirmDialog = ({
 
       {/* 모달: 화면 전체 기준 정중앙 */}
       <div className="fixed inset-0 z-51 flex items-center justify-center pointer-events-none">
-        <div className="pointer-events-auto h-[14.375rem] w-[18rem] rounded-[20px] bg-stone-100 px-6 py-8">
+        <div className="pointer-events-auto h-[14.375rem] w-[18rem] rounded-[1.25rem] bg-stone-100 px-6 py-8">
           <div className="flex flex-col items-center">
             {/* 경고 아이콘 */}
             <img src={warningIcon} alt="" className="size-8" />
@@ -67,7 +67,7 @@ const LeaveConfirmDialog = ({
               type="button"
               onClick={onContinue}
               style={{ fontFamily: "Paperlogy" }}
-              className="h-[2.3125rem] w-[13.1875rem] rounded-[10px] bg-[#19273C] text-xs font-bold tracking-tight text-[#F9F4F0]"
+              className="h-[2.3125rem] w-[13.1875rem] rounded-[0.625rem] bg-[#19273C] text-xs font-bold tracking-tight text-[#F9F4F0]"
             >
               {continueLabel}
             </button>
@@ -77,10 +77,10 @@ const LeaveConfirmDialog = ({
               onClick={onLeave}
               style={{ fontFamily: "Paperlogy" }}
               className="
-                h-9 w-[13.1875rem] overflow-hidden rounded-[10px]
+                h-9 w-[13.1875rem] overflow-hidden rounded-[0.625rem]
                 bg-white
                 text-xs font-bold tracking-tight text-stone-300
-                outline outline-2 outline-offset-[-2px] outline-stone-300
+                outline outline-2 outline-offset-[-0.125rem] outline-stone-300
                 transition-all duration-150
                 hover:bg-[#CFCDCE] hover:text-[#737985]
               "

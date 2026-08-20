@@ -84,11 +84,11 @@ export default function FooterNavigation() {
 
   // 각 메뉴의 notch 위치
   const notchPositions = [
-    "calc(50% - 152px)",
-    "calc(50% - 76px)",
+    "calc(50% - 9.5rem)",
+    "calc(50% - 4.75rem)",
     "50%",
-    "calc(50% + 76px)",
-    "calc(50% + 152px)",
+    "calc(50% + 4.75rem)",
+    "calc(50% + 9.5rem)",
   ] as const;
 
   // 현재 선택된 메뉴 위치를 푸터 곡선에 전달
@@ -146,7 +146,7 @@ export default function FooterNavigation() {
               flex size-17
               items-center justify-center
               rounded-full bg-[#19273C]
-              shadow-[0_0_10.5px_0_rgba(94,140,136,0.25),inset_0_3px_3px_0_rgba(255,255,255,0.25),inset_0_-1.5px_1.5px_0_rgba(159,159,159,0.25)]
+              shadow-[0_0_0.65625rem_0_rgba(94,140,136,0.25),inset_0_0.1875rem_0.1875rem_0_rgba(255,255,255,0.25),inset_0_-0.09375rem_0.09375rem_0_rgba(159,159,159,0.25)]
             "
           >
             <img

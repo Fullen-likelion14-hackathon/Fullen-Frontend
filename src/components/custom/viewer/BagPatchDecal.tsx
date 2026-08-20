@@ -9,6 +9,8 @@ import PatchSelectionFrame from "@/components/custom/viewer/PatchSelectionFrame"
 
 import { useBagCustomStore, type PlacedPatch } from "@/stores/bagCustomStore";
 
+import { withAssetCacheVersion } from "@/utils/assetUrl";
+
 interface BagPatchDecalProps {
   patch: PlacedPatch;
 
@@ -30,7 +32,9 @@ const PATCH_DECAL_DEPTH = 0.5;
 const getPolygonOffsetFactor = (layer: number) => -10 - layer * 2;
 
 const BagPatchDecal = ({ patch, editable, onDragStart }: BagPatchDecalProps) => {
-  const sourceTexture = useTexture(patch.image);
+  const textureUrl = withAssetCacheVersion(patch.image);
+
+  const sourceTexture = useTexture(textureUrl);
 
   const selectedPlacedPatchId = useBagCustomStore((state) => state.selectedPlacedPatchId);
 

@@ -292,7 +292,7 @@ const AIPatchFinalCheck = () => {
       </section>
 
       {/* 하단 생성 버튼 영역 */}
-      <div className="absolute inset-x-0 bottom-0 z-40 rounded-t-4xl bg-[#F9F4F0] px-6 pb-7 pt-6 shadow-[0_-8px_20px_rgba(0,0,0,0.06)]">
+      <div className="absolute inset-x-0 bottom-0 z-40 rounded-t-4xl bg-[#F9F4F0] px-6 pb-7 pt-6 shadow-[0_-0.5rem_1.25rem_rgba(0,0,0,0.06)]">
         <CustomStepButton
           onNext={handleGenerate}
           nextLabel={isGenerating ? "패치 생성 중" : "이대로 생성하기"}

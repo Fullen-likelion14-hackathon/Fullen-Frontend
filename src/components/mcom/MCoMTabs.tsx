@@ -14,8 +14,8 @@ export default function MCoMTabs({ MCoMTab, setMCoM }: MCoMTabsProps) {
           onClick={() => setMCoM("country")}
           className={`w-full p-2.5 ${
             MCoMTab === "country"
-              ? "rounded-tr-[25px] bg-[#F9F4F0] text-[#AB6A37] font-bold"
-              : "rounded-br-[25px] bg-[#AB6A37] text-[#D5B49B]"
+              ? "rounded-tr-[1.5625rem] bg-[#F9F4F0] text-[#AB6A37] font-bold"
+              : "rounded-br-[1.5625rem] bg-[#AB6A37] text-[#D5B49B]"
           }`}
         >
           현재 위치한 나라
@@ -28,8 +28,8 @@ export default function MCoMTabs({ MCoMTab, setMCoM }: MCoMTabsProps) {
           onClick={() => setMCoM("global")}
           className={`w-full p-2.5 ${
             MCoMTab === "global"
-              ? "rounded-tl-[25px] font-bold bg-[#F9F4F0] text-[#AB6A37]"
-              : "rounded-bl-[25px] bg-[#AB6A37] text-[#D5B49B]"
+              ? "rounded-tl-[1.5625rem] font-bold bg-[#F9F4F0] text-[#AB6A37]"
+              : "rounded-bl-[1.5625rem] bg-[#AB6A37] text-[#D5B49B]"
           }`}
         >
           글로벌

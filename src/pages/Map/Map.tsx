@@ -84,7 +84,7 @@ export default function Map() {
               onClick={() => {
                 if (centerJourneyId !== null) handleDetailClick(centerJourneyId);
               }}
-              className="h-[3rem] w-[15.625rem] max-w-80 rounded-full bg-[#EDF2F4] font-['Paperlogy'] text-lg font-semibold tracking-tight text-slate-800 shadow-[0px_0px_5px_0px_rgba(25,39,60,0.30),inset_0px_3px_3px_0px_rgba(255,255,255,0.25),inset_0px_-1.5px_1.5px_0px_rgba(159,159,159,0.25)]"
+              className="h-[3rem] w-[15.625rem] max-w-80 rounded-full bg-[#EDF2F4] font-['Paperlogy'] text-lg font-semibold tracking-tight text-slate-800 shadow-[0rem_0rem_0.3125rem_0rem_rgba(25,39,60,0.30),inset_0rem_0.1875rem_0.1875rem_0rem_rgba(255,255,255,0.25),inset_0rem_-0.09375rem_0.09375rem_0rem_rgba(159,159,159,0.25)]"
             >
               열기
             </button>
@@ -94,7 +94,7 @@ export default function Map() {
             <button
               type="button"
               onClick={handleShowLatestTravel}
-              className="h-[3.375rem] w-[20.625rem] max-w-80 rounded-[10px] bg-slate-800 text-xl font-bold text-white"
+              className="h-[3.375rem] w-[20.625rem] max-w-80 rounded-[0.625rem] bg-slate-800 text-xl font-bold text-white"
             >
               가장 최근 여행 보기
             </button>
@@ -104,7 +104,7 @@ export default function Map() {
             <button
               type="button"
               onClick={handleShowFullMap}
-              className="h-[3.375rem] w-[20.625rem] max-w-80 rounded-[10px] bg-slate-800 text-xl font-bold text-white"
+              className="h-[3.375rem] w-[20.625rem] max-w-80 rounded-[0.625rem] bg-slate-800 text-xl font-bold text-white"
             >
               지도 한눈에 보기
             </button>

@@ -349,13 +349,15 @@ export default function Customizing() {
           inset-0
           z-0
           transition-opacity
-          duration-300
+          duration-700
+          ease-out
           ${isThreeVisible ? "opacity-100" : "opacity-0"}
         `}
       >
         <ProductViewer
           mode="draft"
           customMode={mode}
+          intro={isThreeVisible}
           onReady={() => {
             setIsThreeReady(true);
           }}
@@ -385,7 +387,9 @@ export default function Customizing() {
           <CustomModeToggle mode={mode} onChange={handleModeChange} />
         </div>
 
-        {mode === "patch" && <PatchPanel userBagId={userBagId} onApplied={handleApplied} />}
+        {mode === "patch" && (
+          <PatchPanel userBagId={userBagId} intro={isThreeVisible} onApplied={handleApplied} />
+        )}
 
         {mode === "initial" && <InitialPanel userBagId={userBagId} onApplied={handleApplied} />}
       </div>

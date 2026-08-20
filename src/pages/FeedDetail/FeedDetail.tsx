@@ -105,7 +105,7 @@ export default function FeedDetail() {
                 onClick={() => navigate(-1)}
                 className="flex h-8 w-8 items-center justify-center"
               >
-                <span className="block h-4.5 w-4.5 rotate-45 border-b-[3px] border-l-[3px] border-[#CFCDCE]" />
+                <span className="block h-4.5 w-4.5 rotate-45 border-b-[0.1875rem] border-l-[0.1875rem] border-[#CFCDCE]" />
               </button>
 
               <div className="flex items-center gap-[1.25rem]">
@@ -187,7 +187,7 @@ export default function FeedDetail() {
               {feed.photoList.map((_, index) => (
                 <span
                   key={index}
-                  className={`size-2.5 rounded-full border-[1.67px] border-white/80 ${
+                  className={`size-2.5 rounded-full border-[0.104375rem] border-white/80 ${
                     index === activeIndex ? "bg-white/80" : "bg-transparent"
                   }`}
                 />

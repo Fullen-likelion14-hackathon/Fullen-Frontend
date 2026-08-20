@@ -131,7 +131,7 @@ export default function PhotoSelect() {
           type="button"
           disabled={selectedPhotoId === null || isPhotosPending}
           onClick={handleSelectComplete}
-          className={`h-16 w-full rounded-[18px] text-[1.25rem] font-bold text-white shadow-md transition ${
+          className={`h-16 w-full rounded-[1.125rem] text-[1.25rem] font-bold text-white shadow-md transition ${
             selectedPhotoId === null || isPhotosPending
               ? "cursor-not-allowed bg-[#D2D2D2]"
               : "bg-[#192C44]"

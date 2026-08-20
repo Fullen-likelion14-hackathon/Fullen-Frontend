@@ -11,11 +11,11 @@ interface PinCardCarouselProps {
 }
 
 const ACTIVE_CARD_SHADOW =
-  "shadow-[0_0_9.69px_1.94px_rgba(0,0,0,0.25),inset_1.45px_1.45px_0_0_rgba(255,255,255,0.5),inset_-1.45px_-1.45px_0_0_rgba(0,0,0,0.15)]";
+  "shadow-[0_0_0.605625rem_0.12125rem_rgba(0,0,0,0.25),inset_0.090625rem_0.090625rem_0_0_rgba(255,255,255,0.5),inset_-0.090625rem_-0.090625rem_0_0_rgba(0,0,0,0.15)]";
 const INACTIVE_CARD_SHADOW =
-  "shadow-[0_0_7.76px_1.55px_rgba(0,0,0,0.25),inset_1.16px_1.16px_0_0_rgba(255,255,255,0.5),inset_-1.16px_-1.16px_0_0_rgba(0,0,0,0.15)]";
+  "shadow-[0_0_0.485rem_0.096875rem_rgba(0,0,0,0.25),inset_0.0725rem_0.0725rem_0_0_rgba(255,255,255,0.5),inset_-0.0725rem_-0.0725rem_0_0_rgba(0,0,0,0.15)]";
 const BADGE_SHADOW =
-  "shadow-[0_0_6.63px_0_rgba(94,140,136,0.25),inset_0_-0.99px_0.99px_0_rgba(159,159,159,0.25),inset_0_1.99px_1.99px_0_rgba(255,255,255,0.25)]";
+  "shadow-[0_0_0.414375rem_0_rgba(94,140,136,0.25),inset_0_-0.061875rem_0.061875rem_0_rgba(159,159,159,0.25),inset_0_0.124375rem_0.124375rem_0_rgba(255,255,255,0.25)]";
 
 // 좌/중/우를 고정 3슬롯 배열로 (없는 쪽은 null)
 // left와 right가 같은 여행(journeyId 중복, 여행이 2개뿐일 때 발생)이면
