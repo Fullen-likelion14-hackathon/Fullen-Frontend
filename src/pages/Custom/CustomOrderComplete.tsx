@@ -8,56 +8,89 @@ import {
   Stamp,
   Truck,
 } from "lucide-react";
+
 import { useLocation, useNavigate } from "react-router-dom";
 
 import PageHeader from "@/components/common/PageHeader";
 
+import type { CustomOrderNavigationState } from "@/types/order";
+
 type OrderCompleteLocationState = {
   orderType?: "onetoone" | "custom";
+
   premiumOrderId?: number;
+
+  customOrder?: CustomOrderNavigationState;
 };
 
 export default function CustomOrderComplete() {
   const navigate = useNavigate();
+
   const location = useLocation();
 
   const locationState = location.state as OrderCompleteLocationState | null;
 
   const orderType = locationState?.orderType;
+
   const premiumOrderId = locationState?.premiumOrderId;
 
+  const customOrder = locationState?.customOrder;
+
   const orderSteps = [
-    { icon: <ReceiptText size={28} strokeWidth={2.5} />, active: true },
-    { icon: <Hand size={28} strokeWidth={2.5} />, active: false },
-    { icon: <Stamp size={28} strokeWidth={2.5} />, active: false },
-    { icon: <Stamp size={27} strokeWidth={2.5} />, active: false },
-    { icon: <Truck size={28} strokeWidth={2.5} />, active: false },
-    { icon: <PackageCheck size={28} strokeWidth={2.5} />, active: false },
+    {
+      icon: <ReceiptText size={28} strokeWidth={2.5} />,
+      active: true,
+    },
+    {
+      icon: <Hand size={28} strokeWidth={2.5} />,
+      active: false,
+    },
+    {
+      icon: <Stamp size={28} strokeWidth={2.5} />,
+      active: false,
+    },
+    {
+      icon: <Stamp size={27} strokeWidth={2.5} />,
+      active: false,
+    },
+    {
+      icon: <Truck size={28} strokeWidth={2.5} />,
+      active: false,
+    },
+    {
+      icon: <PackageCheck size={28} strokeWidth={2.5} />,
+      active: false,
+    },
   ];
 
-  // 주문내용 상세보기
+  // 주문내용 상세 이동
   const handleOrderDetail = () => {
-    // 1:1 커스텀 주문
     if (orderType === "onetoone") {
       if (premiumOrderId === undefined) {
         console.error("premiumOrderId가 없습니다.");
+
         return;
       }
 
       navigate(`/onetooneorder/detail/${premiumOrderId}`);
+
       return;
     }
 
-    // 일반 커스텀 주문
-    navigate("/custom/order/detail");
+    navigate("/custom/order/detail", {
+      state: {
+        customOrder,
+      },
+    });
   };
 
-  // 메인 화면으로 이동
+  // 메인 화면 이동
   const handleMoveMain = () => {
     if (orderType === "onetoone") {
       navigate("/onetooneorder", {
         state: {
           showOrderCompleteModal: true,
+
           orderType: "onetoone",
         },
       });
@@ -68,6 +101,7 @@ export default function CustomOrderComplete() {
     navigate("/custom", {
       state: {
         showOrderCompleteModal: true,
+
         orderType: "custom",
       },
     });
@@ -78,7 +112,7 @@ export default function CustomOrderComplete() {
       <PageHeader title="나의 커스텀 주문" />
 
       <div className="flex flex-col items-center">
-        {/* 주문 완료 체크 */}
+        {/* 주문 완료 표시 */}
         <div className="mt-28 flex h-17 w-17 items-center justify-center rounded-full border-2 border-[#AC917C] bg-white">
           <Check size={42} strokeWidth={4} className="text-[#AD6929]" />
         </div>
@@ -90,7 +124,7 @@ export default function CustomOrderComplete() {
           주문이 완료되었습니다.
         </h1>
 
-        {/* 주문내용 상세보기 */}
+        {/* 주문내용 상세 이동 */}
         <button
           type="button"
           onClick={handleOrderDetail}
@@ -100,9 +134,10 @@ export default function CustomOrderComplete() {
           <ChevronRight size={24} strokeWidth={2.5} />
         </button>
 
-        {/* 상태 설명 */}
+        {/* 주문 상태 안내 */}
         <p className="mt-14 text-[18px] text-[#B59A85]">가방을 MCM 측에 전달해주세요</p>
 
+        {/* 주문 진행 상태 */}
         <div className="relative mt-5 flex w-83 items-center justify-between">
           <div className="absolute left-5 right-5 top-1/2 h-1 -translate-y-1/2 bg-[#D6D6D6]" />
 
@@ -131,7 +166,7 @@ export default function CustomOrderComplete() {
         </div>
       </div>
 
-      {/* 메인 화면 버튼 */}
+      {/* 메인 화면 이동 */}
       <button
         type="button"
         onClick={handleMoveMain}
