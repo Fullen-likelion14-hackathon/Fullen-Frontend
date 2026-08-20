@@ -25,7 +25,7 @@ export default function PageHeader({
     }
 
     if (backTo) {
-      navigate(backTo);
+      navigate(backTo, { replace: true });
     } else {
       navigate(-1);
     }
