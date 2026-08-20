@@ -91,6 +91,8 @@ export default function CustomRequestConfirm() {
         posX: selectedLocation.posX,
         posY: selectedLocation.posY,
         rotation: selectedLocation.rotation,
+        previewX: selectedLocation.previewX,
+        previewY: selectedLocation.previewY,
       },
       {
         // 주문 생성 성공

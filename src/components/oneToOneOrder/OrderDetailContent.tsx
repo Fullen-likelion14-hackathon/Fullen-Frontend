@@ -16,7 +16,12 @@ interface OrderDetailContentProps {
   artistImage?: string;
   artistIntro?: string;
 
+  // 주문 확인 페이지에서 사용하는 위치 데이터
   selectedLocation?: PatchLocation;
+
+  // 주문 상세 조회 API에서 사용하는 2D 위치 데이터
+  previewX?: number;
+  previewY?: number;
 
   requestText: string;
 
@@ -31,6 +36,8 @@ export default function OrderDetailContent({
   artistImage,
   artistIntro,
   selectedLocation,
+  previewX,
+  previewY,
   requestText,
   onEdit,
 }: OrderDetailContentProps) {
@@ -42,6 +49,14 @@ export default function OrderDetailContent({
   const displayArtistIntro = selectedArtist?.introSummary ?? artistIntro;
 
   const displayNationImage = selectedArtist?.nationImgUrl;
+
+  // 주문 확인 페이지에서는 selectedLocation 사용
+  // 주문 상세 페이지에서는 API의 previewX, previewY 사용
+  const displayPreviewX = selectedLocation?.previewX ?? previewX;
+  const displayPreviewY = selectedLocation?.previewY ?? previewY;
+
+  // 상세 조회 API에는 rotation이 없으므로 기본값 0
+  const displayRotation = selectedLocation?.rotation ?? 0;
 
   return (
     <>
@@ -91,7 +106,7 @@ export default function OrderDetailContent({
 
       {/* 3. 위치 선택 */}
       <ConfirmStep step={3} title="위치 선택" onEdit={onEdit ? () => onEdit(3) : undefined}>
-        {selectedLocation && (
+        {displayPreviewX !== undefined && displayPreviewY !== undefined && (
           <div className="relative flex h-52 items-center justify-center overflow-hidden rounded-xl border-2 border-[#192C44] bg-white">
             <img src={bagImage} alt="커스텀 가방" className="w-[90%] object-contain" />
 
@@ -99,9 +114,9 @@ export default function OrderDetailContent({
             <div
               className="absolute h-14 w-14 border-2 border-[#192C44] bg-transparent"
               style={{
-                left: `${selectedLocation.previewX * 100}%`,
-                top: `${selectedLocation.previewY * 100}%`,
-                transform: `translate(-50%, -50%) rotate(${selectedLocation.rotation}deg)`,
+                left: `${displayPreviewX * 100}%`,
+                top: `${displayPreviewY * 100}%`,
+                transform: `translate(-50%, -50%) rotate(${displayRotation}deg)`,
               }}
             />
           </div>
