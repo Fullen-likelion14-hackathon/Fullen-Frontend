@@ -12,6 +12,7 @@ import CustomStep from "@/components/custom/common/step/CustomStep";
 import CustomStepButton from "@/components/custom/common/step/CustomStepButton";
 
 import { useArtist } from "@/hooks/queries/artist/useArtist";
+import { useBag, useBags } from "@/hooks/queries/useBags";
 
 import type { Artist } from "@/types/artist";
 import type { PatchLocation } from "@/types/patchLocation";
@@ -70,6 +71,16 @@ const CustomRequest = () => {
 
   // 요청사항
   const [requestText, setRequestText] = useState(locationState?.requestText ?? "");
+
+  // 사용자 소유 가방 목록 조회
+  const { data: bags = [] } = useBags();
+
+  // 현재 서비스에서는 첫 번째 소유 가방을 커스텀 대상으로 사용
+  const userBagId = bags[0]?.userBagId;
+
+  // 현재 가방 상세 조회
+  // 앞면 / 뒷면 이미지를 위치 선택 미리보기에 사용
+  const { data: bagDetail } = useBag(userBagId);
 
   // 선택한 작가 상세 정보 조회
   const {
@@ -270,6 +281,8 @@ const CustomRequest = () => {
               >
                 <LocationSelectBox
                   selectedLocation={selectedLocation}
+                  bagFrontImgUrl={bagDetail?.bagFrontImgUrl}
+                  bagBackImgUrl={bagDetail?.bagBackImgUrl}
                   onSelect={handleLocationSelect}
                   onRemove={handleLocationRemove}
                 />
