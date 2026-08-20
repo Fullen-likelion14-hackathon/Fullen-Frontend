@@ -133,12 +133,11 @@ const CategoryEdit = () => {
   };
 
   return (
-    <div className="relative min-h-dvh max-w-97.5 mx-auto flex flex-col overflow-hidden bg-linear-to-b from-[#EDE5DC] to-[#F9F4F0]">
+    <div className="relative min-h-dvh max-w-97.5 mx-auto flex flex-col bg-linear-to-b from-[#EDE5DC] to-[#F9F4F0]">
       {/* 배경 장식: 하단에서 떠오르는 원형 아치 */}
-      <div
-        aria-hidden="true"
-        className="absolute left-1/2 top-115 -translate-x-1/2 size-187.5 rounded-full bg-[#F9F4F0]"
-      />
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute left-1/2 top-115 -translate-x-1/2 size-187.5 rounded-full bg-[#F9F4F0]" />
+      </div>
 
       {/* 공용 PageHeader 사용, 뒤로가기 시 변경사항 확인 로직을 위해 onBackClick으로 커스텀 */}
       <PageHeader title="여행 수정" onBackClick={handleBack} />

@@ -506,7 +506,7 @@ export default function MyOrderList() {
       </div>
 
       {/* 업데이트 된 목록 */}
-      <div className="-mt-2 w-full">
+      <div className="-mt-5 w-full">
         <button
           type="button"
           onClick={() => {
@@ -565,7 +565,7 @@ export default function MyOrderList() {
       </div>
 
       {/* 주문 버튼 */}
-      <div className="pointer-events-auto absolute inset-x-0 bottom-25 flex justify-center">
+      <div className="pointer-events-auto absolute inset-x-0 bottom-23 flex justify-center">
         <ApplyButton
           text={isOrderPending ? "주문 중" : "주문하기"}
           onApply={handleOrder}
@@ -574,7 +574,7 @@ export default function MyOrderList() {
       </div>
 
       {/* 커스텀 수정 이동 */}
-      <div className="pointer-events-auto absolute inset-x-0 bottom-17 flex justify-center gap-2 font-bold text-[#B6B7BA]">
+      <div className="pointer-events-auto absolute inset-x-0 bottom-15 flex justify-center gap-2 font-bold text-[#B6B7BA]">
         <p>다시 꾸미겠습니까?</p>
 
         <button type="button" onClick={handleEdit} className="underline underline-offset-2">

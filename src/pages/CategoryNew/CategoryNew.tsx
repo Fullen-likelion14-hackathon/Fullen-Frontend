@@ -81,12 +81,11 @@ const CategoryNew = () => {
   };
 
   return (
-    <div className="relative min-h-dvh max-w-97.5 mx-auto flex flex-col overflow-hidden bg-linear-to-b from-[#EDE5DC] to-[#F9F4F0]">
+    <div className="relative min-h-dvh max-w-97.5 mx-auto flex flex-col bg-linear-to-b from-[#EDE5DC] to-[#F9F4F0]">
       {/* 배경 장식: 하단에서 떠오르는 원형 아치 (그라데이션 하단색과 같은 색이라 경계 없이 자연스럽게 이어짐) */}
-      <div
-        aria-hidden="true"
-        className="absolute left-1/2 top-115 -translate-x-1/2 size-187.5 rounded-full bg-[#F9F4F0]"
-      />
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute left-1/2 top-115 -translate-x-1/2 size-187.5 rounded-full bg-[#F9F4F0]" />
+      </div>
 
       {/* 공용 PageHeader 사용. 일부입력 상태 이탈 확인 로직 때문에 onBackClick으로 커스텀 */}
       <PageHeader title="여행 생성" onBackClick={handleBack} />
