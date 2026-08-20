@@ -14,12 +14,12 @@ export default function MyPage() {
   ];
   return (
     <div className="min-h-dvh max-w-97 mx-auto bg-[#faf5f0] pb-32 font-['Pretendard_Variable'] text-[#192940]">
-      <header className="border-b-8 border-[#aa6829] px-6 pb-5 pt-10 text-center">
-        <h1 className="text-[24px] font-bold">마이페이지</h1>
+      <header className="border-b-8 border-[#aa6829] px-6 pb-5 pt-[calc(2.5rem+env(safe-area-inset-top))] text-center">
+        <h1 className="text-[1.5rem] font-bold">마이페이지</h1>
       </header>
       <main className="mx-auto max-w-107 px-8 pt-10">
         <div className="mb-1 flex items-center justify-center gap-2 border-b-2 border-[#e2cdb9] pb-4">
-          <p className="text-[24px] font-extrabold text-black">@{username}</p>
+          <p className="text-[1.5rem] font-extrabold text-black">@{username}</p>
           <Pencil className="size-5 fill-[#c8c9cc] text-[#c8c9cc]" aria-label="닉네임 수정" />
         </div>
         <div>
@@ -28,7 +28,7 @@ export default function MyPage() {
           ))}
           <MyPageMenuItem
             label="제품 디지털 여권"
-            icon={<span className="text-[17px] font-bold">DDP</span>}
+            icon={<span className="text-[1.0625rem] font-bold">DDP</span>}
             onClick={() => navigate("/mypage/ddp")}
           />
         </div>
@@ -38,8 +38,8 @@ export default function MyPage() {
         >
           <Headphones className="mr-6 size-12 text-[#a7abb0]" strokeWidth={1.8} />
           <span className="flex-1">
-            <strong className="block text-[19px]">고객센터</strong>
-            <span className="text-[15px] font-semibold text-[#aaadb2]">
+            <strong className="block text-[1.1875rem]">고객센터</strong>
+            <span className="text-[0.9375rem] font-semibold text-[#aaadb2]">
               문의 사항이 있으신가요?
             </span>
           </span>

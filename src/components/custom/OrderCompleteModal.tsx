@@ -20,7 +20,7 @@ export default function OrderCompleteModal({ onClose, orderType }: OrderComplete
         </div>
 
         {/* 문구 */}
-        <p className="mt-2 text-center text-[15px] font-bold leading-[1.45] text-[#6E3C27]">
+        <p className="mt-2 text-center text-[0.9375rem] font-bold leading-[1.45] text-[#6E3C27]">
           {orderType === "onetoone" ? "1:1 커스텀" : "커스텀"} 배송이 완료되었습니다.
           <br />
           주문하신 디자인을 가방에 <span className="font-extrabold">영구 적용</span>했습니다.

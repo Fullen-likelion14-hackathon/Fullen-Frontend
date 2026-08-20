@@ -43,7 +43,7 @@ export default function NoticeToast({
           border-2
           px-4
           py-3
-          text-[14px]
+          text-[max(12px,0.875rem)]
           font-semibold
           text-[#19273C]
           shadow-sm

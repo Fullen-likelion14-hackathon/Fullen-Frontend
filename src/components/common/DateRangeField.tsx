@@ -87,7 +87,7 @@ const DateRangeField = ({ startDate, endDate, onChange, disabled }: DateRangeFie
             onClick={() => setIsOpen(false)}
           />
 
-          <div className="absolute left-1/2 top-1/2 z-20 w-[280px] -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-stone-300 bg-white p-4 shadow-lg">
+          <div className="absolute left-1/2 top-1/2 z-20 w-[17.5rem] -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-stone-300 bg-white p-4 shadow-lg">
             {/* 시작일/종료일 표시 */}
             <div className="mb-3 flex gap-2">
               <div

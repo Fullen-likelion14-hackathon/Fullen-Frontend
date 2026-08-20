@@ -207,7 +207,7 @@ export default function CustomArtistSelect() {
   };
 
   return (
-    <div className="relative mx-auto min-h-screen max-w-97 bg-[#F9F4F0]">
+    <div className="relative mx-auto min-h-dvh max-w-97 bg-[#F9F4F0]">
       {/* 상단 헤더 */}
       <PageHeader title="작가 선택" />
 
@@ -244,7 +244,7 @@ export default function CustomArtistSelect() {
           onClick={handleMoreArtistClick}
           className="flex w-full items-center justify-between py-4"
         >
-          <span className="text-[18px] font-bold text-[#192A40]">다른 작가 더보기</span>
+          <span className="text-[1.125rem] font-bold text-[#192A40]">다른 작가 더보기</span>
 
           <ChevronDown size={30} color="#192A40" />
         </button>
@@ -259,7 +259,7 @@ export default function CustomArtistSelect() {
             h-16
             w-full
             rounded-[20px]
-            text-[18px]
+            text-[1.125rem]
             font-bold
             shadow-md
             transition
@@ -285,7 +285,7 @@ export default function CustomArtistSelect() {
               onClick={handleMoreArtistClick}
               className="flex w-full items-center justify-between py-6"
             >
-              <span className="text-[18px] font-bold text-[#192A40]">다른 작가 더보기</span>
+              <span className="text-[1.125rem] font-bold text-[#192A40]">다른 작가 더보기</span>
 
               <ChevronDown className="rotate-180" size={30} color="#192A40" />
             </button>
@@ -312,7 +312,7 @@ export default function CustomArtistSelect() {
           </div>
 
           {/* 하단 고정 작가 선택 버튼 */}
-          <div className="fixed inset-x-0 bottom-0 z-40 mx-auto max-w-97 bg-[#F9F4F0] px-6 pb-6 pt-3">
+          <div className="fixed inset-x-0 bottom-0 z-40 mx-auto max-w-97 bg-[#F9F4F0] px-6 pb-[calc(1.5rem+env(safe-area-inset-bottom))] pt-3">
             <button
               type="button"
               disabled={selectedArtistId === null}
@@ -321,7 +321,7 @@ export default function CustomArtistSelect() {
                 h-16
                 w-full
                 rounded-[20px]
-                text-[18px]
+                text-[1.125rem]
                 font-bold
                 shadow-md
                 transition

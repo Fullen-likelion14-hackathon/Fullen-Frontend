@@ -17,7 +17,7 @@ const MCMWarningDialog = ({ onClose }: MCMWarningDialogProps) => {
 
           <p
             style={{ fontFamily: "Paperlogy" }}
-            className="text-center text-base font-semibold pt-[10px] leading-5 tracking-tight text-black"
+            className="text-center text-base font-semibold pt-[0.625rem] leading-5 tracking-tight text-black"
           >
             MCM 제품이 포함되지 않은
             <br />
@@ -25,13 +25,13 @@ const MCMWarningDialog = ({ onClose }: MCMWarningDialogProps) => {
           </p>
           <p
             style={{ fontFamily: "Paperlogy" }}
-            className="text-center text-xs font-semibold pt-[5px] tracking-tight text-[#888D96]"
+            className="text-center text-xs font-semibold pt-[0.3125rem] tracking-tight text-[#888D96]"
           >
             MCM 제품이 포함된 사진을 선택해주세요
           </p>
         </div>
 
-        <div className="flex w-full flex-col items-center pt-[10px]">
+        <div className="flex w-full flex-col items-center pt-[0.625rem]">
           <button
             type="button"
             onClick={onClose}

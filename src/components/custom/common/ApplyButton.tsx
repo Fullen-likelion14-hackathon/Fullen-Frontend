@@ -18,7 +18,7 @@ export function ApplyButton({ text, onApply, disabled = false }: ApplyButtonProp
         w-82.5
         rounded-lg
         bg-[#242D41]
-        text-[16px]
+        text-[1rem]
         font-semibold
         text-white
         shadow-[0_2px_8px_rgba(0,0,0,0.18)]

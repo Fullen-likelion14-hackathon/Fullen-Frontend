@@ -144,7 +144,7 @@ const CategoryEdit = () => {
       <PageHeader title="여행 수정" onBackClick={handleBack} />
 
       {/* 본문 */}
-      <main className="mt-[8px] relative z-10 flex flex-1 flex-col gap-8 px-7.5 pt-7.5 pb-10">
+      <main className="mt-[0.5rem] relative z-10 flex flex-1 flex-col gap-8 px-7.5 pt-7.5 pb-10">
         <div className="flex flex-col items-center gap-5">
           {/* 표지사진: 기존 사진이 있으면 바로 보여주고, 클릭 시 재업로드 가능 (CategoryNew와 동일 UI) */}
           <label className="relative flex h-90 w-66 cursor-pointer items-center justify-center overflow-hidden rounded-[10.43px] border-2 border-[#D3C5BB] bg-neutral-50">
@@ -213,7 +213,7 @@ const CategoryEdit = () => {
 
       {/* 저장 중 로딩 오버레이 */}
       {isSaving && (
-        <div className="absolute inset-x-0 bottom-0 top-[125px] z-50 flex flex-col items-center justify-center gap-4 bg-black/60">
+        <div className="absolute inset-x-0 bottom-0 top-[7.8125rem] z-50 flex flex-col items-center justify-center gap-4 bg-black/60">
           <div className="flex gap-2">
             <span className="size-2 animate-bounce rounded-full bg-white [animation-delay:-0.3s]" />
             <span className="size-2 animate-bounce rounded-full bg-white [animation-delay:-0.15s]" />

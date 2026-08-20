@@ -93,7 +93,7 @@ export default function ArtistDetailModal({ artist, isOpen, onClose }: ArtistDet
     >
       {/* 모달 */}
       <div
-        className="max-h-[80dvh] w-full max-w-[320px] overflow-y-auto rounded-xl bg-white"
+        className="max-h-[80dvh] w-full max-w-[20rem] overflow-y-auto rounded-xl bg-white"
         onClick={(event) => event.stopPropagation()}
       >
         {/* 상단 헤더 */}
@@ -102,7 +102,7 @@ export default function ArtistDetailModal({ artist, isOpen, onClose }: ArtistDet
           <img src={artist.nationImgUrl} alt="" className="h-6 w-10 border-2 object-cover" />
 
           {/* 작가 이름 */}
-          <p className="absolute left-1/2 -translate-x-1/2 whitespace-nowrap pt-1 text-[18px] font-bold text-[#192A40]">
+          <p className="absolute left-1/2 -translate-x-1/2 whitespace-nowrap pt-1 text-[1.125rem] font-bold text-[#192A40]">
             {artist.artistName}
           </p>
 
@@ -146,12 +146,12 @@ export default function ArtistDetailModal({ artist, isOpen, onClose }: ArtistDet
         {/* 상세 정보 */}
         <div className="px-8 py-4">
           {/* 짧은 화풍 설명 */}
-          <p className="text-[12px] font-semibold leading-4 text-[#192A40]">
+          <p className="text-[max(12px,0.75rem)] font-semibold leading-4 text-[#192A40]">
             {artist.introSummary}
           </p>
 
           {/* 상세 설명 */}
-          <p className="mt-4 whitespace-pre-line text-[12px] leading-4.5 text-[#192A40]">
+          <p className="mt-4 whitespace-pre-line text-[max(12px,0.75rem)] leading-4.5 text-[#192A40]">
             {artist.description}
           </p>
         </div>

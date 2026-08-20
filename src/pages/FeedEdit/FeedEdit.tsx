@@ -160,7 +160,7 @@ const FeedEdit = () => {
           />
 
           {images.length === 0 ? (
-            <label className="relative flex h-[301px] w-[330px] cursor-pointer flex-col items-center justify-center gap-3.5 overflow-hidden rounded-[10px] border-2 border-stone-300 bg-white text-center">
+            <label className="relative flex h-[18.8125rem] w-[20.625rem] cursor-pointer flex-col items-center justify-center gap-3.5 overflow-hidden rounded-[10px] border-2 border-stone-300 bg-white text-center">
               <input
                 type="file"
                 accept="image/*"
@@ -219,7 +219,7 @@ const FeedEdit = () => {
             placeholder="코멘트를 입력해주세요."
             disabled={isSaving}
             style={{ fontFamily: "Paperlogy" }}
-            className={`h-[162px] w-full resize-none rounded-[10px] border-2 bg-white p-3 text-sm font-normal leading-4 tracking-tight text-zinc-900 placeholder:font-semibold placeholder:text-[#AC917C] disabled:opacity-60 transition-colors placeholder-shown:pt-[70px] placeholder-shown:text-center ${
+            className={`h-[10.125rem] w-full resize-none rounded-[10px] border-2 bg-white p-3 text-sm font-normal leading-4 tracking-tight text-zinc-900 placeholder:font-semibold placeholder:text-[#AC917C] disabled:opacity-60 transition-colors placeholder-shown:pt-[4.375rem] placeholder-shown:text-center ${
               comment ? "border-slate-800" : "border-stone-300"
             }`}
           />
@@ -242,8 +242,8 @@ const FeedEdit = () => {
               className="relative h-9 w-16 shrink-0 rounded-full bg-stone-300 transition-colors"
             >
               <span
-                className={`absolute top-[3px] flex size-7 items-center justify-center rounded-full bg-white transition-all ${
-                  isPublic ? "left-[calc(100%-31px)]" : "left-[3px]"
+                className={`absolute top-[0.1875rem] flex size-7 items-center justify-center rounded-full bg-white transition-all ${
+                  isPublic ? "left-[calc(100%-1.9375rem)]" : "left-[0.1875rem]"
                 }`}
               >
                 <img

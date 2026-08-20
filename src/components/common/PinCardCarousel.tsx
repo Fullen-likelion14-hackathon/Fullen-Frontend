@@ -83,7 +83,7 @@ export function PinCardCarousel({ nearby, onSelectJourney, onDetailClick }: PinC
         {slots.map((journey, index) => {
           if (!journey) {
             // 좌/우 이웃이 없는 경우(맨 끝, 또는 left/right 중복 제거된 경우) -> 빈 슬롯으로 자리만 유지
-            return <div key={`empty-${index}`} className="h-[293px] w-[215px] shrink-0" />;
+            return <div key={`empty-${index}`} className="h-[18.3125rem] w-[13.4375rem] shrink-0" />;
           }
 
           const isActive = index === 1;
@@ -95,7 +95,7 @@ export function PinCardCarousel({ nearby, onSelectJourney, onDetailClick }: PinC
               onClick={() => handleCardClick(journey, index)}
               className={[
                 "relative shrink-0 overflow-hidden text-left transition-all duration-300",
-                isActive ? "h-[370px] w-[271px] rounded-xl" : "h-[293px] w-[215px] rounded-lg",
+                isActive ? "h-[23.125rem] w-[16.9375rem] rounded-xl" : "h-[18.3125rem] w-[13.4375rem] rounded-lg",
                 isActive ? ACTIVE_CARD_SHADOW : INACTIVE_CARD_SHADOW,
               ].join(" ")}
             >
@@ -132,7 +132,7 @@ export function PinCardCarousel({ nearby, onSelectJourney, onDetailClick }: PinC
                     : "h-28 rounded-b-lg px-3 pt-3 pb-10",
                 ].join(" ")}
               >
-                <div className="pl-[25px]">
+                <div className="pl-[1.5625rem]">
                   <p
                     className={[
                       "font-bold text-white",
@@ -154,7 +154,7 @@ export function PinCardCarousel({ nearby, onSelectJourney, onDetailClick }: PinC
                   <p
                     className={[
                       "mt-1 font-['Paperlogy'] font-semibold text-stone-100",
-                      isActive ? "text-xs" : "text-[9.94px]",
+                      isActive ? "text-xs" : "text-[max(9.94px,0.62125rem)]",
                     ].join(" ")}
                   >
                     {formatPeriod(journey.startDate, journey.endDate)}
@@ -165,7 +165,7 @@ export function PinCardCarousel({ nearby, onSelectJourney, onDetailClick }: PinC
                   className={[
                     "absolute",
                     isActive
-                      ? "bottom-10.5 right-5.5 h-[36px] w-[30px]"
+                      ? "bottom-10.5 right-5.5 h-[2.25rem] w-[1.875rem]"
                       : "bottom-10.5 right-4.5 h-7 w-5.5",
                   ].join(" ")}
                 >

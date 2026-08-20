@@ -40,7 +40,7 @@ export function CustomGenerateButton({ text, path, onClick, active = false }: Cu
         rounded-full
         border-2
         border-[#AC917C]
-        text-[14px]
+        text-[max(12px,0.875rem)]
         font-semibold
         text-[#6E3C27]
         active:bg-[#D2C3B7]!

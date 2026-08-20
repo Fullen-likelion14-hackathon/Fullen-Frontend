@@ -449,7 +449,7 @@ export default function MyOrderList() {
       <PageHeader title="나의 커스텀 주문" backTo="/custom" />
 
       {/* 주문 이미지 생성 전용 Viewer */}
-      <div className="pointer-events-none fixed left-[-10000px] top-0 h-[512px] w-[512px]">
+      <div className="pointer-events-none fixed left-[-10000px] top-0 h-[32rem] w-[32rem]">
         <OrderCaptureViewer
           ref={captureViewerRef}
           onReady={() => {
@@ -472,7 +472,7 @@ export default function MyOrderList() {
           onClick={() => {
             setSide("front");
           }}
-          className={`rounded-full px-4 py-1 text-[16px] font-bold ${
+          className={`rounded-full px-4 py-1 text-[1rem] font-bold ${
             side === "front" ? "bg-white text-[#242D41] shadow-sm" : "text-[#888D96]"
           }`}
         >
@@ -484,7 +484,7 @@ export default function MyOrderList() {
           onClick={() => {
             setSide("back");
           }}
-          className={`rounded-full px-4 py-1 text-[16px] font-bold ${
+          className={`rounded-full px-4 py-1 text-[1rem] font-bold ${
             side === "back" ? "bg-white text-[#242D41] shadow-sm" : "text-[#888D96]"
           }`}
         >
@@ -517,7 +517,7 @@ export default function MyOrderList() {
             flex
             items-center
             gap-1
-            text-[14px]
+            text-[max(12px,0.875rem)]
             font-bold
             text-[#969696]
           "
@@ -558,7 +558,7 @@ export default function MyOrderList() {
                 />
               ))
             ) : (
-              <p className="py-3 text-[13px] text-[#B6B7BA]">새롭게 업데이트된 패치가 없습니다</p>
+              <p className="py-3 text-[max(12px,0.8125rem)] text-[#B6B7BA]">새롭게 업데이트된 패치가 없습니다</p>
             )}
           </div>
         )}
@@ -584,7 +584,7 @@ export default function MyOrderList() {
 
       {/* 주문 처리 오류 */}
       {orderError && (
-        <p className="absolute inset-x-0 bottom-8 text-center text-[13px] font-semibold text-red-500">
+        <p className="absolute inset-x-0 bottom-8 text-center text-[max(12px,0.8125rem)] font-semibold text-red-500">
           {orderError}
         </p>
       )}

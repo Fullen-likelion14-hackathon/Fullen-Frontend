@@ -35,11 +35,11 @@ export default function CategoryFeed() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-200">
-      <div className="relative mx-auto min-h-screen w-full max-w-97.5 overflow-hidden bg-white">
+    <div className="min-h-dvh bg-gray-200">
+      <div className="relative mx-auto min-h-dvh w-full max-w-97.5 overflow-hidden bg-white">
         {/* 헤더 */}
         <header className="relative h-52.5 bg-[#F9F4F0] pb-6 pt-9">
-          <div className="mt-[23px]">
+          <div className="mt-[1.4375rem]">
             <div className="flex flex-col items-center gap-2.5">
               <div className="h-7 w-11 overflow-hidden outline outline-[0.75px] outline-stone-100">
                 <img
@@ -77,12 +77,12 @@ export default function CategoryFeed() {
               type="button"
               aria-label="뒤로 가기"
               onClick={() => navigate(-1)}
-              className="mt-[23px] absolute left-5 top-9 flex h-8 w-8 items-center justify-center"
+              className="mt-[1.4375rem] absolute left-5 top-9 flex h-8 w-8 items-center justify-center"
             >
               <span className="block h-4.5 w-4.5 rotate-45 border-b-[3px] border-l-[3px] border-[#CFCDCE]" />
             </button>
 
-            <div className="mt-[23px] absolute right-5 top-9 flex items-center gap-1.5">
+            <div className="mt-[1.4375rem] absolute right-5 top-9 flex items-center gap-1.5">
               <button
                 type="button"
                 aria-label="카테고리 수정"
@@ -111,7 +111,7 @@ export default function CategoryFeed() {
               </button>
             </div>
           </div>
-          <div className="absolute inset-x-0 bottom-0 h-[7px] bg-[#A3642B]" />
+          <div className="absolute inset-x-0 bottom-0 h-[0.4375rem] bg-[#A3642B]" />
         </header>
 
         {/* 피드 그리드 */}
@@ -138,7 +138,7 @@ export default function CategoryFeed() {
 
         {/* 새 게시물 추가 */}
         <div className="fixed inset-x-0 bottom-0 mx-auto w-full max-w-97.5">
-          <div className="flex justify-center pb-[60px] pt-6">
+          <div className="flex justify-center pb-[calc(3.75rem+env(safe-area-inset-bottom))] pt-6">
             <button
               type="button"
               onClick={() => navigate(`/passport/${categoryId}/new`)}

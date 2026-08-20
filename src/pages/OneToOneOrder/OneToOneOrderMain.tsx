@@ -43,11 +43,11 @@ export default function OneToOneOrderMain() {
 
       {/* 문구 */}
       <div className="relative z-10 pt-30 text-center">
-        <p className="text-[20px] font-extrabold text-[#A3642B]">오직 나를 위한 단 하나의 커스텀</p>
+        <p className="text-[1.25rem] font-extrabold text-[#A3642B]">오직 나를 위한 단 하나의 커스텀</p>
 
-        <p className="mt-0.5 text-[16px] font-bold text-[#242D41]">성주재단이 후원하는 작가가</p>
+        <p className="mt-0.5 text-[1rem] font-bold text-[#242D41]">성주재단이 후원하는 작가가</p>
 
-        <p className="text-[20px] font-extrabold text-[#242D41]">
+        <p className="text-[1.25rem] font-extrabold text-[#242D41]">
           당신의 이야기를 직접 그려드립니다.
         </p>
       </div>
@@ -60,7 +60,7 @@ export default function OneToOneOrderMain() {
       {/* 주문 버튼 */}
       <Button
         onClick={() => navigate("/onetooneorder/request")}
-        className="absolute inset-x-6 bottom-50 rounded-xl bg-[#242D41] py-4 text-[20px] font-bold text-white"
+        className="absolute inset-x-6 bottom-50 rounded-xl bg-[#242D41] py-4 text-[1.25rem] font-bold text-white"
       >
         1:1 커스텀 주문하기
       </Button>

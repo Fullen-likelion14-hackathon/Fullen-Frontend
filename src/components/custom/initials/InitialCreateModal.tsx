@@ -59,7 +59,7 @@ export default function InitialCreateModal({ onClose, onCreate }: InitialCreateM
             absolute
             -top-9
             right-0
-            text-[28px]
+            text-[1.75rem]
             text-white
           "
         >
@@ -75,7 +75,7 @@ export default function InitialCreateModal({ onClose, onCreate }: InitialCreateM
               left-1/2
               -translate-x-1/2
               whitespace-nowrap
-              text-[12px]
+              text-[max(12px,0.75rem)]
               text-white
             "
           >

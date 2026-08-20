@@ -61,7 +61,7 @@ export default function CustomOrderDetail() {
 
       {/* 주문 가방 정보 */}
       <div className="pt-30 text-center">
-        <h1 className="text-[24px] font-bold text-[#242D41]">{bagDetail?.bagName}</h1>
+        <h1 className="text-[1.5rem] font-bold text-[#242D41]">{bagDetail?.bagName}</h1>
 
         <p className="mt-1 text-[#888D96]">{bagDetail?.bagSize}</p>
       </div>
@@ -73,7 +73,7 @@ export default function CustomOrderDetail() {
           onClick={() => {
             setSide("front");
           }}
-          className={`rounded-full px-4 py-1 text-[16px] font-bold ${
+          className={`rounded-full px-4 py-1 text-[1rem] font-bold ${
             side === "front" ? "bg-white text-[#242D41] shadow-sm" : "text-[#888D96]"
           }`}
         >
@@ -85,7 +85,7 @@ export default function CustomOrderDetail() {
           onClick={() => {
             setSide("back");
           }}
-          className={`rounded-full px-4 py-1 text-[16px] font-bold ${
+          className={`rounded-full px-4 py-1 text-[1rem] font-bold ${
             side === "back" ? "bg-white text-[#242D41] shadow-sm" : "text-[#888D96]"
           }`}
         >

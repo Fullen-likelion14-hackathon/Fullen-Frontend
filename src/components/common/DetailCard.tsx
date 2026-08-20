@@ -82,7 +82,7 @@ export function DetailCard({ category, isActive }: DetailCardProps) {
 
         <div
           className={`absolute overflow-hidden ${
-            isActive ? "left-59 top-23 h-[36px] w-[30px]" : "left-48 top-18 h-7 w-5.5"
+            isActive ? "left-59 top-23 h-[2.25rem] w-[1.875rem]" : "left-48 top-18 h-7 w-5.5"
           }`}
         >
           <img src={fileIcon} alt="" className="absolute inset-0 h-full w-full" />

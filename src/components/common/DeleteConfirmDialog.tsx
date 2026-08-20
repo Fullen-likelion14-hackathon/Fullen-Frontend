@@ -33,11 +33,11 @@ export default function DeleteConfirmDialog({
       {/* 모달: 화면 전체 기준 정중앙, w-72 h-56 */}
       <div className="fixed inset-0 z-51 flex items-center justify-center pointer-events-none">
         <div className="pointer-events-auto relative h-56 w-72 overflow-hidden rounded-[20px] bg-stone-100">
-          <div className="absolute left-[39px] top-[32px] flex w-52 flex-col items-center gap-2.5">
+          <div className="absolute left-[2.4375rem] top-[2rem] flex w-52 flex-col items-center gap-2.5">
             <div className="flex w-full flex-col items-center gap-2.5">
               <img src={warningIcon} alt="" className="h-7 w-8 object-contain" />
 
-              <div className="flex w-full flex-col items-center gap-[5px]">
+              <div className="flex w-full flex-col items-center gap-[0.3125rem]">
                 <p
                   style={{ fontFamily: "Paperlogy" }}
                   className="w-full text-center text-base font-bold tracking-tight text-slate-800"
@@ -53,7 +53,7 @@ export default function DeleteConfirmDialog({
               </div>
             </div>
 
-            <div className="flex w-full flex-col gap-[5px]">
+            <div className="flex w-full flex-col gap-[0.3125rem]">
               <button
                 type="button"
                 onClick={onCancel}

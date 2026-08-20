@@ -116,7 +116,7 @@ const AIPatchGenerator = () => {
         className="pointer-events-none absolute left-1/2 top-140 z-0 h-160 w-240 -translate-x-1/2 rounded-[90%] bg-[#F9F4F0]"
       />
 
-      <section className="relative z-10 h-[calc(100dvh-126px)] overflow-y-auto">
+      <section className="relative z-10 h-[calc(100dvh-7.875rem)] overflow-y-auto">
         <div className="mx-auto flex w-full flex-col items-center px-8 pb-14 pt-10">
           <img
             src={analysisIcon}

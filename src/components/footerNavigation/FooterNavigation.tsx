@@ -196,7 +196,7 @@ export default function FooterNavigation() {
 
               <span
                 className={`
-                  text-[12px]
+                  text-[max(12px,0.75rem)]
                   font-['Pretendard_Variable']
                   transition-colors duration-1000
                   ${isActive ? "font-semibold text-white" : "text-white/50"}

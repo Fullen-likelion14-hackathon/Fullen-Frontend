@@ -133,7 +133,7 @@ const AIPatchFinalCheck = () => {
       <PageHeader title="AI 패치 생성" />
 
       {/* 최종 확인 스크롤 영역 */}
-      <section className="h-[calc(100dvh-126px)] overflow-y-auto pb-40">
+      <section className="h-[calc(100dvh-7.875rem)] overflow-y-auto pb-40">
         <div className="relative px-8 pb-8 pt-10 text-center">
           <h2 className="text-2xl font-bold text-black">이대로 패치를 생성할까요?</h2>
 

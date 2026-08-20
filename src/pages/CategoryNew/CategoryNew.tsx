@@ -93,7 +93,7 @@ const CategoryNew = () => {
 
       {/* 본문: relative 추가 -> 로딩 오버레이가 헤더 높이를 픽셀로 고정하지 않고
           이 컨테이너 기준 absolute inset-0로 자연스럽게 붙도록 함 */}
-      <main className="relative mt-[8px] z-10 flex flex-1 flex-col gap-8 px-7.5 pt-7.5 pb-10">
+      <main className="relative mt-[0.5rem] z-10 flex flex-1 flex-col gap-8 px-7.5 pt-7.5 pb-10">
         <div className="flex flex-col items-center gap-5">
           {/* 표지사진 업로드: 테두리 #D3C5BB, 크기 264x360, 안내 문구 색상 #AC917C */}
           <label className="relative flex h-90 w-66 cursor-pointer items-center justify-center overflow-hidden rounded-[10.43px] border-2 border-[#D3C5BB] bg-neutral-50">

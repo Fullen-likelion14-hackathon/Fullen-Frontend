@@ -51,7 +51,7 @@ export default function ArtistFrame({
               event.stopPropagation();
               onDetail();
             }}
-            className="absolute left-1/2 top-[85%] z-30 -translate-x-1/2 whitespace-nowrap rounded-md border border-white bg-white/40 px-3 py-1.5 text-[14px] font-medium text-white"
+            className="absolute left-1/2 top-[85%] z-30 -translate-x-1/2 whitespace-nowrap rounded-md border border-white bg-white/40 px-3 py-1.5 text-[max(12px,0.875rem)] font-medium text-white"
           >
             상세보기
           </button>

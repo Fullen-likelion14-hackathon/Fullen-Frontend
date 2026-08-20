@@ -30,7 +30,7 @@ const LeaveConfirmDialog = ({
         className="
           fixed
           left-1/2
-          top-[125px]
+          top-[7.8125rem]
           bottom-0
           w-full
           max-w-97.5
@@ -42,32 +42,32 @@ const LeaveConfirmDialog = ({
 
       {/* 모달: 화면 전체 기준 정중앙 */}
       <div className="fixed inset-0 z-51 flex items-center justify-center pointer-events-none">
-        <div className="pointer-events-auto h-[230px] w-[288px] rounded-[20px] bg-stone-100 px-6 py-8">
+        <div className="pointer-events-auto h-[14.375rem] w-[18rem] rounded-[20px] bg-stone-100 px-6 py-8">
           <div className="flex flex-col items-center">
             {/* 경고 아이콘 */}
             <img src={warningIcon} alt="" className="size-8" />
 
             <p
               style={{ fontFamily: "Paperlogy" }}
-              className="pt-[10px] text-center text-base font-bold leading-5 tracking-tight text-[#19273C]"
+              className="pt-[0.625rem] text-center text-base font-bold leading-5 tracking-tight text-[#19273C]"
             >
               {title}
             </p>
 
             <p
               style={{ fontFamily: "Paperlogy" }}
-              className="pt-[5px] text-center text-xs font-semibold leading-5 text-[#888D96]"
+              className="pt-[0.3125rem] text-center text-xs font-semibold leading-5 text-[#888D96]"
             >
               {subtitle}
             </p>
           </div>
 
-          <div className="mt-[10px] flex flex-col items-center justify-center gap-2">
+          <div className="mt-[0.625rem] flex flex-col items-center justify-center gap-2">
             <button
               type="button"
               onClick={onContinue}
               style={{ fontFamily: "Paperlogy" }}
-              className="h-[37px] w-[211px] rounded-[10px] bg-[#19273C] text-xs font-bold tracking-tight text-[#F9F4F0]"
+              className="h-[2.3125rem] w-[13.1875rem] rounded-[10px] bg-[#19273C] text-xs font-bold tracking-tight text-[#F9F4F0]"
             >
               {continueLabel}
             </button>
@@ -77,7 +77,7 @@ const LeaveConfirmDialog = ({
               onClick={onLeave}
               style={{ fontFamily: "Paperlogy" }}
               className="
-                h-9 w-[211px] overflow-hidden rounded-[10px]
+                h-9 w-[13.1875rem] overflow-hidden rounded-[10px]
                 bg-white
                 text-xs font-bold tracking-tight text-stone-300
                 outline outline-2 outline-offset-[-2px] outline-stone-300

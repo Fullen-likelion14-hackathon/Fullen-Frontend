@@ -73,7 +73,7 @@ export default function PhotoSelect() {
       <PageHeader title="전체 사진" backTo="/onetooneorder/request" />
 
       {/* 사진 목록 */}
-      <section className="h-[calc(100dvh-206px)] overflow-y-auto pb-4">
+      <section className="h-[calc(100dvh-12.875rem)] overflow-y-auto pb-4">
         {/* 로딩 */}
         {isPhotosPending && (
           <div className="flex h-full items-center justify-center">
@@ -126,12 +126,12 @@ export default function PhotoSelect() {
       </section>
 
       {/* 하단 선택 버튼 */}
-      <div className="absolute bottom-0 left-0 right-0 bg-[#F9F4F0] px-7 pb-7 pt-3">
+      <div className="absolute bottom-0 left-0 right-0 bg-[#F9F4F0] px-7 pb-[calc(1.75rem+env(safe-area-inset-bottom))] pt-3">
         <button
           type="button"
           disabled={selectedPhotoId === null || isPhotosPending}
           onClick={handleSelectComplete}
-          className={`h-16 w-full rounded-[18px] text-[20px] font-bold text-white shadow-md transition ${
+          className={`h-16 w-full rounded-[18px] text-[1.25rem] font-bold text-white shadow-md transition ${
             selectedPhotoId === null || isPhotosPending
               ? "cursor-not-allowed bg-[#D2D2D2]"
               : "bg-[#192C44]"

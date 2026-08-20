@@ -1,4 +1,3 @@
-// src/pages/PassportDetail/PassportDetail.tsx
 import { useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -226,7 +225,7 @@ export default function PassportDetail() {
       <PageHeader title="나의 여정" />
 
       {homeContinent && (
-        <div className="mx-auto mt-9.5 flex h-[42px] w-[300px] items-center gap-0.5 rounded-[10px] bg-stone-300 p-0.5">
+        <div className="mx-auto mt-9.5 flex h-[2.625rem] w-[18.75rem] items-center gap-0.5 rounded-[10px] bg-stone-300 p-0.5">
           <button
             onClick={handleSelectAll}
             className={`h-9 flex-1 rounded-lg font-['Paperlogy'] text-base font-semibold tracking-tight transition-colors ${

@@ -35,9 +35,9 @@ export default function DigitalProductPassport() {
 
       <main className="mx-auto max-w-107 px-6 pt-8">
         <section className="text-center">
-          <h2 className="text-[25px] font-bold">{bag.bagName}</h2>
+          <h2 className="text-[1.5625rem] font-bold">{bag.bagName}</h2>
 
-          <p className="text-[17px] font-bold text-[#91949c]">{bag.bagSize}</p>
+          <p className="text-[1.0625rem] font-bold text-[#91949c]">{bag.bagSize}</p>
 
           <img
             src={bag.bagFrontImgUrl}
@@ -47,14 +47,14 @@ export default function DigitalProductPassport() {
         </section>
 
         <section className="flex items-center rounded-xl border-2 border-[#aa6829] bg-white px-4 py-3 mt-4">
-          <div className="mr-3 flex size-14 shrink-0 items-center justify-center rounded-lg bg-[#faf5f0] text-[17px] font-serif font-bold">
+          <div className="mr-3 flex size-14 shrink-0 items-center justify-center rounded-lg bg-[#faf5f0] text-[1.0625rem] font-serif font-bold">
             MCM
           </div>
 
           <div className="min-w-0 flex-1">
-            <h3 className="text-[18px] font-bold">정품 인증 완료</h3>
+            <h3 className="text-[1.125rem] font-bold">정품 인증 완료</h3>
 
-            <p className="text-[11px] font-semibold text-[#ac927c]">
+            <p className="text-[max(11px,0.6875rem)] font-semibold text-[#ac927c]">
               이 제품은 MCM에서 정식 인증한 제품입니다.
             </p>
           </div>
@@ -62,7 +62,7 @@ export default function DigitalProductPassport() {
           <ChevronRight className="size-6 text-[#ac927c]" />
         </section>
 
-        <dl className="mt-6 text-[18px]">
+        <dl className="mt-6 text-[1.125rem]">
           <div className="flex justify-between border-b border-[#c9c9c9] py-3">
             <dt className="font-bold">시리얼 번호</dt>
             <dd>{bag.serialNumber}</dd>
@@ -87,7 +87,7 @@ export default function DigitalProductPassport() {
                 <Icon className="size-9 text-black" strokeWidth={1.7} />
               </span>
 
-              <span className="whitespace-nowrap text-[13px] font-bold">{label}</span>
+              <span className="whitespace-nowrap text-[max(12px,0.8125rem)] font-bold">{label}</span>
             </button>
           ))}
         </div>

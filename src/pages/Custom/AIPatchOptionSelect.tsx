@@ -473,7 +473,7 @@ const AIPatchOptionSelect = () => {
       <section
         className="
           flex
-          h-[calc(100dvh-126px)]
+          h-[calc(100dvh-7.875rem)]
           flex-col
           overflow-y-auto
           px-8
