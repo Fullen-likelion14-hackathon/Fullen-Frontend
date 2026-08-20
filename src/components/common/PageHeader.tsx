@@ -35,8 +35,8 @@ export default function PageHeader({
     <header
       className={`
         relative z-50
-        pb-6.25 pt-11
-        ${variant === "default" ? "border-b-[7px] border-[#AB6A37] bg-[#242D41]" : "bg-transparent"}
+        pb-6.25 pt-[calc(2.75rem+env(safe-area-inset-top))]
+        ${variant === "default" ? "border-b-[0.4375rem] border-[#AB6A37] bg-[#242D41]" : "bg-transparent"}
       `}
     >
       <div className="relative flex items-center justify-center px-5">

@@ -104,7 +104,7 @@ const WarningModal = ({
           <h2
             className="
               whitespace-pre-line
-              text-[16px]
+              text-[1rem]
               font-bold
               leading-[1.4]
               text-[#152A42]
@@ -117,7 +117,7 @@ const WarningModal = ({
             className="
               mt-1
               whitespace-pre-line
-              text-[13px]
+              text-[max(12px,0.8125rem)]
               font-medium
               leading-[1.45]
               text-[#8D9299]
@@ -158,7 +158,7 @@ const WarningModal = ({
               w-full
               rounded-lg
               bg-[#152A42]
-              text-[14px]
+              text-[max(12px,0.875rem)]
               font-bold
               text-white
             "
@@ -182,7 +182,7 @@ const WarningModal = ({
               border-2
               border-[#D5D5D5]
               bg-white
-              text-[14px]
+              text-[max(12px,0.875rem)]
               font-bold
               text-[#BFC1C4]
               transition-colors

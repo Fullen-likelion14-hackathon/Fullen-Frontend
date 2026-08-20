@@ -150,7 +150,7 @@ export default function CustomRequestConfirm() {
         <div className="mb-8 text-center">
           <h1 className="text-xl font-extrabold">이대로 1:1 커스텀을 주문할까요?</h1>
 
-          <p className="mt-2 text-[15px] font-bold text-[#B89B84]">
+          <p className="mt-2 text-[0.9375rem] font-bold text-[#B89B84]">
             선택한 사진, 작가, 위치, 요청사항을 확인해주세요.
           </p>
         </div>
@@ -166,7 +166,7 @@ export default function CustomRequestConfirm() {
       </section>
 
       {/* 하단 고정 주문 버튼 */}
-      <div className="fixed bottom-0 left-1/2 z-30 w-full max-w-97.5 -translate-x-1/2 bg-[#F9F4F0] px-7 pb-6 pt-4">
+      <div className="fixed bottom-0 left-1/2 z-30 w-full max-w-97.5 -translate-x-1/2 bg-[#F9F4F0] px-7 pb-[calc(1.5rem+env(safe-area-inset-bottom))] pt-4">
         <button
           type="button"
           onClick={handleOrder}

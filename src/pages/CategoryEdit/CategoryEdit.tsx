@@ -144,10 +144,10 @@ const CategoryEdit = () => {
       <PageHeader title="여행 수정" onBackClick={handleBack} />
 
       {/* 본문 */}
-      <main className="mt-[8px] relative z-10 flex flex-1 flex-col gap-8 px-7.5 pt-7.5 pb-10">
+      <main className="mt-[0.5rem] relative z-10 flex flex-1 flex-col gap-8 px-7.5 pt-7.5 pb-10">
         <div className="flex flex-col items-center gap-5">
           {/* 표지사진: 기존 사진이 있으면 바로 보여주고, 클릭 시 재업로드 가능 (CategoryNew와 동일 UI) */}
-          <label className="relative flex h-90 w-66 cursor-pointer items-center justify-center overflow-hidden rounded-[10.43px] border-2 border-[#D3C5BB] bg-neutral-50">
+          <label className="relative flex h-90 w-66 cursor-pointer items-center justify-center overflow-hidden rounded-[0.651875rem] border-2 border-[#D3C5BB] bg-neutral-50">
             <input
               type="file"
               accept="image/*"
@@ -179,7 +179,7 @@ const CategoryEdit = () => {
               placeholder="여행 유형을 적어주세요"
               disabled={isSaving}
               style={{ fontFamily: "Paperlogy" }}
-              className={`h-12 rounded-[10px] border-2 bg-white text-center text-xl font-semibold tracking-tight text-[#19273C] placeholder:text-[#AC917C] placeholder:text-sm disabled:opacity-60 ${
+              className={`h-12 rounded-[0.625rem] border-2 bg-white text-center text-xl font-semibold tracking-tight text-[#19273C] placeholder:text-[#AC917C] placeholder:text-sm disabled:opacity-60 ${
                 travelType ? "border-slate-800" : "border-[#D3C5BB]"
               }`}
             />
@@ -201,10 +201,10 @@ const CategoryEdit = () => {
           disabled={!isFormValid || isSaving}
           onClick={handleSave}
           style={{ fontFamily: "Paperlogy" }}
-          className={`h-14 rounded-[10px] px-6 text-xl font-semibold tracking-tight transition-colors ${
+          className={`h-14 rounded-[0.625rem] px-6 text-xl font-semibold tracking-tight transition-colors ${
             isFormValid
-              ? "cursor-pointer bg-slate-800 text-white shadow-[0px_0px_10px_0px_rgba(81,66,54,0.20)]"
-              : "cursor-not-allowed bg-stone-300 text-stone-100 shadow-[1px_1px_1px_0px_rgba(81,66,54,0.30),inset_0px_2px_2px_0px_rgba(255,255,255,0.6),inset_0px_-2px_2px_0px_rgba(120,100,80,0.2)]"
+              ? "cursor-pointer bg-slate-800 text-white shadow-[0rem_0rem_0.625rem_0rem_rgba(81,66,54,0.20)]"
+              : "cursor-not-allowed bg-stone-300 text-stone-100 shadow-[0.0625rem_0.0625rem_0.0625rem_0rem_rgba(81,66,54,0.30),inset_0rem_0.125rem_0.125rem_0rem_rgba(255,255,255,0.6),inset_0rem_-0.125rem_0.125rem_0rem_rgba(120,100,80,0.2)]"
           }`}
         >
           저장하기
@@ -213,7 +213,7 @@ const CategoryEdit = () => {
 
       {/* 저장 중 로딩 오버레이 */}
       {isSaving && (
-        <div className="absolute inset-x-0 bottom-0 top-[125px] z-50 flex flex-col items-center justify-center gap-4 bg-black/60">
+        <div className="absolute inset-x-0 bottom-0 top-[7.8125rem] z-50 flex flex-col items-center justify-center gap-4 bg-black/60">
           <div className="flex gap-2">
             <span className="size-2 animate-bounce rounded-full bg-white [animation-delay:-0.3s]" />
             <span className="size-2 animate-bounce rounded-full bg-white [animation-delay:-0.15s]" />

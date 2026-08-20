@@ -87,19 +87,19 @@ export default function Login() {
       />
 
       {/* 헤드라인 텍스트 */}
-      <h1 className="absolute left-[54px] top-[151px] font-['Paperlogy'] text-2xl font-medium tracking-wide text-slate-300">
+      <h1 className="absolute left-[3.375rem] top-[9.4375rem] font-['Paperlogy'] text-2xl font-medium tracking-wide text-slate-300">
         여행으로 채워가는
         <br />
         나만의 가방
       </h1>
 
       {/* 서비스명 로고 */}
-      <div className="absolute left-[54px] top-[236px] font-['Paperlogy'] text-5xl font-bold tracking-wide text-stone-100">
+      <div className="absolute left-[3.375rem] top-[14.75rem] font-['Paperlogy'] text-5xl font-bold tracking-wide text-stone-100">
         Füllen
       </div>
 
       {/* 비행기 애니메이션 - 텍스트 블록 아래, 왼쪽 벽에서 시작해 크게 처졌다 위로 올라가며 멀리 이동 */}
-      <div className="absolute left-0 top-[250px] z-10 h-40 w-80">
+      <div className="absolute left-0 top-[15.625rem] z-10 h-40 w-80">
         {/* 좌표 계산 전용 path, 화면에 안 보임 */}
         <svg className="absolute inset-0 h-full w-full" viewBox="0 0 320 160" fill="none">
           <path ref={geometryPathRef} d={PLANE_PATH} stroke="none" fill="none" />
@@ -126,14 +126,14 @@ export default function Login() {
       <img
         src={bagCarrier}
         alt="MCM 캐리어"
-        className="pointer-events-none absolute -left-6 top-[186px] w-[598px] max-w-none"
+        className="pointer-events-none absolute -left-6 top-[11.625rem] w-[37.375rem] max-w-none"
       />
 
       {/* 시작 버튼 */}
       <Button
         onClick={handleTestLogin}
         disabled={isPending}
-        className="absolute bottom-[60px] left-1/2 h-14 w-80 max-w-full -translate-x-1/2 shrink-0 rounded-[10px] bg-stone-300 px-6 py-2 text-xl font-bold tracking-tight text-slate-800 shadow-[0_0_10px_0_rgba(81,66,54,0.20),inset_0_1px_1px_1px_rgba(255,255,255,0.10),inset_0_-1px_1px_1px_rgba(0,0,0,0.10)] hover:bg-stone-300/90"
+        className="absolute bottom-[3.75rem] left-1/2 h-14 w-80 max-w-full -translate-x-1/2 shrink-0 rounded-[0.625rem] bg-stone-300 px-6 py-2 text-xl font-bold tracking-tight text-slate-800 shadow-[0_0_0.625rem_0_rgba(81,66,54,0.20),inset_0_0.0625rem_0.0625rem_0.0625rem_rgba(255,255,255,0.10),inset_0_-0.0625rem_0.0625rem_0.0625rem_rgba(0,0,0,0.10)] hover:bg-stone-300/90"
       >
         {isPending ? "로그인 중..." : "테스트 버튼으로 시작하기"}
       </Button>

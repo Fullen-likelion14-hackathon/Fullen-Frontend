@@ -63,7 +63,7 @@ export default function MCoMGallery({ MCoMTab }: MCoMGalleryProps) {
               />
 
               <div className="absolute inset-0 flex items-center justify-center">
-                <p className="text-center text-[16px] font-semibold leading-tight text-white">
+                <p className="text-center text-[1rem] font-semibold leading-tight text-white">
                   MCM in...
                   <br />
                   {currentCountry}!
@@ -100,7 +100,7 @@ export default function MCoMGallery({ MCoMTab }: MCoMGalleryProps) {
               />
 
               <div className="absolute inset-0 flex items-center justify-center">
-                <p className="text-center text-[16px] font-semibold text-white">MCM in GLOBAL</p>
+                <p className="text-center text-[1rem] font-semibold text-white">MCM in GLOBAL</p>
               </div>
             </div>
           )}

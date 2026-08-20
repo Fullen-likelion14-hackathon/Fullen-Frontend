@@ -1,8 +1,8 @@
 import * as THREE from "three";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
-import { createPortal, type ThreeEvent } from "@react-three/fiber";
+import { createPortal, useFrame, type ThreeEvent } from "@react-three/fiber";
 
 import { Html, useGLTF } from "@react-three/drei";
 
@@ -26,6 +26,8 @@ interface ProductProps {
   customMode?: ProductCustomMode;
 
   onLocationChange?: (location: PatchLocation) => void;
+
+  intro?: boolean;
 }
 
 type CustomRenderItem =
@@ -70,6 +72,10 @@ const BACK_MAX_Y = 0.121;
 
 // Decal 표면 이격값
 const SURFACE_OFFSET = 0.002;
+
+const INTRO_DURATION = 1.3;
+
+const INTRO_RISE = 0.7;
 
 // 서버 UV 기준 실제 Mesh 위치 계산
 const findMeshPointFromUv = (
@@ -238,8 +244,53 @@ const findInitialFrontSurface = (mesh: THREE.Mesh): SurfaceGeometry | null => {
   };
 };
 
-export function Product({ mode = "view", customMode = "patch", onLocationChange }: ProductProps) {
+export function Product({
+  mode = "view",
+  customMode = "patch",
+  onLocationChange,
+  intro = false,
+}: ProductProps) {
   const { scene } = useGLTF(bagUrl);
+
+  const introGroupRef = useRef<THREE.Group>(null);
+
+  const introProgressRef = useRef(0);
+
+  useEffect(() => {
+    if (!intro) {
+      return;
+    }
+
+    introProgressRef.current = 0;
+
+    const group = introGroupRef.current;
+
+    if (!group) {
+      return;
+    }
+
+    group.rotation.y = Math.PI * 2;
+
+    group.position.y = -INTRO_RISE;
+  }, [intro]);
+
+  useFrame((_, delta) => {
+    const group = introGroupRef.current;
+
+    if (!group || !intro || introProgressRef.current >= 1) {
+      return;
+    }
+
+    const progress = Math.min(1, introProgressRef.current + delta / INTRO_DURATION);
+
+    introProgressRef.current = progress;
+
+    const eased = 1 - Math.pow(1 - progress, 3);
+
+    group.rotation.y = Math.PI * 2 * (1 - eased);
+
+    group.position.y = -INTRO_RISE * (1 - eased);
+  });
 
   const [bagMesh, setBagMesh] = useState<THREE.Mesh | null>(null);
 
@@ -615,32 +666,34 @@ export function Product({ mode = "view", customMode = "patch", onLocationChange 
 
   return (
     <>
-      <primitive
-        object={scene}
-        position={[0, 1.9, 0]}
-        scale={1.1}
-        onPointerDown={handleBagPointerDown}
-        onPointerMove={mode === "draft" ? handlePointerMove : undefined}
-        onPointerUp={mode === "draft" ? handlePointerUp : undefined}
-        onPointerLeave={mode === "draft" ? handlePointerUp : undefined}
-        onPointerMissed={() => {
-          if (mode !== "draft") {
-            return;
-          }
+      <group ref={introGroupRef}>
+        <primitive
+          object={scene}
+          position={[0, 1.9, 0]}
+          scale={1.1}
+          onPointerDown={handleBagPointerDown}
+          onPointerMove={mode === "draft" ? handlePointerMove : undefined}
+          onPointerUp={mode === "draft" ? handlePointerUp : undefined}
+          onPointerLeave={mode === "draft" ? handlePointerUp : undefined}
+          onPointerMissed={() => {
+            if (mode !== "draft") {
+              return;
+            }
 
-          if (draggingPatchId || draggingInitialId) {
-            return;
-          }
+            if (draggingPatchId || draggingInitialId) {
+              return;
+            }
 
-          if (customMode === "initial") {
-            selectPlacedInitial(null);
+            if (customMode === "initial") {
+              selectPlacedInitial(null);
 
-            return;
-          }
+              return;
+            }
 
-          selectPlacedPatch(null);
-        }}
-      />
+            selectPlacedPatch(null);
+          }}
+        />
+      </group>
 
       {/* layer 기반 렌더링 */}
       {bagMesh &&

@@ -230,9 +230,9 @@ export default function CustomMain() {
 
         {/* 가방 정보 */}
         <div className="mt-7 text-center">
-          <h1 className="text-[20px] font-bold text-[#333]">Ottomar 비세토스 위켄더</h1>
+          <h1 className="text-[1.25rem] font-bold text-[#333]">Ottomar 비세토스 위켄더</h1>
 
-          <p className="mt-1 text-[14px] text-[#777]">50.5 cm (19.9 in)</p>
+          <p className="mt-1 text-[max(12px,0.875rem)] text-[#777]">50.5 cm (19.9 in)</p>
         </div>
 
         {/* 하단 액션 버튼 */}

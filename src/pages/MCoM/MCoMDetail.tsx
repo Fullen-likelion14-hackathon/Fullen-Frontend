@@ -67,10 +67,10 @@ export default function MCoMDetail() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-200">
-      <div className="mx-auto min-h-screen w-full max-w-97.5 bg-[#FEFEFE]">
+    <div className="min-h-dvh bg-gray-200">
+      <div className="mx-auto min-h-dvh w-full max-w-97.5 bg-[#FEFEFE]">
         {/* 헤더 */}
-        <header className="bg-[#FEFEFE] pb-1 pt-11">
+        <header className="bg-[#FEFEFE] pb-1 pt-[calc(2.75rem+env(safe-area-inset-top))]">
           <div className="relative flex items-center justify-center px-5">
             <button
               type="button"
@@ -82,9 +82,9 @@ export default function MCoMDetail() {
             </button>
 
             <div className="text-center text-black">
-              <h1 className="mt-1 text-[25px] font-bold">{feed.nationKRName}</h1>
+              <h1 className="mt-1 text-[1.5625rem] font-bold">{feed.nationKRName}</h1>
 
-              <p className="mt-1 text-[15px] font-bold">{feed.journeyType}</p>
+              <p className="mt-1 text-[0.9375rem] font-bold">{feed.journeyType}</p>
             </div>
 
             <img
@@ -96,7 +96,7 @@ export default function MCoMDetail() {
         </header>
 
         {/* 날짜 */}
-        <p className="pb-3 text-center text-[15px] font-semibold text-[#A0A0A0]">{feed.date}</p>
+        <p className="pb-3 text-center text-[0.9375rem] font-semibold text-[#A0A0A0]">{feed.date}</p>
 
         {/* 사진 슬라이더 */}
         {feed.photoList.length > 0 && (
@@ -138,7 +138,7 @@ export default function MCoMDetail() {
 
         {/* 피드 내용 */}
         <div className="px-5 py-6">
-          <p className="whitespace-pre-line text-[15px] leading-6 text-black">{feed.comment}</p>
+          <p className="whitespace-pre-line text-[0.9375rem] leading-6 text-black">{feed.comment}</p>
         </div>
       </div>
     </div>

@@ -76,7 +76,7 @@ export default function InitialEditor({
             rounded-full
             px-5
             py-2
-            text-[16px]
+            text-[1rem]
             transition-colors
             ${fontWeight === "normal" ? "bg-[#969CA7] text-white" : "text-[#B1B1B1]"}
           `}
@@ -92,7 +92,7 @@ export default function InitialEditor({
             rounded-full
             px-5
             py-2
-            text-[16px]
+            text-[1rem]
             transition-colors
             ${fontWeight === "bold" ? "bg-[#969CA7] text-white" : "text-[#B1B1B1]"}
           `}
