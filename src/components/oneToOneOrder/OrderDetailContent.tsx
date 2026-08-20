@@ -112,7 +112,7 @@ export default function OrderDetailContent({
 
             {/* 선택 위치 */}
             <div
-              className="absolute h-14 w-14 border-2 border-[#192C44] bg-transparent"
+              className="absolute h-14 w-14 border-2 border-[#192C44] bg-[#192C44]/50"
               style={{
                 left: `${displayPreviewX * 100}%`,
                 top: `${displayPreviewY * 100}%`,

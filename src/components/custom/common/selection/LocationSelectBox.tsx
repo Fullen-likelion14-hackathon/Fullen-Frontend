@@ -86,7 +86,7 @@ export default function LocationSelectBox({
 
           {/* 3D에서 선택한 위치를 2D 가방 이미지 위에 표시 */}
           <div
-            className="pointer-events-none absolute h-14 w-14 border-2 border-[#192C44] bg-transparent"
+            className="pointer-events-none absolute h-14 w-14 border-2 border-[#192C44] bg-[#192C44]/50"
             style={{
               left: `${previewLeft}%`,
               top: `${previewTop}%`,
