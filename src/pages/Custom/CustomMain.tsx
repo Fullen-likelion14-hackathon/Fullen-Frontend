@@ -19,6 +19,7 @@ import floorBg from "@/assets/images/Floor.png";
 
 export default function CustomMain() {
   const location = useLocation();
+
   const [isThreeReady, setIsThreeReady] = useState(false);
 
   // 서버 상태 초기화 기준
@@ -55,6 +56,8 @@ export default function CustomMain() {
     hydratedPatchBagIdRef.current = null;
 
     hydratedInitialBagIdRef.current = null;
+
+    setIsThreeReady(false);
   }, [userBagId]);
 
   // 서버 패치 상태 초기화
@@ -80,6 +83,7 @@ export default function CustomMain() {
 
       image: patch.imgUrl,
 
+      // Product UV 복원 대상
       position: null,
 
       normal:
@@ -138,6 +142,7 @@ export default function CustomMain() {
 
       fontWeight: initial.isBold ? ("bold" as const) : ("normal" as const),
 
+      // Product UV 복원 대상
       position: null,
 
       normal:
@@ -206,9 +211,15 @@ export default function CustomMain() {
 
       {/* 적용 완료 가방 상태 */}
       <div className="absolute inset-0">
-        <ProductViewer onReady={() => setIsThreeReady(true)} />
+        <ProductViewer
+          mode="applied"
+          onReady={() => {
+            setIsThreeReady(true);
+          }}
+        />
       </div>
 
+      {/* 화면 UI */}
       <div className="pointer-events-none relative z-10 h-full">
         {/* DPP 버튼 */}
         <div className="pointer-events-auto flex justify-center pt-30">
@@ -229,15 +240,22 @@ export default function CustomMain() {
           <OrderButton />
         </div>
       </div>
-      {/* Three.js 렌더링이 완료될 때까지 로딩 화면 덮기 */}
+
+      {/* Three.js 렌더링 완료 전 로딩 */}
       {!isThreeReady && (
         <div className="absolute inset-0 z-40">
           <CustomLoading overlayOnly />
         </div>
       )}
 
+      {/* 주문 완료 모달 */}
       {isOrderCompleteModalOpen && (
-        <OrderCompleteModal orderType="custom" onClose={() => setIsOrderCompleteModalOpen(false)} />
+        <OrderCompleteModal
+          orderType="custom"
+          onClose={() => {
+            setIsOrderCompleteModalOpen(false);
+          }}
+        />
       )}
     </main>
   );
