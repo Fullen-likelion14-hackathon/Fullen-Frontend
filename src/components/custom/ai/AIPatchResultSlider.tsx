@@ -157,6 +157,7 @@ const AIPatchResultSlider = ({
             >
               <img
                 src={patch.image}
+                crossOrigin="anonymous"
                 alt={`AI 패치 ${index + 1}안`}
                 draggable={false}
                 className="pointer-events-none aspect-square w-full select-none object-contain"

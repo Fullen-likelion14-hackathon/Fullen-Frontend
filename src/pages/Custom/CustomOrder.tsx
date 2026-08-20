@@ -545,6 +545,7 @@ export default function MyOrderList() {
                 <img
                   key={patch.patchPositionId}
                   src={patch.imgUrl}
+                  crossOrigin="anonymous"
                   alt="업데이트 패치"
                   draggable={false}
                   className="

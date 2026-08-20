@@ -132,6 +132,7 @@ const WarningModal = ({
           <div className="mt-5 flex justify-center">
             <img
               src={imageUrl}
+              crossOrigin="anonymous"
               alt="삭제할 패치"
               className="
                 h-26

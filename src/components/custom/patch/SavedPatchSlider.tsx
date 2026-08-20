@@ -405,6 +405,7 @@ const SavedPatchSlider = ({
                 >
                   <img
                     src={patch.image}
+                    crossOrigin="anonymous"
                     alt={`저장된 패치 ${index + 1}`}
                     draggable={false}
                     className="
